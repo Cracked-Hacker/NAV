@@ -1,0 +1,151 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  line-height: 1.7;
+  color: #222;
+  background: #f9f9f9;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: #111;
+  color: white;
+}
+
+nav .logo { font-weight: bold; font-size: 1.2rem; }
+nav ul { list-style: none; display: flex; gap: 1.5rem; }
+nav a { color: white; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+
+.hero {
+  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+  color: white;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+.hero p { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
+
+.btn {
+  display: inline-block;
+  background: #e63946;
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover { background: #c5303c; }
+
+section { padding: 3rem 2rem; max-width: 900px; margin: auto; }
+
+h2 { margin-bottom: 1rem; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.card h3 { margin-bottom: 0.5rem; }
+
+.testimonial {
+  background: #111;
+  color: white;
+  text-align: center;
+  padding: 3rem 2rem;
+  max-width: 100%;
+}
+
+.testimonial blockquote {
+  font-size: 1.3rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  background: #eee;
+  margin-top: 2rem;
+}
+
+footer a { color: #111; }
+
+/* Page styles */
+.page {
+  max-width: 800px;
+  margin: auto;
+  padding: 3rem 2rem;
+}
+
+.page h1 { margin-bottom: 1.5rem; }
+.page ul, .page ol { margin: 1rem 0 1rem 1.5rem; }
+.page li { margin-bottom: 0.5rem; }
+
+/* Pricing */
+.pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.tier {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.tier.featured { border: 3px solid #e63946; }
+.tier h3 { margin-bottom: 0.5rem; }
+.tier .price { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; }
+.tier ul { list-style: none; text-align: left; padding: 0; }
+.tier li { padding: 0.4rem 0; border-bottom: 1px solid #eee; }
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+input, textarea {
+  padding: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+label { font-size: 0.9rem; }
+
+.center { text-align: center; }
+.small { font-size: 0.85rem; color: #666; }
+.disclaimer { font-size: 0.85rem; color: #666; margin-top: 2rem; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  nav { flex-direction: column; gap: 1rem; }
+  nav ul { flex-wrap: wrap; justify-content: center; }
+  .hero h1 { font-size: 1.8rem; }
+}
