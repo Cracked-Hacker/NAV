@@ -19,6 +19,8 @@ const classroomModules = [
 const lmsPages = [
   "classroom/index.html",
   "classroom/course.html",
+  "classroom/syllabus.html",
+  "classroom/week.html",
   "classroom/assignments.html",
   "classroom/labs.html",
   "classroom/quizzes.html",
@@ -43,6 +45,9 @@ const requiredFiles = [
   "classroom/classroom.js",
   "classroom/lms-data.js",
   "classroom/workspace-sync.js",
+  "classroom/curriculum-detail.js",
+  "classroom/curriculum-ui.js",
+  "classroom/curriculum.css",
   ...lmsPages,
   ...classroomModules
 ];
@@ -68,7 +73,7 @@ for (const file of requiredFiles) {
 }
 
 const htmlFiles = walk(root).filter((file) => extname(file) === ".html");
-if (htmlFiles.length < 26) failures.push(`site: expected at least 26 HTML pages, found ${htmlFiles.length}`);
+if (htmlFiles.length < 28) failures.push(`site: expected at least 28 HTML pages, found ${htmlFiles.length}`);
 
 const forbidden = [
   [/localhost/gi, "contains localhost"],
@@ -118,12 +123,35 @@ for (const page of lmsPages) {
   if (!/classroom\.js/.test(html)) fail(page, "missing Classroom behavior script");
   if (!/lms-data\.js/.test(html)) fail(page, "missing shared LMS course data");
   if (!/classroom-subnav/.test(html)) fail(page, "missing Classroom LMS navigation");
+  if (!/href=["']syllabus\.html["']/.test(html)) fail(page, "missing Course Guide / Syllabus navigation");
 }
 
 for (const workspacePage of ["classroom/assignments.html", "classroom/labs.html"]) {
   const html = readFileSync(resolve(root, workspacePage), "utf8");
   if (!/workspace-sync\.js/.test(html)) fail(workspacePage, "missing workspace completion-state synchronization");
 }
+
+for (const curriculumPage of ["classroom/course.html", "classroom/syllabus.html", "classroom/week.html", "classroom/progress.html"]) {
+  const html = readFileSync(resolve(root, curriculumPage), "utf8");
+  if (!/curriculum-detail\.js/.test(html)) fail(curriculumPage, "missing detailed Class Builder curriculum data");
+  if (!/curriculum-ui\.js/.test(html)) fail(curriculumPage, "missing detailed Class Builder curriculum behavior");
+  if (!/curriculum\.css/.test(html)) fail(curriculumPage, "missing detailed Class Builder curriculum styles");
+}
+
+const syllabusPage = readFileSync(resolve(root, "classroom/syllabus.html"), "utf8");
+if (!/data-syllabus/.test(syllabusPage)) fail("classroom/syllabus.html", "missing course guide renderer hook");
+if (!/not university-approved/i.test(syllabusPage)) fail("classroom/syllabus.html", "must clearly distinguish university-ready design from university approval");
+
+const weekPage = readFileSync(resolve(root, "classroom/week.html"), "utf8");
+if (!/data-week-view/.test(weekPage)) fail("classroom/week.html", "missing detailed week renderer hook");
+if (!/data-week-title/.test(weekPage)) fail("classroom/week.html", "missing dynamic week title hook");
+
+const coursePage = readFileSync(resolve(root, "classroom/course.html"), "utf8");
+if (!/data-course-map/.test(coursePage)) fail("classroom/course.html", "missing full-course map renderer hook");
+if (!/Quick answer → learn → apply → inspect evidence → master/i.test(coursePage)) fail("classroom/course.html", "missing Class Builder learning-depth explanation");
+
+const progressPage = readFileSync(resolve(root, "classroom/progress.html"), "utf8");
+if (!/data-mastery-dashboard/.test(progressPage)) fail("classroom/progress.html", "missing mastery dashboard separate from completion");
 
 for (const moduleFile of classroomModules) {
   const html = readFileSync(resolve(root, moduleFile), "utf8");
@@ -145,6 +173,11 @@ if (!/min-height:48px/.test(classroomCss)) fail("classroom/classroom.css", "miss
 if (!/classroom-subnav/.test(classroomCss)) fail("classroom/classroom.css", "missing LMS sub-navigation styles");
 if (!/work-draft/.test(classroomCss)) fail("classroom/classroom.css", "missing assignment/lab workspace styles");
 
+const curriculumCss = readFileSync(resolve(root, "classroom/curriculum.css"), "utf8");
+if (!/@media \(prefers-reduced-motion: reduce\)/.test(curriculumCss)) fail("classroom/curriculum.css", "missing reduced-motion handling for detailed curriculum interactions");
+if (!/min-height: 48px/.test(curriculumCss)) fail("classroom/curriculum.css", "missing minimum touch-target protection for detailed curriculum controls");
+if (!/mastery-chip/.test(curriculumCss)) fail("classroom/curriculum.css", "missing mastery-state styles");
+
 const classroomJs = readFileSync(resolve(root, "classroom/classroom.js"), "utf8");
 if (!/localStorage/.test(classroomJs)) fail("classroom/classroom.js", "missing browser-local progress persistence");
 if (!/data-classroom-filter/.test(classroomJs)) fail("classroom/classroom.js", "missing module filtering behavior");
@@ -154,6 +187,13 @@ if (!/data-assignment-list/.test(classroomJs)) fail("classroom/classroom.js", "m
 if (!/data-lab-list/.test(classroomJs)) fail("classroom/classroom.js", "missing lab workspace renderer");
 if (!/data-quiz-list/.test(classroomJs)) fail("classroom/classroom.js", "missing full-course quiz renderer");
 if (!/data-progress-dashboard/.test(classroomJs)) fail("classroom/classroom.js", "missing progress dashboard renderer");
+
+const curriculumUi = readFileSync(resolve(root, "classroom/curriculum-ui.js"), "utf8");
+if (!/nav-classroom-mastery-v1/.test(curriculumUi)) fail("classroom/curriculum-ui.js", "missing mastery state distinct from activity completion");
+if (!/masteryCheck/.test(curriculumUi)) fail("classroom/curriculum-ui.js", "missing separate mastery retrieval checks");
+if (!/week\.html\?week=/.test(curriculumUi)) fail("classroom/curriculum-ui.js", "missing course-map links into detailed weekly learning units");
+if (!/Quick Answer|quickAnswer/.test(curriculumUi)) fail("classroom/curriculum-ui.js", "missing Quick Answer learning depth");
+if (!/Deep Dive|deepDive/.test(curriculumUi)) fail("classroom/curriculum-ui.js", "missing Deep Dive learning depth");
 
 const workspaceSync = readFileSync(resolve(root, "classroom/workspace-sync.js"), "utf8");
 if (!/work-complete-button/.test(workspaceSync) || !/work-status/.test(workspaceSync)) fail("classroom/workspace-sync.js", "missing work completion badge synchronization logic");
@@ -170,6 +210,18 @@ if (assignmentCount !== 10) fail("classroom/lms-data.js", `expected 10 applied a
 if (labCount !== 12) fail("classroom/lms-data.js", `expected 12 solo gym labs, found ${labCount}`);
 if (!/Hard to Kill/.test(lmsData)) fail("classroom/lms-data.js", "missing full-course NAV title");
 
+const curriculumDetail = readFileSync(resolve(root, "classroom/curriculum-detail.js"), "utf8");
+const cloCount = (curriculumDetail.match(/["']CLO\d+\./g) || []).length;
+const masteryCheckCount = (curriculumDetail.match(/masteryCheck:\s*\{/g) || []).length;
+const evidenceAnchorCount = (curriculumDetail.match(/id:\s*["']E-\d+["']/g) || []).length;
+if (cloCount !== 14) fail("classroom/curriculum-detail.js", `expected 14 course learning outcomes, found ${cloCount}`);
+if (masteryCheckCount !== 10) fail("classroom/curriculum-detail.js", `expected 10 weekly mastery checks, found ${masteryCheckCount}`);
+if (evidenceAnchorCount < 5) fail("classroom/curriculum-detail.js", `expected at least 5 public evidence-ledger anchors, found ${evidenceAnchorCount}`);
+if (!/4 quarter credits/.test(curriculumDetail)) fail("classroom/curriculum-detail.js", "missing four-quarter-credit course record");
+if (!/No capstone|no capstone/i.test(`${syllabusPage}\n${coursePage}`)) fail("classroom", "missing explicit no-capstone requirement");
+if (!/learningSequence/.test(curriculumDetail)) fail("classroom/curriculum-detail.js", "missing ten-step learning sequence");
+if (!/masteryLevels/.test(curriculumDetail)) fail("classroom/curriculum-detail.js", "missing mastery progression states");
+
 if (failures.length) {
   console.error(`NAV public-site release gate failed with ${failures.length} problem(s):`);
   for (const failure of failures) console.error(`- ${failure}`);
@@ -177,4 +229,4 @@ if (failures.length) {
 }
 
 console.log(`NAV public-site release gate passed (${htmlFiles.length} HTML pages checked).`);
-console.log(`Required routes/assets: ${requiredFiles.length}; Starter modules: ${classroomModules.length}; LMS pages: ${lmsPages.length}; weeks: ${weekCount}; quizzes: ${quizCount}; labs: ${labCount}; assignments: ${assignmentCount}; broken internal links: 0.`);
+console.log(`Required routes/assets: ${requiredFiles.length}; Starter modules: ${classroomModules.length}; LMS pages: ${lmsPages.length}; weeks: ${weekCount}; quizzes: ${quizCount}; labs: ${labCount}; assignments: ${assignmentCount}; CLOs: ${cloCount}; mastery checks: ${masteryCheckCount}; evidence anchors: ${evidenceAnchorCount}; broken internal links: 0.`);
