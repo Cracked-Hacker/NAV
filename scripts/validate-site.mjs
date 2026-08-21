@@ -157,7 +157,7 @@ const labCount = (lmsData.match(/id:\s*["']lab-[^"']+["']/g) || []).length;
 if (weekCount !== 10) fail("classroom/lms-data.js", `expected 10 course weeks, found ${weekCount}`);
 if (quizCount !== 10) fail("classroom/lms-data.js", `expected 10 weekly quizzes, found ${quizCount}`);
 if (assignmentCount !== 10) fail("classroom/lms-data.js", `expected 10 applied assignments, found ${assignmentCount}`);
-if (labCount !== 11) fail("classroom/lms-data.js", `expected 11 solo gym labs, found ${labCount}`);
+if (labCount !== 12) fail("classroom/lms-data.js", `expected 12 solo gym labs, found ${labCount}`);
 if (!/Hard to Kill/.test(lmsData)) fail("classroom/lms-data.js", "missing full-course NAV title");
 
 if (failures.length) {
