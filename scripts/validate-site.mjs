@@ -42,6 +42,7 @@ const requiredFiles = [
   "classroom/classroom.css",
   "classroom/classroom.js",
   "classroom/lms-data.js",
+  "classroom/workspace-sync.js",
   ...lmsPages,
   ...classroomModules
 ];
@@ -119,6 +120,11 @@ for (const page of lmsPages) {
   if (!/classroom-subnav/.test(html)) fail(page, "missing Classroom LMS navigation");
 }
 
+for (const workspacePage of ["classroom/assignments.html", "classroom/labs.html"]) {
+  const html = readFileSync(resolve(root, workspacePage), "utf8");
+  if (!/workspace-sync\.js/.test(html)) fail(workspacePage, "missing workspace completion-state synchronization");
+}
+
 for (const moduleFile of classroomModules) {
   const html = readFileSync(resolve(root, moduleFile), "utf8");
   if (!/classroom\.css/.test(html)) fail(moduleFile, "missing shared Classroom stylesheet");
@@ -148,6 +154,10 @@ if (!/data-assignment-list/.test(classroomJs)) fail("classroom/classroom.js", "m
 if (!/data-lab-list/.test(classroomJs)) fail("classroom/classroom.js", "missing lab workspace renderer");
 if (!/data-quiz-list/.test(classroomJs)) fail("classroom/classroom.js", "missing full-course quiz renderer");
 if (!/data-progress-dashboard/.test(classroomJs)) fail("classroom/classroom.js", "missing progress dashboard renderer");
+
+const workspaceSync = readFileSync(resolve(root, "classroom/workspace-sync.js"), "utf8");
+if (!/work-complete-button/.test(workspaceSync) || !/work-status/.test(workspaceSync)) fail("classroom/workspace-sync.js", "missing work completion badge synchronization logic");
+if (!/requestAnimationFrame/.test(workspaceSync)) fail("classroom/workspace-sync.js", "completion synchronization must run after the primary state update");
 
 const lmsData = readFileSync(resolve(root, "classroom/lms-data.js"), "utf8");
 const weekCount = (lmsData.match(/\n\s*week:\s*\d+/g) || []).length;
