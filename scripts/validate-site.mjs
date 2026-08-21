@@ -5,6 +5,17 @@ import process from "node:process";
 const root = process.cwd();
 const failures = [];
 
+const classroomModules = [
+  "classroom/how-training-works/index.html",
+  "classroom/building-muscle/index.html",
+  "classroom/getting-strong/index.html",
+  "classroom/rir-rpe/index.html",
+  "classroom/choosing-exercises/index.html",
+  "classroom/programming-a-workout/index.html",
+  "classroom/recovery/index.html",
+  "classroom/build-your-system/index.html"
+];
+
 const requiredFiles = [
   "index.html",
   "coaching.html",
@@ -19,14 +30,9 @@ const requiredFiles = [
   "style.css",
   "robots.txt",
   "classroom/index.html",
-  "classroom/how-training-works/index.html",
-  "classroom/building-muscle/index.html",
-  "classroom/getting-strong/index.html",
-  "classroom/rir-rpe/index.html",
-  "classroom/choosing-exercises/index.html",
-  "classroom/programming-a-workout/index.html",
-  "classroom/recovery/index.html",
-  "classroom/build-your-system/index.html"
+  "classroom/classroom.css",
+  "classroom/classroom.js",
+  ...classroomModules
 ];
 
 function walk(dir) {
@@ -114,12 +120,43 @@ for (const file of htmlFiles) {
   }
 }
 
+const classroomHub = readFileSync(resolve(root, "classroom/index.html"), "utf8");
+if (!/data-classroom-hub/.test(classroomHub)) fail("classroom/index.html", "missing Classroom hub enhancement hook");
+if (!/classroom\.css/.test(classroomHub)) fail("classroom/index.html", "missing Classroom stylesheet");
+if (!/classroom\.js/.test(classroomHub)) fail("classroom/index.html", "missing Classroom behavior script");
+if (!/data-course-progress/.test(classroomHub)) fail("classroom/index.html", "missing Starter Kit progress control");
+if (!/data-classroom-search/.test(classroomHub)) fail("classroom/index.html", "missing module search control");
+
+for (const moduleFile of classroomModules) {
+  const html = readFileSync(resolve(root, moduleFile), "utf8");
+  if (!/classroom\.css/.test(html)) fail(moduleFile, "missing shared Classroom stylesheet");
+  if (!/classroom\.js/.test(html)) fail(moduleFile, "missing shared Classroom behavior script");
+  if (!/<form[^>]*data-quiz[^>]*data-correct=["'][0-9]+["']/i.test(html)) {
+    fail(moduleFile, "missing interactive quiz answer key hook");
+  }
+  if (!/class=["'][^"']*lesson-nav/.test(html)) fail(moduleFile, "missing module navigation container");
+  if (!/class=["'][^"']*lesson-content/.test(html)) fail(moduleFile, "missing lesson content container");
+}
+
 const css = readFileSync(resolve(root, "style.css"), "utf8");
 if (!/@media\(prefers-reduced-motion:reduce\)/.test(css)) {
   fail("style.css", "missing reduced-motion handling");
 }
 if (!/:focus-visible/.test(css)) fail("style.css", "missing visible focus treatment");
 if (!/env\(safe-area-inset-bottom\)/.test(css)) fail("style.css", "missing mobile safe-area handling");
+
+const classroomCss = readFileSync(resolve(root, "classroom/classroom.css"), "utf8");
+if (!/@media\(prefers-reduced-motion:reduce\)/.test(classroomCss)) {
+  fail("classroom/classroom.css", "missing reduced-motion handling for Classroom interactions");
+}
+if (!/min-height:48px/.test(classroomCss)) {
+  fail("classroom/classroom.css", "missing 48px minimum target protection for Classroom controls");
+}
+
+const classroomJs = readFileSync(resolve(root, "classroom/classroom.js"), "utf8");
+if (!/localStorage/.test(classroomJs)) fail("classroom/classroom.js", "missing browser-local progress persistence");
+if (!/data-classroom-filter/.test(classroomJs)) fail("classroom/classroom.js", "missing module filtering behavior");
+if (!/data-quiz/.test(classroomJs)) fail("classroom/classroom.js", "missing quiz enhancement behavior");
 
 if (failures.length) {
   console.error(`NAV public-site release gate failed with ${failures.length} problem(s):`);
@@ -128,4 +165,4 @@ if (failures.length) {
 }
 
 console.log(`NAV public-site release gate passed (${htmlFiles.length} HTML pages checked).`);
-console.log(`Required routes: ${requiredFiles.length}; broken internal links: 0; prohibited production placeholders/origins: 0.`);
+console.log(`Required routes/assets: ${requiredFiles.length}; Classroom modules protected: ${classroomModules.length}; broken internal links: 0; prohibited production placeholders/origins: 0.`);
