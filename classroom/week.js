@@ -28,6 +28,35 @@
     return node;
   }
 
+  function ensureMobileNav() {
+    const header = document.querySelector(".site-header");
+    if (!header || header.querySelector(".mobile-nav")) return;
+    const details = document.createElement("details");
+    details.className = "mobile-nav";
+    const summary = document.createElement("summary");
+    summary.setAttribute("aria-label", "Open navigation");
+    summary.textContent = "Menu";
+    const nav = document.createElement("nav");
+    nav.setAttribute("aria-label", "Mobile primary");
+    [
+      ["Home", "../../../index.html"],
+      ["Coaching", "../../../coaching.html"],
+      ["Classroom", "../../index.html"],
+      ["About", "../../../about.html"],
+      ["Resources", "../../../resources.html"],
+      ["Sign In", "https://nav-coach-app-eight.vercel.app/auth?mode=login"]
+    ].forEach(([label, href]) => {
+      const link = document.createElement("a");
+      link.textContent = label;
+      link.href = href;
+      if (label === "Classroom") link.setAttribute("aria-current", "page");
+      if (label === "Sign In") link.className = "nav-app";
+      nav.append(link);
+    });
+    details.append(summary, nav);
+    header.append(details);
+  }
+
   function addStatus(container, label, done, detailText) {
     const row = document.createElement("div");
     row.className = `week-activity-status${done ? " is-complete" : ""}`;
@@ -184,6 +213,7 @@
   }
 
   document.title = `Week ${week.week}: ${week.title} | NAV Classroom`;
+  ensureMobileNav();
   renderHero();
   renderStatus();
   renderObjectives();
