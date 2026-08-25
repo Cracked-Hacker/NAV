@@ -16,9 +16,12 @@ const classroomModules = [
   "classroom/build-your-system/index.html"
 ];
 
+const courseWeekPages = Array.from({ length: 10 }, (_, index) => `classroom/course/week-${index + 1}/index.html`);
+
 const lmsPages = [
   "classroom/index.html",
   "classroom/course.html",
+  "classroom/syllabus.html",
   "classroom/assignments.html",
   "classroom/labs.html",
   "classroom/quizzes.html",
@@ -43,7 +46,12 @@ const requiredFiles = [
   "classroom/classroom.js",
   "classroom/lms-data.js",
   "classroom/workspace-sync.js",
+  "classroom/week.css",
+  "classroom/week.js",
+  "classroom/week-data.js",
+  "classroom/week-links.js",
   ...lmsPages,
+  ...courseWeekPages,
   ...classroomModules
 ];
 
@@ -68,7 +76,7 @@ for (const file of requiredFiles) {
 }
 
 const htmlFiles = walk(root).filter((file) => extname(file) === ".html");
-if (htmlFiles.length < 26) failures.push(`site: expected at least 26 HTML pages, found ${htmlFiles.length}`);
+if (htmlFiles.length < 37) failures.push(`site: expected at least 37 HTML pages, found ${htmlFiles.length}`);
 
 const forbidden = [
   [/localhost/gi, "contains localhost"],
@@ -120,6 +128,33 @@ for (const page of lmsPages) {
   if (!/classroom-subnav/.test(html)) fail(page, "missing Classroom LMS navigation");
 }
 
+const fullCoursePage = readFileSync(resolve(root, "classroom/course.html"), "utf8");
+if (!/week-links\.js/.test(fullCoursePage)) fail("classroom/course.html", "missing detailed week-link enhancer");
+if (!/course\/week-1\/index\.html/.test(fullCoursePage)) fail("classroom/course.html", "missing direct Week 1 entry point");
+if (!/syllabus\.html/.test(fullCoursePage)) fail("classroom/course.html", "missing course syllabus entry point");
+
+for (const [index, page] of courseWeekPages.entries()) {
+  const weekNumber = index + 1;
+  const html = readFileSync(resolve(root, page), "utf8");
+  if (!new RegExp(`data-classroom-week=["']${weekNumber}["']`).test(html)) fail(page, `missing Week ${weekNumber} identity hook`);
+  if (!/week\.css/.test(html)) fail(page, "missing detailed week stylesheet");
+  if (!/lms-data\.js/.test(html) || !/week-data\.js/.test(html) || !/week\.js/.test(html)) fail(page, "missing shared course/week data or renderer");
+  if (!/data-week-title/.test(html)) fail(page, "missing stable week page h1 hook");
+  if (!/data-week-objectives/.test(html)) fail(page, "missing learning-objective container");
+  if (!/data-week-lessons/.test(html)) fail(page, "missing core-lesson container");
+  if (!/data-week-evidence/.test(html)) fail(page, "missing evidence-layer container");
+  if (!/data-week-deliverables/.test(html)) fail(page, "missing quiz/lab/assignment container");
+  if (!/data-week-pager/.test(html)) fail(page, "missing previous/next week navigation container");
+  if (!/classroom-subnav/.test(html)) fail(page, "missing Classroom navigation");
+}
+
+const syllabus = readFileSync(resolve(root, "classroom/syllabus.html"), "utf8");
+if (!/Course learning outcomes/i.test(syllabus)) fail("classroom/syllabus.html", "missing course learning outcomes");
+if (!/40%/.test(syllabus) || !/25%/.test(syllabus) || !/15%/.test(syllabus)) fail("classroom/syllabus.html", "missing assessment weighting contract");
+if (!/120–126/.test(syllabus)) fail("classroom/syllabus.html", "missing university-format workload target");
+if (!/not a claim of institutional approval/i.test(syllabus)) fail("classroom/syllabus.html", "must not imply institutional approval");
+if (!/analytically equivalent non-physical alternative/i.test(syllabus)) fail("classroom/syllabus.html", "missing lab accessibility alternative");
+
 for (const workspacePage of ["classroom/assignments.html", "classroom/labs.html"]) {
   const html = readFileSync(resolve(root, workspacePage), "utf8");
   if (!/workspace-sync\.js/.test(html)) fail(workspacePage, "missing workspace completion-state synchronization");
@@ -145,6 +180,10 @@ if (!/min-height:48px/.test(classroomCss)) fail("classroom/classroom.css", "miss
 if (!/classroom-subnav/.test(classroomCss)) fail("classroom/classroom.css", "missing LMS sub-navigation styles");
 if (!/work-draft/.test(classroomCss)) fail("classroom/classroom.css", "missing assignment/lab workspace styles");
 
+const weekCss = readFileSync(resolve(root, "classroom/week.css"), "utf8");
+if (!/@media\(prefers-reduced-motion:reduce\)/.test(weekCss)) fail("classroom/week.css", "missing reduced-motion handling for detailed course weeks");
+if (!/@media\(max-width:900px\)/.test(weekCss)) fail("classroom/week.css", "missing responsive week layout");
+
 const classroomJs = readFileSync(resolve(root, "classroom/classroom.js"), "utf8");
 if (!/localStorage/.test(classroomJs)) fail("classroom/classroom.js", "missing browser-local progress persistence");
 if (!/data-classroom-filter/.test(classroomJs)) fail("classroom/classroom.js", "missing module filtering behavior");
@@ -154,6 +193,24 @@ if (!/data-assignment-list/.test(classroomJs)) fail("classroom/classroom.js", "m
 if (!/data-lab-list/.test(classroomJs)) fail("classroom/classroom.js", "missing lab workspace renderer");
 if (!/data-quiz-list/.test(classroomJs)) fail("classroom/classroom.js", "missing full-course quiz renderer");
 if (!/data-progress-dashboard/.test(classroomJs)) fail("classroom/classroom.js", "missing progress dashboard renderer");
+
+const weekJs = readFileSync(resolve(root, "classroom/week.js"), "utf8");
+if (!/nav-classroom-full-course-v1/.test(weekJs)) fail("classroom/week.js", "detailed weeks must reuse canonical full-course progress state");
+if (!/data-week-lessons/.test(weekJs) || !/data-week-deliverables/.test(weekJs)) fail("classroom/week.js", "missing detailed lesson/deliverable renderer");
+if (!/Reading a page does not mark mastery/.test(weekJs)) fail("classroom/week.js", "must keep completion distinct from mastery");
+if (!/mobile-nav/.test(weekJs)) fail("classroom/week.js", "missing mobile navigation protection for week pages");
+
+const weekData = readFileSync(resolve(root, "classroom/week-data.js"), "utf8");
+const detailWeekCount = (weekData.match(/\n\s{2}\d+:\s*\{/g) || []).length;
+const lessonSetCount = (weekData.match(/\n\s{4}lessons:\s*\[/g) || []).length;
+const workedExampleCount = (weekData.match(/\n\s{4}workedExample:/g) || []).length;
+const spacedReturnCount = (weekData.match(/\n\s{4}spacedReturn:/g) || []).length;
+const cloMapCount = (weekData.match(/\n\s{4}primaryCLOs:/g) || []).length;
+if (detailWeekCount !== 10) fail("classroom/week-data.js", `expected 10 detailed course weeks, found ${detailWeekCount}`);
+if (lessonSetCount !== 10) fail("classroom/week-data.js", `expected lesson clusters for all 10 weeks, found ${lessonSetCount}`);
+if (workedExampleCount !== 10) fail("classroom/week-data.js", `expected worked examples for all 10 weeks, found ${workedExampleCount}`);
+if (spacedReturnCount !== 10) fail("classroom/week-data.js", `expected spaced-return prompts for all 10 weeks, found ${spacedReturnCount}`);
+if (cloMapCount !== 10) fail("classroom/week-data.js", `expected CLO mappings for all 10 weeks, found ${cloMapCount}`);
 
 const workspaceSync = readFileSync(resolve(root, "classroom/workspace-sync.js"), "utf8");
 if (!/work-complete-button/.test(workspaceSync) || !/work-status/.test(workspaceSync)) fail("classroom/workspace-sync.js", "missing work completion badge synchronization logic");
@@ -177,4 +234,4 @@ if (failures.length) {
 }
 
 console.log(`NAV public-site release gate passed (${htmlFiles.length} HTML pages checked).`);
-console.log(`Required routes/assets: ${requiredFiles.length}; Starter modules: ${classroomModules.length}; LMS pages: ${lmsPages.length}; weeks: ${weekCount}; quizzes: ${quizCount}; labs: ${labCount}; assignments: ${assignmentCount}; broken internal links: 0.`);
+console.log(`Required routes/assets: ${requiredFiles.length}; Starter modules: ${classroomModules.length}; LMS pages: ${lmsPages.length}; detailed course weeks: ${courseWeekPages.length}; weeks: ${weekCount}; quizzes: ${quizCount}; labs: ${labCount}; assignments: ${assignmentCount}; broken internal links: 0.`);
