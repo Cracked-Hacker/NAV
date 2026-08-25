@@ -1,0 +1,1 @@
+Week pages are rendered from shared data so course changes remain consistent. Do not copy week lesson text into multiple independent files. Update `week-data.js` and `lms-data.js` intentionally, then run `scripts/validate-site.mjs`.
