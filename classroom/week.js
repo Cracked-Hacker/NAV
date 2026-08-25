@@ -38,21 +38,23 @@
   function renderHero() {
     const root = document.querySelector("[data-week-hero]");
     if (!root) return;
-    root.append(
-      text("p", `Hard to Kill · Week ${week.week} · ${week.hours}`, "eyebrow"),
-      text("h1", week.title),
-      text("p", week.essentialQuestion, "lead"),
-      text("p", detail.why, "week-why")
-    );
-    const facts = document.createElement("div");
-    facts.className = "course-facts";
+    const eyebrow = root.querySelector("[data-week-eyebrow]");
+    const title = root.querySelector("[data-week-title]");
+    const question = root.querySelector("[data-week-question]");
+    const why = root.querySelector("[data-week-why]");
+    if (eyebrow) eyebrow.textContent = `Hard to Kill · Week ${week.week} · ${week.hours}`;
+    if (title) title.textContent = week.title;
+    if (question) question.textContent = week.essentialQuestion;
+    if (why) why.textContent = detail.why;
+    const facts = root.querySelector("[data-week-facts]");
+    if (!facts) return;
+    facts.replaceChildren();
     [
       `${week.topics.length} topic areas`,
       `${week.labs.length} ${week.labs.length === 1 ? "lab" : "labs"}`,
       "1 quiz",
       "1 applied assignment"
     ].forEach((value) => facts.append(text("span", value)));
-    root.append(facts);
   }
 
   function renderStatus() {
@@ -71,8 +73,7 @@
     addStatus(root, week.quiz.title, quizDone, quizDone ? "Quiz passed" : "Quiz not yet passed");
     week.labs.forEach((lab) => addStatus(root, lab.title, state.labs.includes(lab.id), state.labs.includes(lab.id) ? "Lab marked complete" : "Lab not complete"));
     addStatus(root, week.assignment.title, assignmentDone, assignmentDone ? "Assignment marked complete" : "Assignment not complete");
-    const note = text("p", "Reading a page does not mark mastery. Activity completion and quiz performance are tracked separately from simply opening the lesson.", "storage-note");
-    root.append(note);
+    root.append(text("p", "Reading a page does not mark mastery. Activity completion and quiz performance are tracked separately from simply opening the lesson.", "storage-note"));
   }
 
   function renderObjectives() {
@@ -127,8 +128,7 @@
     const root = document.querySelector("[data-week-evidence]");
     if (!root) return;
     root.append(text("p", "Evidence lens", "eyebrow"), text("h2", "How certain should the claim be?"), text("p", detail.evidence));
-    const clos = text("p", `Primary course outcomes: CLO ${detail.primaryCLOs.join(", CLO ")}.`, "week-clo-copy");
-    root.append(clos);
+    root.append(text("p", `Primary course outcomes: CLO ${detail.primaryCLOs.join(", CLO ")}.`, "week-clo-copy"));
   }
 
   function renderDeliverables() {
