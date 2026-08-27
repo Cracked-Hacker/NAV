@@ -27,6 +27,9 @@ jobs:
       - name: Run public-site release gate
         run: node scripts/validate-site.mjs
 
+      - name: Run website CR truth, SEO, and routing gate
+        run: node scripts/validate-public-cr.mjs
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 

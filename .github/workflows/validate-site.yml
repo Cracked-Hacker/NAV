@@ -16,3 +16,41 @@ jobs:
 
       - name: Run public-site release gate
         run: node scripts/validate-site.mjs
+
+      - name: Run website CR truth, SEO, and routing gate
+        run: node scripts/validate-public-cr.mjs
+
+      - name: Capture rendered viewport QA and browser audit
+        run: |
+          set -euo pipefail
+          command -v google-chrome
+          python3 -m http.server 4173 >/tmp/nav-public-site.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          mkdir -p qa-screenshots
+          for width in 320 360 390 430 901 1024 1440; do
+            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="${width},1600" --screenshot="qa-screenshots/home-${width}.png" "http://127.0.0.1:4173/index.html"
+          done
+          for page in nav-coach coaching resources science contact; do
+            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="390,1800" --screenshot="qa-screenshots/${page}-390.png" "http://127.0.0.1:4173/${page}.html"
+          done
+          npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173/index.html" --quiet --chrome-flags="--headless --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=qa-screenshots/lighthouse-home.json
+          node - <<'NODE'
+          const report = require('./qa-screenshots/lighthouse-home.json');
+          const scores = Object.fromEntries(Object.entries(report.categories).map(([key, value]) => [key, Math.round(value.score * 100)]));
+          console.log('Lighthouse scores:', scores);
+          const minimums = { performance: 85, accessibility: 90, 'best-practices': 90, seo: 90 };
+          const failed = Object.entries(minimums).filter(([key, min]) => scores[key] < min);
+          if (failed.length) {
+            console.error('Browser audit thresholds failed:', failed.map(([key, min]) => `${key} ${scores[key]} < ${min}`).join(', '));
+            process.exit(1);
+          }
+          NODE
+
+      - name: Upload rendered QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-site-rendered-qa
+          path: qa-screenshots/
+          if-no-files-found: error
