@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://cracked-hacker.github.io/NAV/sitemap.xml
