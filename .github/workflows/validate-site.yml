@@ -29,7 +29,7 @@ jobs:
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           sleep 1
           mkdir -p qa-screenshots
-          for width in 320 360 390 430 1440; do
+          for width in 320 360 390 430 901 1024 1440; do
             google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="${width},1600" --screenshot="qa-screenshots/home-${width}.png" "http://127.0.0.1:4173/index.html"
           done
           for page in nav-coach coaching resources science contact; do
