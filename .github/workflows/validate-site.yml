@@ -3,6 +3,8 @@ name: Validate NAV public site
 on:
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 15 * * 1"
 
 permissions:
   contents: read
@@ -47,6 +49,31 @@ jobs:
             process.exit(1);
           }
           NODE
+
+      - name: Smoke-check live production and app routing
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          urls=(
+            "https://cracked-hacker.github.io/NAV/"
+            "https://cracked-hacker.github.io/NAV/nav-coach.html"
+            "https://cracked-hacker.github.io/NAV/coaching.html"
+            "https://cracked-hacker.github.io/NAV/classroom/"
+            "https://cracked-hacker.github.io/NAV/science.html"
+            "https://cracked-hacker.github.io/NAV/resources.html"
+            "https://cracked-hacker.github.io/NAV/about.html"
+            "https://cracked-hacker.github.io/NAV/contact.html"
+            "https://cracked-hacker.github.io/NAV/terms.html"
+            "https://cracked-hacker.github.io/NAV/privacy.html"
+            "https://cracked-hacker.github.io/NAV/disclaimer.html"
+            "https://cracked-hacker.github.io/NAV/sitemap.xml"
+            "https://cracked-hacker.github.io/NAV/robots.txt"
+            "https://nav-coach-app-eight.vercel.app/auth?mode=login"
+          )
+          for url in "${urls[@]}"; do
+            echo "Checking $url"
+            curl --fail --silent --show-error --location --retry 3 --retry-all-errors --max-time 30 "$url" >/dev/null
+          done
 
       - name: Upload rendered QA evidence
         uses: actions/upload-artifact@v4
