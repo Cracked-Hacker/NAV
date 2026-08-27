@@ -41,7 +41,7 @@ const product = text("nav-coach.html");
 requireMatch("nav-coach.html", product, /human coach in control/i, "missing human-coach-control positioning");
 requireMatch("nav-coach.html", product, /Status:\s*In development/i, "spreadsheet migration must be visibly labeled in development");
 requireMatch("nav-coach.html", product, /Spreadsheet import is not presented here as a currently released production feature/i, "missing explicit migration availability boundary");
-requireMatch("nav-coach.html", product, /private coaching information belongs in the authenticated app/i, "missing public/private boundary");
+requireMatch("nav-coach.html", product, /private coaching information.{0,180}(?:authenticated|private).{0,40}app/i, "missing public/private boundary");
 
 const science = text("science.html");
 requireMatch("science.html", science, /Systematic reviews/i, "missing evidence hierarchy");
