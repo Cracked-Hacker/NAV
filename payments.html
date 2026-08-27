@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prepared secure checkout for the NAV Strength & Movement Assessment. Payment remains off until the owner completes the required readiness checks.">
+  <meta name="theme-color" content="#003f87">
+  <meta name="color-scheme" content="light">
+  <link rel="canonical" href="https://cracked-hacker.github.io/NAV/payments.html">
+  <meta property="og:title" content="Assessment Checkout | NAV">
+  <meta property="og:description" content="A prepared Stripe checkout for the NAV Strength & Movement Assessment, kept off until the required readiness checks are complete.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cracked-hacker.github.io/NAV/payments.html">
+  <title>Assessment Checkout | NAV</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="NAV home"><span class="brand-mark">NAV</span><span class="brand-copy">COACHING · EDUCATION · TRAINING</span></a>
+  <nav class="desktop-nav" aria-label="Primary"><a href="index.html">Home</a><a href="nav-coach.html">NAV Coach</a><a href="coaching.html">Coaching</a><a href="classroom/index.html">Classroom</a><a href="science.html">Science</a><a href="resources.html">Resources</a><a class="nav-app" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Sign In</a></nav>
+  <details class="mobile-nav"><summary aria-label="Open navigation">Menu</summary><nav aria-label="Mobile primary"><a href="index.html">Home</a><a href="nav-coach.html">NAV Coach</a><a href="coaching.html">Coaching</a><a href="classroom/index.html">Classroom</a><a href="science.html">Science</a><a href="resources.html">Resources</a><a href="about.html">About</a><a class="nav-app" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Sign In</a></nav></details>
+</header>
+<main id="main"><div class="wrap">
+  <section class="page-hero">
+    <p class="eyebrow">Prepared entry offer</p>
+    <h1>Start with a NAV Strength &amp; Movement Assessment.</h1>
+    <p class="lead">This page is ready for a Stripe-hosted checkout when the owner has completed the legal, insurance, customer-document, refund-policy, and payment-readiness checks. Until then, no charge can be created.</p>
+  </section>
+
+  <section class="section">
+    <div class="card lime-panel">
+      <p class="eyebrow">Assessment</p>
+      <h2>$99 Strength &amp; Movement Assessment</h2>
+      <p>A focused remote session covering goals, training history, movement observation, and next steps, followed by a written summary, a two-week starter plan, and a follow-up message.</p>
+      <button class="button secondary" type="button" data-checkout>Continue to secure checkout</button>
+      <p class="tiny muted" id="payment-status" role="status" aria-live="polite">Payment is currently disabled.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="card">
+      <p class="eyebrow">Before you begin</p>
+      <p>Start with the <a class="text-link" href="https://docs.google.com/forms/d/e/1FAIpQLSe9PMHqtbUqTVsK7YZ5N22228zVhpwugwJG4Cor2sepC-_1Tg/viewform?usp=header">coaching application</a>. Submitting an application does not guarantee acceptance, availability, or a particular outcome.</p>
+      <p class="tiny muted">NAV provides fitness, strength, movement, and general wellness coaching—not medical diagnosis, treatment, or emergency care.</p>
+    </div>
+  </section>
+</div></main>
+<footer class="site-footer">
+  <div><a class="brand footer-brand" href="index.html"><span class="brand-mark">NAV</span><span>NAV</span></a><p>Human coaching, useful exercise science, and a focused training platform.</p></div>
+  <nav aria-label="Footer"><a href="about.html">About</a><a href="science.html">Science</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="disclaimer.html">Disclaimer</a><a href="accessibility.html">Accessibility</a></nav>
+  <div class="footer-meta"><p>Follow NAV’s Coach Nate: <a href="https://www.instagram.com/the_nate_dawg/">Instagram</a> · <a href="https://www.youtube.com/@NAV-Nate">YouTube</a></p><p>© 2026 NAV. Fitness coaching and education; not medical care.</p></div>
+</footer>
+<script>
+  const checkoutButton = document.querySelector("[data-checkout]");
+  const status = document.querySelector("#payment-status");
+  const returnedStatus = new URLSearchParams(window.location.search).get("status");
+
+  if (returnedStatus === "returned") {
+    status.textContent = "Checkout returned. Payment confirmation is handled by Stripe; check your receipt before beginning services.";
+  } else if (returnedStatus === "canceled") {
+    status.textContent = "Checkout was canceled. No service has been scheduled.";
+  }
+
+  checkoutButton.addEventListener("click", async () => {
+    checkoutButton.disabled = true;
+    status.textContent = "Checking secure checkout…";
+
+    try {
+      const response = await fetch("/.netlify/functions/create-checkout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ offer: "assessment" })
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.url) {
+        status.textContent = payload.message || "Secure checkout is not enabled yet.";
+        checkoutButton.disabled = false;
+        return;
+      }
+
+      window.location.assign(payload.url);
+    } catch {
+      status.textContent = "Secure checkout is temporarily unavailable.";
+      checkoutButton.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
