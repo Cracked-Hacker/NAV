@@ -41,3 +41,35 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Verify deployed production
+        run: |
+          set -euo pipefail
+          base="${{ steps.deployment.outputs.page_url }}"
+          case "$base" in
+            */) ;;
+            *) base="${base}/" ;;
+          esac
+          paths=(
+            ""
+            "nav-coach.html"
+            "coaching.html"
+            "classroom/"
+            "science.html"
+            "resources.html"
+            "about.html"
+            "contact.html"
+            "terms.html"
+            "privacy.html"
+            "disclaimer.html"
+            "sitemap.xml"
+            "robots.txt"
+          )
+          for path in "${paths[@]}"; do
+            url="${base}${path}"
+            echo "Verifying $url"
+            curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "$url" >/dev/null
+          done
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}" | grep -Fq "Human coaching"
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}nav-coach.html" | grep -Fq "A simpler place to coach"
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "https://nav-coach-app-eight.vercel.app/auth?mode=login" >/dev/null
