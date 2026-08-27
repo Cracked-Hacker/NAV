@@ -19,3 +19,26 @@ jobs:
 
       - name: Run website CR truth, SEO, and routing gate
         run: node scripts/validate-public-cr.mjs
+
+      - name: Capture rendered viewport QA
+        run: |
+          set -euo pipefail
+          command -v google-chrome
+          python3 -m http.server 4173 >/tmp/nav-public-site.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          sleep 1
+          mkdir -p qa-screenshots
+          for width in 320 360 390 430 1440; do
+            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="${width},1600" --screenshot="qa-screenshots/home-${width}.png" "http://127.0.0.1:4173/index.html"
+          done
+          for page in nav-coach coaching resources science contact; do
+            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="390,1800" --screenshot="qa-screenshots/${page}-390.png" "http://127.0.0.1:4173/${page}.html"
+          done
+
+      - name: Upload rendered QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-site-rendered-qa
+          path: qa-screenshots/
+          if-no-files-found: error
