@@ -71,12 +71,16 @@ async function loadAccount() {
     if (!data.user.email_confirmed_at) { recovery('Please confirm your email before opening My NAV.'); return; }
     currentUser = data.user;
     const id = currentUser.id;
+    const policies = await client.rpc('has_accepted_current_user_policies');
+    const mayReadServices = !policies.error && policies.data === true;
+    if (view !== generation) return;
+    const unavailableServices = () => Promise.resolve({data:[],error:null});
     const results = await Promise.all([
       client.from('profiles').select('id,full_name,phone').eq('id', id).maybeSingle(),
       client.from('platform_user_roles').select('role,status').eq('user_id', id),
-      client.rpc('get_my_coach_connections'),
-      client.from('subscriptions').select('id,status,current_period_end').eq('user_id', id).limit(10),
-      client.from('billing_invoices').select('id,invoice_number,status,total_due_cents,amount_remaining_cents,currency,due_date').eq('client_id', id).neq('status', 'draft').order('issue_date', {ascending:false}).limit(10)
+      mayReadServices ? client.rpc('get_my_coach_connections') : unavailableServices(),
+      mayReadServices ? client.from('subscriptions').select('id,status,current_period_end').eq('user_id', id).limit(10) : unavailableServices(),
+      mayReadServices ? client.from('billing_invoices').select('id,invoice_number,status,total_due_cents,amount_remaining_cents,currency,due_date').eq('client_id', id).neq('status', 'draft').order('issue_date', {ascending:false}).limit(10) : unavailableServices()
     ]);
     if (view !== generation) return;
     const [profile, roles, connections, subscriptions, invoices] = results;
@@ -98,7 +102,12 @@ async function loadAccount() {
     document.querySelector('#coach-workspace').hidden = Boolean(roles.error) || !(roles.data ?? []).some(row => row.role === 'coach' && row.status === 'active');
     const coachArea = document.querySelector('#coach-connections');
     coachArea.replaceChildren();
-    if (connections.error) coachArea.append(textElement('p', 'Coaching connections could not load. Retry or open NAV Coach.'));
+    if (!mayReadServices) {
+      coachArea.append(textElement('p', policies.error ? 'Your account agreements could not be verified. Retry or open NAV Coach.' : 'Review the current NAV account agreements in NAV Coach to see protected services here.'));
+      const review = textElement('a', 'Review account agreements →');
+      review.href = config.appUrl; coachArea.append(review);
+    }
+    else if (connections.error) coachArea.append(textElement('p', 'Coaching connections could not load. Retry or open NAV Coach.'));
     else if (!connections.data?.length) coachArea.append(textElement('p', 'No coaching connection is linked to this account yet. Explore coaching or open NAV Coach to get started.'));
     else for (const relationship of connections.data) {
       coachArea.append(textElement('p', `${relationship.coach_name || 'NAV coach'} · ${String(relationship.relationship_status).replaceAll('_', ' ')}`));
@@ -125,7 +134,7 @@ async function loadAccount() {
     }
     loader.hidden = true;
     dashboard.hidden = false;
-    if ([roles,connections,subscriptions,invoices].some(result => result.error)) message('Some account details could not load. Your profile is available; retry to refresh the rest.', 'error');
+    if ([policies,roles,connections,subscriptions,invoices].some(result => result.error)) message('Some account details could not load. Your profile is available; retry to refresh the rest.', 'error');
     else message('');
   } catch { if (view === generation) recovery('Your account connection was interrupted. Retry to reload securely.'); }
 }

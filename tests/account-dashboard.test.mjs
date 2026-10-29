@@ -18,7 +18,7 @@ function fakeClient(options={}) {
       onAuthStateChange:callback=>{state.onAuth=callback;return {data:{subscription:{unsubscribe(){}}}};},
       signOut:async()=>{calls.push({type:'signOut'});return {error:state.logoutError??null};}
     },
-    rpc:async name=>{calls.push({rpc:name});return {data:[],error:null};},
+    rpc:async name=>{calls.push({rpc:name});return {data:name==='has_accepted_current_user_policies' ? state.policiesAccepted!==false : [],error:null};},
     from(table){
       const call={table,filters:[]};calls.push(call);
       const result=()=>{
@@ -90,6 +90,15 @@ test('a missing or unauthorized profile cannot render another person’s account
     assert.equal(window.document.querySelector('#account-retry').hidden,false);
     await window.happyDOM.close();
   }
+});
+test('missing versioned consent prevents protected service reads without fabricating empty records',async()=>{
+  const fake=fakeClient({policiesAccepted:false});const window=await mount(fake);
+  assert.equal(window.document.querySelector('#account-dashboard').hidden,false);
+  assert.match(window.document.querySelector('#coach-connections').textContent,/Review the current NAV account agreements/);
+  assert.equal(fake.calls.some(call=>call.rpc==='get_my_coach_connections'),false);
+  assert.equal(fake.calls.some(call=>['subscriptions','billing_invoices'].includes(call.table)),false);
+  assert.equal(window.document.querySelector('#billing').hidden,true);
+  await window.happyDOM.close();
 });
 test('transient session check and failed logout do not destroy a valid session',async()=>{
   const unavailable=fakeClient({authError:{name:'AuthRetryableFetchError',status:503}});

@@ -11,7 +11,7 @@ Public NAV company website, Classroom, and NAV Coach gateway.
 
 ## Release gate
 
-Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, and `npm run build` before publishing. Existing public-site checks and account runtime tests also run on pull requests and in the GitHub Pages production deployment. Only `.site-build/` public assets are uploaded.
+Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, and `npm run build` before publishing. Existing public-site checks and account runtime tests are configured for pull requests, GitHub Pages production deployment, and the existing Netlify build through `netlify.toml`. Only `.site-build/` public assets are uploaded on either host.
 
 The gate protects required public routes, internal links, one-H1 page structure, viewport/title metadata, reduced-motion/focus/safe-area CSS, and rejects placeholder content plus localhost/127.0.0.1 production references.
 

@@ -32,13 +32,14 @@ New website members enter the existing minimum-capability `client` signup path w
 - Public navigation loads the SDK only when a website session may exist. Marketing pages remain usable if account recovery fails.
 - The member hub distinguishes confirmed signout from transient verification errors; private views are cleared on signout, account replacement, and page hiding.
 - Profile writes verify the returned persisted row and preserve input on failure. Email changes require current-password reauthentication and provider confirmation.
+- Signup acknowledgments do not replace the existing versioned consent ledger. Before reading coaching connections, subscriptions, or invoices, My NAV checks `has_accepted_current_user_policies`. Missing consent routes the user to the existing NAV Coach review flow; unknown consent holds those reads and shows recovery. No acceptance history is manufactured.
 - Email verification, email-change confirmation, and password resets intentionally retain the existing allowlisted NAV Coach callback. Recovery pages explain this handoff. No new redirect allowlist or cross-domain token handoff is assumed.
 - Website logout ends the website session. Other product sessions may remain active.
 - Account pages are noindex and use a restrictive CSP and no-referrer policy. Public deployment packaging excludes server source, tests, documentation, and development dependencies.
 
 ## Release and verification
 
-Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, `npm run build`, and `git diff --check`. Existing public route/content gates remain intact. The account tests execute frontend behavior with synthetic SDK/database fixtures and execute the actual signup transport with controlled requests. They do not prove real email delivery or authenticated production behavior.
+Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, `npm run build`, and `git diff --check`. Existing public route/content gates remain intact. GitHub Pages and the existing Netlify host both publish only the bounded `.site-build` artifact after configured tests and checks. Netlify account routes also receive no-store, no-referrer, no-sniff, and anti-framing headers. The account tests execute frontend behavior with synthetic SDK/database fixtures and execute the actual signup transport with controlled requests. They do not prove real email delivery or authenticated production behavior.
 
 Before calling the entire directive complete, obtain production evidence for website signup → actual verification email → website login → same account in NAV Coach; existing-user login; persisted profile change and reload; dual-role app access; email/password recovery including expired links; ordinary-user data isolation; and real-device behavior. Do not change an existing user's password or manufacture consent to obtain test evidence.
 
