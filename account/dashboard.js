@@ -64,7 +64,7 @@ async function loadAccount() {
     if (view !== generation) return;
     if (hasConfirmedSignOut(error) || (!error && !data.user)) {
       clearPrivateView();
-      location.replace(new URL('auth.html?mode=login', location.href).href);
+      location.replace(new URL('auth.html?mode=login', import.meta.url).href);
       return;
     }
     if (error || !data.user) { recovery('Your session could not be checked. Retry when connected; your account has not been reset.'); return; }
@@ -164,7 +164,7 @@ document.querySelector('#logout').addEventListener('click', async event => {
     const {error} = await client.auth.signOut({scope:'local'});
     if (error) { message('Log out could not be confirmed. Please retry.', 'error'); return; }
     clearPrivateView();
-    location.replace(new URL('auth.html?mode=login', location.href).href);
+    location.replace(new URL('auth.html?mode=login', import.meta.url).href);
   } catch { message('Log out could not be confirmed. Please retry.', 'error'); }
   finally { event.target.disabled = false; }
 });

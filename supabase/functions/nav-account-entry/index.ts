@@ -1,6 +1,11 @@
 // Website transport only. Canonical signup, password checks, duplicate handling,
 // verification, and signup authorization remain owned by secure-signup.
-const WEBSITE_ORIGIN = 'https://cracked-hacker.github.io';
+const WEBSITE_ORIGINS = new Set([
+  'https://cracked-hacker.github.io',
+  'https://coach-nate.netlify.app',
+  // Exact reviewed candidate; do not allow arbitrary Netlify preview origins.
+  'https://deploy-preview-15--coach-nate.netlify.app'
+]);
 const CANONICAL_AUTH_URL = 'https://ljvusfrnrlcurzwxnlya.supabase.co';
 const MAX_BODY_BYTES = 8192;
 
@@ -12,8 +17,8 @@ function response(body: Record<string, unknown> | null, status: number, origin: 
       'Cache-Control': 'no-store',
       'X-Content-Type-Options': 'nosniff',
       'Vary': 'Origin',
-      ...(origin === WEBSITE_ORIGIN ? {
-        'Access-Control-Allow-Origin': WEBSITE_ORIGIN,
+      ...(origin && WEBSITE_ORIGINS.has(origin) ? {
+        'Access-Control-Allow-Origin': origin,
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'authorization, apikey, x-client-info, content-type',
         'Access-Control-Max-Age': '600'
@@ -36,7 +41,7 @@ function publicKey() {
 
 export async function handleAccountEntry(request: Request) {
   const origin = request.headers.get('Origin');
-  if (origin !== WEBSITE_ORIGIN) return response({accepted:false}, 403, null);
+  if (!origin || !WEBSITE_ORIGINS.has(origin)) return response({accepted:false}, 403, null);
   if (request.method === 'OPTIONS') return response(null, 204, origin);
   if (request.method !== 'POST') return response({accepted:false}, 405, origin);
   if (!request.headers.get('Content-Type')?.toLowerCase().startsWith('application/json')) return response({accepted:false,reason:'invalid_request'}, 415, origin);

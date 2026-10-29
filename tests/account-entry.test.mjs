@@ -26,6 +26,11 @@ test('only the exact website origin is allowed and preflight never signs up', as
   const preflight=await handler(request(body,'https://cracked-hacker.github.io','OPTIONS'));
   assert.equal(preflight.status,204);
   assert.equal(preflight.headers.get('access-control-allow-origin'),'https://cracked-hacker.github.io');
+  for(const origin of ['https://coach-nate.netlify.app','https://deploy-preview-15--coach-nate.netlify.app']){
+    const allowed=await handler(request(body,origin,'OPTIONS'));
+    assert.equal(allowed.status,204);assert.equal(allowed.headers.get('access-control-allow-origin'),origin);
+  }
+  assert.equal((await handler(request(body,'https://deploy-preview-99--coach-nate.netlify.app'))).status,403);
   assert.equal(calls.length,0);
 });
 test('signup forwards only approved data into the existing canonical gate',async()=>{

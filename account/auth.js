@@ -51,7 +51,7 @@ async function start() {
       message('Confirm your email before logging in.', 'error');
       return;
     }
-    location.assign(new URL('./', location.href).href);
+    location.assign(new URL('./', import.meta.url).href);
   });
 
   wire(document.querySelector('#signup-form'), async (data, form) => {

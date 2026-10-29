@@ -5,7 +5,7 @@ import {Window} from 'happy-dom';
 import * as security from '../account/security.mjs';
 
 const html=readFileSync(new URL('../account/auth.html',import.meta.url),'utf8');
-const source=readFileSync(new URL('../account/auth.js',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
+const source=readFileSync(new URL('../account/auth.js',import.meta.url),'utf8').replace(/^import .*;\n/gm,'').replaceAll('import.meta.url', JSON.stringify('https://preview.example.invalid/account/auth.js'));
 async function flush(){for(let i=0;i<12;i++)await new Promise(resolve=>setImmediate(resolve));}
 async function mount(mode,client){
   const window=new Window({url:`https://preview.example.invalid/account/auth.html?mode=${mode}`,settings:{disableJavaScriptFileLoading:true,disableCSSFileLoading:true}});

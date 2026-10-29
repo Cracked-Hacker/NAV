@@ -5,7 +5,7 @@ import {Window} from 'happy-dom';
 import * as security from '../account/security.mjs';
 
 const html=readFileSync(new URL('../account/index.html',import.meta.url),'utf8');
-const source=readFileSync(new URL('../account/dashboard.js',import.meta.url),'utf8').replace(/^import .*;\n/gm,'');
+const source=readFileSync(new URL('../account/dashboard.js',import.meta.url),'utf8').replace(/^import .*;\n/gm,'').replaceAll('import.meta.url', JSON.stringify('https://preview.example.invalid/account/dashboard.js'));
 const tick=()=>new Promise(resolve=>setImmediate(resolve));
 async function flush(){for(let i=0;i<12;i++)await tick();}
 

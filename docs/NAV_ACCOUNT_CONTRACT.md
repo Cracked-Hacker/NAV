@@ -21,7 +21,7 @@ Email can change without changing identity. Browser metadata, a selected persona
 
 The static website calls `nav-account-entry`, a small same-project Edge Function transport. It forwards an explicit whitelist into the existing `secure-signup` function. The existing signup authorization ledger, breach checks, minimum password requirements, duplicate handling, Auth trigger, and email verification remain canonical.
 
-The transport accepts only the exact production website origin, bounds request bodies, uses a fixed upstream URL, never uses a service-role key, suppresses upstream session data, and returns generic results. Origin checks constrain browser exposure; they are not a replacement for the canonical signup authorization or user authorization.
+The transport accepts only the exact existing GitHub Pages and Netlify website origins and the explicitly reviewed PR #15 preview origin. It bounds request bodies, uses a fixed upstream URL, never uses a service-role key, suppresses upstream session data, and returns generic results. Arbitrary preview subdomains are not allowed. Origin checks constrain browser exposure; they are not a replacement for the canonical signup authorization or user authorization.
 
 New website members enter the existing minimum-capability `client` signup path without a mandatory persona selector. This does not request coach/admin privileges, create a coaching relationship, activate a subscription, or permanently restrict the person to a client identity. Existing dual-role records remain unchanged. Coach capability approval continues through the existing controlled app workflow.
 
