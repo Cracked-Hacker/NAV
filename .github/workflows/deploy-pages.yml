@@ -24,11 +24,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install test dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Verify account identity, isolation, recovery, and signup transport
+        run: npm test
+
       - name: Run public-site release gate
         run: node scripts/validate-site.mjs
 
       - name: Run website CR truth, SEO, and routing gate
         run: node scripts/validate-public-cr.mjs
+
+      - name: Package public assets only
+        run: npm run build
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -36,7 +51,7 @@ jobs:
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: .site-build
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -52,6 +67,8 @@ jobs:
           esac
           paths=(
             ""
+            "account/auth.html"
+            "account/"
             "nav-coach.html"
             "coaching.html"
             "classroom/"

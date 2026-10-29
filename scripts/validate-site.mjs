@@ -57,7 +57,7 @@ const requiredFiles = [
 
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    if ([".git", "node_modules"].includes(entry.name)) return [];
+    if ([".git", "node_modules", ".site-build"].includes(entry.name)) return [];
     const full = join(dir, entry.name);
     return entry.isDirectory() ? walk(full) : [full];
   });
