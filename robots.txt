@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /NAV/account/
 
 Sitemap: https://cracked-hacker.github.io/NAV/sitemap.xml
