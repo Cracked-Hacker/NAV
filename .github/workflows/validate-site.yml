@@ -49,6 +49,7 @@ jobs:
           for page in nav-coach coaching resources science contact; do
             google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="390,1800" --screenshot="qa-screenshots/${page}-390.png" "http://127.0.0.1:4173/${page}.html"
           done
+          node scripts/qa-account-layout.mjs
           npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173/index.html" --quiet --chrome-flags="--headless --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=qa-screenshots/lighthouse-home.json
           node - <<'NODE'
           const report = require('./qa-screenshots/lighthouse-home.json');
