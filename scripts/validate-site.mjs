@@ -34,6 +34,7 @@ const requiredFiles = [
   "account.html",
   "coach-nate.html",
   "resume.html",
+  "research.html",
   "coaching.html",
   "about.html",
   "resources.html",
