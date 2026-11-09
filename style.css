@@ -9,3 +9,15 @@
 
 /* Owner-supplied original research photograph as the homepage founder portrait. */
 .coach-identity img.identity-mark{object-fit:cover;object-position:center 27%;border:2px solid var(--ink);background:#e6f0f6}
+
+/* Conversion-first homepage: one message, immediate audience choices, no redundant giant hero. */
+.hero-home{display:block;max-width:980px;padding:clamp(28px,5vw,58px) 0 14px}
+.hero-home h1{max-width:900px;font-size:clamp(2.8rem,6.5vw,5.6rem);line-height:1.01;letter-spacing:-.055em}
+.hero-home .hero-copy{max-width:700px;margin-bottom:18px;font-size:clamp(1.05rem,1.8vw,1.25rem)}
+.audience-switcher{padding:14px 0 46px}
+.audience-switcher>h2{font-size:clamp(1.55rem,3vw,2.6rem);line-height:1.12;margin:16px 0 18px}
+.path-card{min-height:270px;padding:22px;box-shadow:none}
+.path-number{margin-bottom:24px}
+.path-card h3{line-height:1.13}
+.path-card:focus-visible{outline:3px solid #007ac8;outline-offset:4px}
+@media(max-width:520px){.hero-home{padding:26px 0 8px}.hero-home h1{font-size:clamp(2.65rem,12vw,3.8rem)}.audience-switcher{padding-top:10px}.audience-switcher>h2{font-size:1.65rem}.path-grid{gap:10px}.path-card{min-height:0;padding:18px}.path-number{margin-bottom:14px}}
