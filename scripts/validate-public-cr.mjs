@@ -3,8 +3,8 @@ import process from "node:process";
 
 const failures = [];
 const root = process.cwd();
-const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html"];
-const canonicalBase = "https://cracked-hacker.github.io/NAV/";
+const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "coach-nate.html", "resume.html", "account.html"];
+const canonicalBase = "https://coach-nate.netlify.app/";
 const appUrl = "https://nav-coach-app-eight.vercel.app/auth?mode=login";
 
 function text(path) {
@@ -28,7 +28,10 @@ for (const page of keyPages) {
   requireMatch(page, html, /class=["'][^"']*desktop-nav/i, "missing desktop primary navigation");
   requireMatch(page, html, /class=["'][^"']*mobile-nav/i, "missing mobile navigation");
   requireMatch(page, html, /href=["']nav-coach\.html["']/i, "missing NAV Coach navigation route");
-  requireMatch(page, html, /href=["']science\.html["']/i, "missing Science navigation route");
+  requireMatch(page, html, /href=["']science\.html["']/i, "missing Science navigation or footer route");
+  requireMatch(page, html, /href=["']coach-nate\.html["']/i, "missing Coach Nate navigation or footer route");
+  requireMatch(page, html, /href=["']account\.html["']/i, "missing My NAV account navigation or footer route");
+  requireMatch(page, html, /Create Account/i, "missing public account creation action");
   requireMatch(page, html, new RegExp(appUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "missing canonical NAV Coach sign-in route");
 }
 
@@ -54,6 +57,15 @@ for (const question of ["What is NAV?", "Does NAV replace a coach?", "Can coache
 }
 requireMatch("resources.html", resources, /"@type":"FAQPage"/, "missing FAQPage structured data");
 
+const accountGateway = text("account.html");
+if (/<form\b/i.test(accountGateway) || /name=["\'](?:password|pin|card-number)["\']/i.test(accountGateway)) failures.push("account.html: must delegate authentication rather than collect credentials on the static public site");
+if (!accountGateway.includes("mode=signup&amp;account=client") || !accountGateway.includes("mode=signup&amp;account=coach")) failures.push("account.html: client and coach signup routes missing");
+if (!accountGateway.includes("mode=reset")) failures.push("account.html: password reset route missing");
+if (!/name=["\']robots["\']\s+content=["\']noindex,follow["\']/i.test(accountGateway)) failures.push("account.html: gateway should not compete with marketing content in search");
+
+const resume = text("resume.html");
+if (!resume.includes("B.S. Kinesiology") || !resume.includes("B.A. Biology") || !resume.includes("10.1007/s10560-024-01000-y")) failures.push("resume.html: November 2026 résumé facts missing");
+
 const prohibitedClaims = [
   [/scientifically proven/gi, "unsupported 'scientifically proven' claim"],
   [/HIPAA compliant/gi, "unsupported HIPAA compliance claim"],
@@ -72,7 +84,7 @@ for (const page of keyPages) {
 const robots = text("robots.txt");
 if (!robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`)) failures.push("robots.txt: sitemap declaration missing or wrong");
 const sitemap = text("sitemap.xml");
-for (const route of ["nav-coach.html", "coaching.html", "classroom/", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
+for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "coaching.html", "classroom/", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
   if (!sitemap.includes(`<loc>${canonicalBase}${route}</loc>`)) failures.push(`sitemap.xml: missing ${route}`);
 }
 
