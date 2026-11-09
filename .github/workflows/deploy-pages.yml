@@ -75,3 +75,26 @@ jobs:
           curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 --output "${RUNNER_TEMP}/nav-product.html" "${base}nav-coach.html"
           grep -Fq "A training workspace for coaches and athletes." "${RUNNER_TEMP}/nav-product.html"
           curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "https://nav-coach-app-eight.vercel.app/auth?mode=login" >/dev/null
+
+      - name: Verify canonical Netlify website is live
+        run: |
+          set -euo pipefail
+          base="https://coach-nate.netlify.app"
+          for attempt in $(seq 1 12); do
+            echo "Canonical Netlify smoke test attempt ${attempt}/12"
+            if curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-home.html" "${base}/" &&
+               grep -Fq "Strength coaching, training tools" "${RUNNER_TEMP}/nav-netlify-home.html" &&
+               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-account.html" "${base}/account.html" &&
+               grep -Fq "Your NAV account starts here." "${RUNNER_TEMP}/nav-netlify-account.html" &&
+               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-coach.html" "${base}/coach-nate.html" &&
+               grep -Fq "coach-nate-research-poster.pdf" "${RUNNER_TEMP}/nav-netlify-coach.html" &&
+               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-research.html" "${base}/research.html" &&
+               grep -Fq "coach-nate-research-poster.webp" "${RUNNER_TEMP}/nav-netlify-research.html" &&
+               curl --fail --silent --show-error --location --head --max-time 25 "${base}/assets/coach-nate-research-poster.pdf" >/dev/null; then
+              echo "Canonical Netlify website verified: home, account, Coach Nate, research, original poster."
+              exit 0
+            fi
+            if [ "${attempt}" -lt 12 ]; then sleep 10; fi
+          done
+          echo "Canonical Netlify production did not match this release after 12 attempts." >&2
+          exit 1
