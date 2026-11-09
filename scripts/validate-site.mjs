@@ -31,6 +31,9 @@ const lmsPages = [
 
 const requiredFiles = [
   "index.html",
+  "account.html",
+  "coach-nate.html",
+  "resume.html",
   "coaching.html",
   "about.html",
   "resources.html",
