@@ -470,7 +470,17 @@
     if (items.length !== 8 || new Set(items.map((q) => q.id)).size !== 8 ||
         items.some((q) => ![1, 2, 3, 4].includes(q.objective) || !Array.isArray(q.options) ||
           q.options.length !== 4 || !Number.isInteger(q.correct) || q.correct < 0 || q.correct > 3)) return null;
-    return items;
+    // Shuffle displayed choices using Fisher-Yates so item-bank answer-index patterns
+    // do not teach learners to select a position instead of understanding the concept.
+    return items.map((item) => {
+      const choices = item.options.map((label, original) => ({ label, original }));
+      for (let i = choices.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      return { ...item, options: choices.map((choice) => choice.label),
+        correct: choices.findIndex((choice) => choice.original === item.correct) };
+    });
   }
 
   function renderQuizzes() {
