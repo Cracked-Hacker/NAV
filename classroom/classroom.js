@@ -303,7 +303,7 @@
     return span;
   }
 
-  function completionButton(type, id, onChange) {
+  function completionButton(type, id, onChange, canMark) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "work-complete-button";
@@ -315,6 +315,7 @@
     }
     button.addEventListener("click", () => {
       const done = load().completed[type].includes(id);
+      if (!done && typeof canMark === "function" && !canMark()) return;
       complete(type, id, !done);
       render();
       onChange?.();
@@ -376,22 +377,67 @@
     article.className = "coursework-card";
     article.dataset.workId = item.id;
     const head = weekHeader(week, label);
-    const status = statusPill(type, item.id);
+    let status = statusPill(type, item.id);
     head.append(status);
     const title = document.createElement("h3"); title.textContent = item.title;
     const summary = document.createElement("p"); summary.className = "coursework-summary"; summary.textContent = item.summary;
     const details = document.createElement("details"); details.className = "work-panel";
     const summaryEl = document.createElement("summary"); summaryEl.textContent = type === "assignments" ? "Open assignment workspace" : "Open lab notes";
     const body = document.createElement("div"); body.className = "work-panel-body";
-    const note = document.createElement("p"); note.className = "storage-note"; note.textContent = "Private browser-local draft. Nothing here is uploaded or sent to an instructor.";
-    const textarea = document.createElement("textarea"); textarea.className = "work-draft"; textarea.rows = 7; textarea.placeholder = type === "assignments" ? "Draft your reasoning, outline, or response here…" : "Record observations, data, limitations, and interpretation here…"; textarea.value = load().drafts[item.id] || "";
+    const note = document.createElement("p"); note.className = "storage-note";
+    note.textContent = "This is a browser-local practice workspace. Your writing is not submitted, independently graded, reviewed by an instructor, or a qualification for a NAV credential.";
+    const guide = document.createElement("div"); guide.className = "practice-rubric";
+    const rubricTitle = document.createElement("h4"); rubricTitle.textContent = type === "labs" ? "Lab report expectations" : "Assignment self-review checklist";
+    const criteria = type === "labs" ? [
+      "Specify a safe, feasible protocol and any nonphysical alternative or modification.",
+      "Document raw observations, units, equipment, timing and controls; do not invent measurements.",
+      "Interpret observations and identify measurement uncertainty or other limitations.",
+      "State the practical conclusion, next action and any safety/referral boundaries."
+    ] : [
+      "Identify the athlete or scenario, measurable goal and real constraints.",
+      "Explain the proposed answer or program with a scientifically relevant rationale.",
+      "Compare alternatives and acknowledge assumptions, tradeoffs or uncertainty.",
+      "Specify what feedback/data would change your recommendation and when referral is appropriate."
+    ];
+    const intro = document.createElement("p");
+    intro.textContent = "Include the following in the written response. Checking these boxes is your own review, not an instructor's evaluation.";
+    const checklist = document.createElement("div"); checklist.className = "practice-rubric-checklist";
+    const checks = criteria.map((criterion, index) => {
+      const row = document.createElement("label");
+      const input = document.createElement("input"); input.type = "checkbox"; input.value = String(index + 1);
+      const copy = document.createElement("span"); copy.textContent = criterion;
+      row.append(input, copy); checklist.append(row);
+      return input;
+    });
+    guide.append(rubricTitle, intro, checklist);
+    const textarea = document.createElement("textarea"); textarea.className = "work-draft"; textarea.rows = 10;
+    textarea.setAttribute("aria-label", `${item.title}: written evidence and analysis`);
+    textarea.placeholder = type === "assignments"
+      ? "Goal/constraints:\\nEvidence and proposed decision:\\nAlternatives and uncertainty:\\nMonitoring or referral:"
+      : "Question/protocol and safety:\\nRaw observations with units:\\nInterpretation and limitations:\\nNext action:";
+    textarea.value = load().drafts[item.id] || "";
     const controls = document.createElement("div"); controls.className = "work-controls";
-    const saveButton = document.createElement("button"); saveButton.type = "button"; saveButton.className = "work-save-button"; saveButton.textContent = "Save draft";
+    const saveButton = document.createElement("button"); saveButton.type = "button"; saveButton.className = "work-save-button";
+    saveButton.textContent = "Save draft";
     const saved = document.createElement("span"); saved.className = "saved-copy"; saved.setAttribute("aria-live", "polite");
-    saveButton.addEventListener("click", () => { const state = load(); save({ ...state, drafts: { ...state.drafts, [item.id]: textarea.value } }); saved.textContent = "Saved on this device."; });
-    const doneButton = completionButton(type, item.id, () => { const fresh = statusPill(type, item.id); status.replaceWith(fresh); });
+    const saveDraft = () => { const state = load(); save({ ...state, drafts: { ...state.drafts, [item.id]: textarea.value } }); };
+    saveButton.addEventListener("click", () => { saveDraft(); saved.textContent = "Draft saved only in this browser. It was not submitted or graded."; });
+    const canMark = () => {
+      const count = textarea.value.trim().length;
+      const countChecked = checks.filter((input) => input.checked).length;
+      if (count < 150 || countChecked !== checks.length) {
+        saved.textContent = `To self-mark, write at least 150 characters of actual evidence (${count} now) and review all ${checks.length} criteria (${countChecked} checked). This does not certify quality.`;
+        return false;
+      }
+      saveDraft();
+      saved.textContent = "Evidence saved and practice self-marked. No instructor assessed it.";
+      return true;
+    };
+    const doneButton = completionButton(type, item.id, () => {
+      const fresh = statusPill(type, item.id); status.replaceWith(fresh); status = fresh;
+    }, canMark);
     controls.append(saveButton, doneButton, saved);
-    body.append(note, textarea, controls);
+    body.append(note, guide, textarea, controls);
     details.append(summaryEl, body);
     article.append(head, title, summary, details);
     return article;
@@ -436,7 +482,7 @@
       const card = document.createElement("article");
       card.className = "full-quiz-card";
       card.append(weekHeader(week, "8-question formative assessment"));
-      const status = statusPill("quizzes", week.quiz.id);
+      let status = statusPill("quizzes", week.quiz.id);
       card.querySelector(".coursework-head")?.append(status);
       const heading = document.createElement("h2");
       heading.textContent = week.quiz.title;
@@ -539,7 +585,9 @@
         feedback.classList.remove("correct", "incorrect");
         feedback.classList.add(passedThisAttempt ? "correct" : "incorrect");
         feedback.textContent = `This attempt: ${correct}/8 (${percent}%). ${passedThisAttempt ? "Practice target met." : "Review the explanations and try again."} Best: ${bestCorrect}/8. This is formative practice, not certification.`;
-        status.replaceWith(statusPill("quizzes", week.quiz.id));
+        const updatedStatus = statusPill("quizzes", week.quiz.id);
+        status.replaceWith(updatedStatus);
+        status = updatedStatus;
         submit.textContent = "Score another practice attempt";
       });
       card.append(note, form);
