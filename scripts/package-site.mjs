@@ -4,9 +4,19 @@ import {execFileSync} from 'node:child_process';
 const output = '.site-build';
 rmSync(output, {recursive:true,force:true});
 mkdirSync(output);
+// Allowlist public release assets. Do not upload source-only coursework, quiz banks,
+ // labs, drafts, or beta materials to a static host where links cannot protect them.
 for (const name of readdirSync('.')) {
-  if (['account','assets','classroom','vendor'].includes(name) || /\.(html|css|xml|txt)$/.test(name)) cpSync(name, `${output}/${name}`, {recursive:true});
+  if (name === 'classroom') {
+    mkdirSync(`${output}/classroom`, {recursive:true});
+    cpSync('classroom/index.html', `${output}/classroom/index.html`);
+    continue;
+  }
+  if (['account','assets','vendor'].includes(name) || /\.(html|css|xml|txt)$/.test(name)) {
+    cpSync(name, `${output}/${name}`, {recursive:true});
+  }
 }
+
 let commit = process.env.COMMIT_REF;
 let dirty = false;
 if (!commit) {
