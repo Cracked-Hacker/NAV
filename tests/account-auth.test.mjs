@@ -50,11 +50,11 @@ test('password mismatch and upstream failure preserve recoverable signup input',
   assert.match(window.document.querySelector('#account-status').textContent,/entries are still here/);
   await window.happyDOM.close();
 });
-test('reset uses the existing allowlisted callback and a generic account-existence message',async()=>{
-  let destination;const window=await mount('reset',{auth:{resetPasswordForEmail:async(email,options)=>{destination=options.redirectTo;return {error:null};}}});
-  const form=window.document.querySelector('#reset-form');form.elements.email.value='synthetic@example.invalid';
-  form.dispatchEvent(new window.Event('submit',{cancelable:true}));await flush();
-  assert.equal(destination,'https://nav-coach-app-eight.vercel.app/auth/callback?next=/reset-password');
-  assert.match(window.document.querySelector('#account-status').textContent,/If an eligible NAV account exists/);
+test('recovery uses the existing app flow without creating cross-origin verification state',async()=>{
+  const window=await mount('reset',{});
+  const panel=window.document.querySelector('#reset-form');
+  assert.equal(panel.hidden,false);
+  assert.equal(panel.querySelector('a.button').href,'https://nav-coach-app-eight.vercel.app/auth?mode=reset');
+  assert.equal(panel.querySelector('input'),null);
   await window.happyDOM.close();
 });

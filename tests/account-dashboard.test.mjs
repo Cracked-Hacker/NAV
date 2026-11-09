@@ -122,3 +122,17 @@ test('logout/auth changes immediately remove private view and form data',async()
   assert.equal(window.document.querySelector('#profile-form').elements.fullName.value,'');
   await window.happyDOM.close();
 });
+
+test('email change requires the same reauthenticated identity and returns to the confirmation page',async()=>{
+  for(const valid of [false,true]){
+    const fake=fakeClient();let change;
+    fake.client.auth.signInWithPassword=async()=>({data:{user:{id:valid?fake.state.user.id:'unrelated-user'}},error:null});
+    fake.client.auth.updateUser=async(values,options)=>{change={values,options};return {error:null};};
+    const window=await mount(fake);const form=window.document.querySelector('#email-form');
+    form.elements.email.value='changed@example.invalid';form.elements.password.value='Synthetic-Test-Only-123!';
+    form.dispatchEvent(new window.Event('submit',{cancelable:true}));await flush();
+    if(!valid){assert.equal(change,undefined);assert.match(window.document.querySelector('#dashboard-status').textContent,/could not be confirmed/);}
+    else{assert.equal(change.options.emailRedirectTo,'https://nav-coach-app-eight.vercel.app/auth/confirmed');assert.equal(form.elements.password.value,'');}
+    await window.happyDOM.close();
+  }
+});

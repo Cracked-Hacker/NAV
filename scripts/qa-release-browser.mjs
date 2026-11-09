@@ -38,7 +38,7 @@ try{
     for(const route of routes){
       const response=await page.goto(new URL(route,base).href,{waitUntil:'networkidle'});
       assert.ok(response.ok(),`${route}: ${response.status()}`);
-      if(route.startsWith('account/auth'))await page.locator('form:not([hidden]) button').waitFor({state:'visible'});
+      if(route.startsWith('account/auth'))await page.locator(route.includes('mode=reset')?'#reset-form a.button':'form:not([hidden]) button').waitFor({state:'visible'});
       await page.evaluate(async()=>{for(const img of document.images)img.loading='eager';await Promise.all([...document.images].map(img=>img.decode().catch(()=>{})));});
       const metrics=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,h1:document.querySelectorAll('h1').length,
         cardWidth:document.querySelector('.account-wrap--auth .account-card')?.getBoundingClientRect().width,
@@ -69,12 +69,14 @@ try{
   await page.getByRole('button',{name:'Log In',exact:true}).click();
   assert.equal(await page.locator('#login-form input[name=email]').evaluate(el=>el.validity.valueMissing),true);
   await page.getByRole('link',{name:'Forgot your password?'}).click();await page.locator('#reset-form').waitFor({state:'visible'});
+  await page.locator('#reset-form a.button').click();
+  await page.getByRole('heading',{name:"We'll send you a reset link.",exact:true}).waitFor({state:'visible'});
   await page.goto(new URL('account/',base).href);await page.waitForURL(/account\/auth(?:\.html)?\?mode=login/);
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
   writeFileSync(`${out}/report.json`,JSON.stringify({base,checkedAt:new Date().toISOString(),results,accessibility,errors,missing,
-    journeys:['mobile menu → Create Account','keyboard skip link','native empty-login validation','forgot-password form','signed-out My NAV guard','poster PDF bytes'],
+    journeys:['mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
     notVerified:['new-user email confirmation','authenticated website/app round trip','real client/coach/dual-role production sessions','password recovery email and expiry']},null,2));
   const violations=accessibility.flatMap(a=>a.violations.map(v=>({...v,route:a.route,width:a.width})));
   assert.deepEqual(violations,[],'Automated WCAG A/AA violations; see report.json');

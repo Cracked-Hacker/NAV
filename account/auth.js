@@ -1,4 +1,3 @@
-import {ACCOUNT_CONFIG as config} from './config.js';
 import {accountClient} from './client.js';
 import {accountMode, cleanEmail, passwordProblem} from './security.mjs';
 
@@ -33,6 +32,9 @@ async function start() {
   });
   const form = document.querySelector(`#${mode}-form`);
   form.hidden = false;
+  // Recovery starts on the app origin so its existing server-side flow keeps
+  // the verification context beside the canonical callback.
+  if (mode === 'reset') { message(''); return; }
   try { client = await accountClient(); }
   catch { message('Secure account tools could not load. Refresh to retry, or keep browsing NAV.', 'error'); return; }
   form.querySelector('button').disabled = false;
@@ -82,18 +84,6 @@ async function start() {
     message('If signup can proceed, NAV will send an email confirmation. Check your inbox and spam folder, verify through the secure link, then return here to log in. If you already have an account, use Log In or reset your password.', 'success');
   });
 
-  wire(document.querySelector('#reset-form'), async data => {
-    const email = cleanEmail(data.get('email'));
-    if (!email) { message('Enter a valid email address.', 'error'); return; }
-    const {error} = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${config.appUrl}/auth/callback?next=/reset-password`
-    });
-    if (error && !['over_email_send_rate_limit', 'email_address_not_authorized'].includes(error.code)) {
-      message('The reset request could not be completed. Please retry shortly.', 'error');
-      return;
-    }
-    message('If an eligible NAV account exists, a reset message will be sent. Open its secure link, change your password in NAV Coach, then return here to log in. An expired link can be replaced with a new request.', 'success');
-  });
 }
 
 start();

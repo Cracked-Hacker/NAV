@@ -159,7 +159,7 @@ wire(document.querySelector('#email-form'), async (data, view) => {
   const {data: reauthenticated, error} = await client.auth.signInWithPassword({email:user.email,password:String(data.get('password'))});
   if (view !== generation) return;
   if (error || reauthenticated.user?.id !== user.id) { message('Your password could not be confirmed. Please retry.', 'error'); return; }
-  const result = await client.auth.updateUser({email}, {emailRedirectTo:`${config.appUrl}/auth/callback?next=/auth/confirmed`});
+  const result = await client.auth.updateUser({email}, {emailRedirectTo:`${config.appUrl}/auth/confirmed`});
   if (view !== generation) return;
   if (result.error) { message('The email change could not be requested. Please retry or contact NAV support.', 'error'); return; }
   document.querySelector('#email-form').elements.password.value = '';
