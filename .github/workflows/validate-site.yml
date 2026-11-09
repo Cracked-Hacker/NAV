@@ -34,7 +34,7 @@ jobs:
           for width in 320 360 390 430 901 1024 1440; do
             google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="${width},1600" --screenshot="qa-screenshots/home-${width}.png" "http://127.0.0.1:4173/index.html"
           done
-          for page in nav-coach coaching resources science contact; do
+          for page in nav-coach coaching resources science contact account coach-nate resume; do
             google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="390,1800" --screenshot="qa-screenshots/${page}-390.png" "http://127.0.0.1:4173/${page}.html"
           done
           npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173/index.html" --quiet --chrome-flags="--headless --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=qa-screenshots/lighthouse-home.json

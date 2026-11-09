@@ -31,6 +31,10 @@ const lmsPages = [
 
 const requiredFiles = [
   "index.html",
+  "account.html",
+  "coach-nate.html",
+  "resume.html",
+  "research.html",
   "coaching.html",
   "about.html",
   "resources.html",
@@ -226,6 +230,42 @@ if (quizCount !== 10) fail("classroom/lms-data.js", `expected 10 weekly quizzes,
 if (assignmentCount !== 10) fail("classroom/lms-data.js", `expected 10 applied assignments, found ${assignmentCount}`);
 if (labCount !== 12) fail("classroom/lms-data.js", `expected 12 solo gym labs, found ${labCount}`);
 if (!/Hard to Kill/.test(lmsData)) fail("classroom/lms-data.js", "missing full-course NAV title");
+
+
+/* Coach Nate proof-of-work: real media, academic attribution, and honest CV claims. */
+const coachPage = readFileSync(resolve(root, "coach-nate.html"), "utf8");
+const researchAssets = [
+  "assets/coach-nate-lab-portrait.webp",
+  "assets/coach-nate-acs-conference.webp",
+  "assets/coach-nate-lab-bench.webp",
+  "assets/coach-nate-research-poster.webp",
+  "assets/coach-nate-research-poster.pdf"
+];
+for (const asset of researchAssets) {
+  const fullPath = resolve(root, asset);
+  if (!existsSync(fullPath) || !statSync(fullPath).isFile() || statSync(fullPath).size < 1000) {
+    fail("coach-nate.html", `missing or empty original research media: ${asset}`);
+  }
+  if (!coachPage.includes(asset)) fail("coach-nate.html", `media not linked in page: ${asset}`);
+}
+for (const required of [
+  "Cycling of Ethanol and Acetaldehyde in Estuarine Waters",
+  "Jefferson Crosland",
+  "Nate Holochwost",
+  "Warren de Bruyn",
+  "Catherine Clark",
+  "B.S. Kinesiology",
+  "B.A. Biology",
+  "10.1007/s10560-024-01000-y",
+  "2,000+",
+  "https://coach-nate.netlify.app/coach-nate.html",
+  "class=\"mobile-nav",
+  "class=\"desktop-nav"
+]) if (!coachPage.includes(required)) fail("coach-nate.html", `missing research / credibility evidence: ${required}`);
+if (/holochn@yahoo\.com|\(313\)[ -]*300|principal investigator|fake testimonial|AI-generated portrait/i.test(coachPage)) {
+  fail("coach-nate.html", "private contact, invented appointment, or disallowed fabricated imagery claim");
+}
+if (!/<img[^>]+alt=["'][^"']{12,}["']/i.test(coachPage)) fail("coach-nate.html", "research images need descriptive alt text");
 
 if (failures.length) {
   console.error(`NAV public-site release gate failed with ${failures.length} problem(s):`);
