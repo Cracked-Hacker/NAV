@@ -31,7 +31,7 @@ const page=await context.newPage();
 const errors=[],missing=[],results=[],accessibility=[];
 page.on('pageerror',e=>errors.push(e.message));
 page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)missing.push({url:r.url(),status:r.status()});});
-const routes=['','coaching.html','nav-coach.html','coach-nate.html','resume.html','research.html','classroom/','classroom/course/week-1/index.html','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset'];
+const routes=['','coaching.html','nav-coach.html','coach-nate.html','resume.html','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset'];
 try{
   for(const width of [320,390,768,1024,1440,1920]){
     await page.setViewportSize({width,height:1000});
@@ -72,51 +72,26 @@ try{
   await page.locator('#reset-form a.button').click();
   await page.getByRole('heading',{name:"We'll send you a reset link.",exact:true}).waitFor({state:'visible'});
   await page.goto(new URL('account/',base).href);await page.waitForURL(/account\/auth(?:\.html)?\?mode=login/);
-  // Classroom P0 competency-truth regression: legacy single-answer passes never qualify.
-  await page.goto(new URL('classroom/quizzes.html',base).href);
-  await page.evaluate(() => window.localStorage.setItem('nav-classroom-full-course-v1',
-    JSON.stringify({completed:{assignments:[],labs:[],quizzes:['quiz-1']},drafts:{},quizAttempts:{}})));
-  await page.reload({waitUntil:'networkidle'});
-  assert.equal(await page.locator('.full-quiz-card').count(),10,'10 weekly assessment cards');
-  const firstQuiz=page.locator('.full-quiz-card').first();
-  assert.equal(await firstQuiz.locator('fieldset.quiz-question').count(),8,'8 questions per week, not one');
-  assert.match(await firstQuiz.locator('.work-status').textContent(),/Practice target not met/,'old one-question status invalidated');
-  assert.equal(await firstQuiz.locator('fieldset.quiz-question').first().locator('input[type=radio]').count(),4,'four accessible answer choices');
-  await firstQuiz.locator('fieldset.quiz-question').first().locator('label').first().click();
-  await firstQuiz.locator('button[type=submit]').click();
-  assert.match(await firstQuiz.locator('.quiz-feedback').textContent(),/Answer all eight questions/,'cannot score incomplete quiz');
-  const correctLabels=await page.evaluate(()=>{
-    const week=window.NAV_CLASSROOM.weeks[0].quiz;
-    const rows=window.NAV_CLASSROOM_WEEKLY_BANK.rows[1];
-    return [week.options[week.correct],...rows.map(item=>item[3][item[4]])];
-  });
-  for(let i=0;i<8;i++){
-    const question=firstQuiz.locator('fieldset.quiz-question').nth(i);
-    const options=question.locator('label');
-    const labels=await options.allTextContents();
-    const index=labels.findIndex(value=>value.trim()===correctLabels[i]);
-    assert.ok(index>=0,`correct option text exists in displayed item ${i+1}`);
-    await options.nth(index).click();
+  // Release privacy supersedes the previous public-course smoke test.
+  // Published learning assets must be explicitly allowlisted; drafts must
+  // never be reachable through a direct URL or an old bookmark.
+  const publicLanding=await page.goto(new URL('classroom/',base).href);
+  assert.ok(publicLanding.ok(),'Approved Classroom landing remains public');
+  assert.match(await page.locator('h1').textContent(),/Exercise science that improves decisions/);
+  assert.equal(await page.getByRole('link',{name:'Start Week 1'}).count(),0);
+  for(const privateRoute of [
+    'classroom/course.html',
+    'classroom/quizzes.html',
+    'classroom/progress.html',
+    'classroom/lms-data.js',
+    'classroom/weekly-question-bank.js',
+    'classroom/course/week-1/index.html',
+    'classroom/how-training-works/index.html'
+  ]) {
+    const response=await context.request.get(new URL(privateRoute,base).href);
+    assert.equal(response.status(),404,`${privateRoute}: no public draft delivery`);
   }
-  await firstQuiz.locator('button[type=submit]').click();
-  assert.match(await firstQuiz.locator('.quiz-feedback').textContent(),/8\/8 \(100%\)/,'practice scored on all eight items');
-  assert.match(await firstQuiz.locator('.work-status').textContent(),/8-question practice target met/,'updated practice status');
-  assert.equal(await firstQuiz.locator('.quiz-item-feedback:not([hidden])').count(),8,'all item explanations revealed');
-  await page.goto(new URL('classroom/progress.html',base).href);
-  assert.match(await page.locator('[data-progress-dashboard]').textContent(),/1\/10/,'valid practice completion reflected in progress');
-  await page.goto(new URL('classroom/labs.html',base).href);
-  const firstLab=page.locator('.coursework-card').first();
-  await firstLab.locator('summary').click();
-  await firstLab.locator('.work-complete-button').click();
-  assert.match(await firstLab.locator('.saved-copy').textContent(),/at least 150 characters/,'empty lab cannot be self-marked');
-  assert.match(await firstLab.locator('.work-status').textContent(),/Not self-marked/);
-  await firstLab.locator('textarea.work-draft').fill('Question and safety: choose a familiar low-risk submaximal exercise. Record a stable protocol, measurements and units, and the equipment used. Interpretation: identify measurement error and fatigue confounders. Next step: adjust the task if the findings warrant it, and refer symptoms outside coaching scope.');
-  await firstLab.locator('.practice-rubric-checklist input[type=checkbox]').check({force:true}).catch(()=>{});
-  const rubricChecks=firstLab.locator('.practice-rubric-checklist input[type=checkbox]');
-  for(let i=0;i<4;i++)await rubricChecks.nth(i).check();
-  await firstLab.locator('.work-complete-button').click();
-  assert.match(await firstLab.locator('.work-status').textContent(),/Self-reported complete/,'complete means self-reported, not graded');
-  console.log('PASS 8-item weekly practice, legacy migration, scoring, explanatory feedback, and lab self-review');
+  console.log('PASS public Classroom landing and direct-route denial for unapproved course materials');
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
