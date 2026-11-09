@@ -19,3 +19,11 @@
 .full-quiz-form .quiz-question .quiz-correct{background:#e6f5e6}
 .full-quiz-form .quiz-question .quiz-incorrect{background:#fbeceb}
 @media(max-width:600px){.full-quiz-form .quiz-question{padding:.8rem}.full-quiz-form .quiz-question legend{font-size:1rem}}
+
+/* Evidence-based practice workspaces: distinguish draft, personal self-review, and grading. */
+.practice-rubric{border:1px solid #b6c8d9;border-radius:12px;padding:1rem;background:#f4f8fc;margin:1rem 0}
+.practice-rubric h4{font-weight:800;font-size:1.05rem;margin:.1rem 0 .5rem}
+.practice-rubric-checklist{display:grid;gap:.65rem;margin:.7rem 0}
+.practice-rubric-checklist label{display:flex;align-items:start;gap:.7rem;line-height:1.4;cursor:pointer}
+.practice-rubric-checklist input{accent-color:#003f87;width:1.15rem;height:1.15rem;flex-shrink:0;margin-top:.15rem}
+.practice-rubric-checklist input:focus-visible{outline:3px solid #adcc00;outline-offset:2px}
