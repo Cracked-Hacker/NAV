@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-
+Disallow: /account/
 Sitemap: https://coach-nate.netlify.app/sitemap.xml

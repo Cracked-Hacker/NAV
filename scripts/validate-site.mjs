@@ -31,7 +31,8 @@ const lmsPages = [
 
 const requiredFiles = [
   "index.html",
-  "account.html",
+  "account/auth.html",
+  "account/index.html",
   "coach-nate.html",
   "resume.html",
   "research.html",
@@ -61,7 +62,7 @@ const requiredFiles = [
 
 function walk(dir) {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-    if ([".git", "node_modules"].includes(entry.name)) return [];
+    if ([".git", "node_modules", ".site-build", "qa-screenshots"].includes(entry.name)) return [];
     const full = join(dir, entry.name);
     return entry.isDirectory() ? walk(full) : [full];
   });

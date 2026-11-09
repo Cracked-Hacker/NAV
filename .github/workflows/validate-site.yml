@@ -2,6 +2,8 @@ name: Validate NAV public site
 
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "17 15 * * 1"
@@ -16,27 +18,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install test dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Verify account identity, isolation, recovery, and signup transport
+        run: npm test
+
       - name: Run public-site release gate
         run: node scripts/validate-site.mjs
 
       - name: Run website CR truth, SEO, and routing gate
         run: node scripts/validate-public-cr.mjs
 
-      - name: Capture rendered viewport QA and browser audit
+      - name: Build bounded public artifact
+        run: npm run build
+
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify real pages at six widths and run accessibility audits
+        run: node scripts/qa-release-browser.mjs
+
+      - name: Measure Lighthouse against the packaged homepage
         run: |
           set -euo pipefail
-          command -v google-chrome
-          python3 -m http.server 4173 >/tmp/nav-public-site.log 2>&1 &
+          python3 -m http.server 4173 --directory .site-build >/tmp/nav-public-site.log 2>&1 &
           server_pid=$!
           trap 'kill "$server_pid" 2>/dev/null || true' EXIT
           sleep 1
-          mkdir -p qa-screenshots
-          for width in 320 360 390 430 901 1024 1440; do
-            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="${width},1600" --screenshot="qa-screenshots/home-${width}.png" "http://127.0.0.1:4173/index.html"
-          done
-          for page in nav-coach coaching resources science contact account coach-nate resume; do
-            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --window-size="390,1800" --screenshot="qa-screenshots/${page}-390.png" "http://127.0.0.1:4173/${page}.html"
-          done
           npx --yes lighthouse@12.8.2 "http://127.0.0.1:4173/index.html" --quiet --chrome-flags="--headless --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo --output=json --output-path=qa-screenshots/lighthouse-home.json
           node - <<'NODE'
           const report = require('./qa-screenshots/lighthouse-home.json');
@@ -55,19 +70,19 @@ jobs:
         run: |
           set -euo pipefail
           urls=(
-            "https://cracked-hacker.github.io/NAV/"
-            "https://cracked-hacker.github.io/NAV/nav-coach.html"
-            "https://cracked-hacker.github.io/NAV/coaching.html"
-            "https://cracked-hacker.github.io/NAV/classroom/"
-            "https://cracked-hacker.github.io/NAV/science.html"
-            "https://cracked-hacker.github.io/NAV/resources.html"
-            "https://cracked-hacker.github.io/NAV/about.html"
-            "https://cracked-hacker.github.io/NAV/contact.html"
-            "https://cracked-hacker.github.io/NAV/terms.html"
-            "https://cracked-hacker.github.io/NAV/privacy.html"
-            "https://cracked-hacker.github.io/NAV/disclaimer.html"
-            "https://cracked-hacker.github.io/NAV/sitemap.xml"
-            "https://cracked-hacker.github.io/NAV/robots.txt"
+            "https://coach-nate.netlify.app/"
+            "https://coach-nate.netlify.app/nav-coach.html"
+            "https://coach-nate.netlify.app/coaching.html"
+            "https://coach-nate.netlify.app/classroom/"
+            "https://coach-nate.netlify.app/science.html"
+            "https://coach-nate.netlify.app/resources.html"
+            "https://coach-nate.netlify.app/about.html"
+            "https://coach-nate.netlify.app/contact.html"
+            "https://coach-nate.netlify.app/terms.html"
+            "https://coach-nate.netlify.app/privacy.html"
+            "https://coach-nate.netlify.app/disclaimer.html"
+            "https://coach-nate.netlify.app/sitemap.xml"
+            "https://coach-nate.netlify.app/robots.txt"
             "https://nav-coach-app-eight.vercel.app/auth?mode=login"
           )
           for url in "${urls[@]}"; do
@@ -76,6 +91,7 @@ jobs:
           done
 
       - name: Upload rendered QA evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: public-site-rendered-qa

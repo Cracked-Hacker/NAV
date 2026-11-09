@@ -1,100 +1,20 @@
-name: Deploy NAV public site
-
+name: Verify Netlify release source
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run public-site release gate
-        run: node scripts/validate-site.mjs
-
-      - name: Run website CR truth, SEO, and routing gate
-        run: node scripts/validate-public-cr.mjs
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload static site
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          path: .
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: Verify deployed production
-        run: |
-          set -euo pipefail
-          base="${{ steps.deployment.outputs.page_url }}"
-          case "$base" in
-            */) ;;
-            *) base="${base}/" ;;
-          esac
-          paths=(
-            ""
-            "nav-coach.html"
-            "coaching.html"
-            "classroom/"
-            "science.html"
-            "resources.html"
-            "about.html"
-            "contact.html"
-            "terms.html"
-            "privacy.html"
-            "disclaimer.html"
-            "sitemap.xml"
-            "robots.txt"
-          )
-          for path in "${paths[@]}"; do
-            url="${base}${path}"
-            echo "Verifying $url"
-            curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "$url" >/dev/null
-          done
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 --output "${RUNNER_TEMP}/nav-home.html" "${base}"
-          grep -Fq "Human coaching" "${RUNNER_TEMP}/nav-home.html"
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 --output "${RUNNER_TEMP}/nav-product.html" "${base}nav-coach.html"
-          grep -Fq "A training workspace for coaches and athletes." "${RUNNER_TEMP}/nav-product.html"
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "https://nav-coach-app-eight.vercel.app/auth?mode=login" >/dev/null
-
-      - name: Verify canonical Netlify website is live
-        run: |
-          set -euo pipefail
-          base="https://coach-nate.netlify.app"
-          for attempt in $(seq 1 12); do
-            echo "Canonical Netlify smoke test attempt ${attempt}/12"
-            if curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-home.html" "${base}/" &&
-               grep -Fq "Strength coaching, training tools" "${RUNNER_TEMP}/nav-netlify-home.html" &&
-               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-account.html" "${base}/account.html" &&
-               grep -Fq "Your NAV account starts here." "${RUNNER_TEMP}/nav-netlify-account.html" &&
-               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-coach.html" "${base}/coach-nate.html" &&
-               grep -Fq "coach-nate-research-poster.pdf" "${RUNNER_TEMP}/nav-netlify-coach.html" &&
-               curl --fail --silent --show-error --location --max-time 25 --output "${RUNNER_TEMP}/nav-netlify-research.html" "${base}/research.html" &&
-               grep -Fq "coach-nate-research-poster.webp" "${RUNNER_TEMP}/nav-netlify-research.html" &&
-               curl --fail --silent --show-error --location --head --max-time 25 "${base}/assets/coach-nate-research-poster.pdf" >/dev/null; then
-              echo "Canonical Netlify website verified: home, account, Coach Nate, research, original poster."
-              exit 0
-            fi
-            if [ "${attempt}" -lt 12 ]; then sleep 10; fi
-          done
-          echo "Canonical Netlify production did not match this release after 12 attempts." >&2
-          exit 1
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run verify
+      - run: npm audit --audit-level=high
+      - run: npm run build
+      - name: Verify canonical Netlify production artifact
+        run: node scripts/verify-production.mjs

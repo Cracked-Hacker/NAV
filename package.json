@@ -1,0 +1,19 @@
+{
+  "name": "nav-public-platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "verify": "node scripts/validate-site.mjs && node scripts/validate-public-cr.mjs && npm test",
+    "build": "node scripts/package-site.mjs",
+    "test:browser": "node scripts/qa-release-browser.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "happy-dom": "21.0.4",
+    "playwright": "1.65.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
