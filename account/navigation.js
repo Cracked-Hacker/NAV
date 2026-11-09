@@ -10,7 +10,7 @@ function ensureCoachNateLinks() {
   const coachPath = coachUrl.pathname.replace(/\/+$/, '');
 
   document.querySelectorAll('.desktop-nav, .mobile-nav nav[aria-label="Mobile primary"]').forEach(nav => {
-    if (nav.querySelector('[data-coach-nate-link]')) return;
+    if ([...nav.querySelectorAll('a')].some(link => new URL(link.href).pathname === coachUrl.pathname)) return;
     const link = document.createElement('a');
     link.dataset.coachNateLink = '';
     link.href = coachUrl.href;
@@ -25,7 +25,7 @@ function ensureCoachNateLinks() {
 function apply(signedIn) {
   ensureCoachNateLinks();
   document.querySelectorAll('[data-nav-login]').forEach(link => {
-    link.textContent = signedIn ? 'My NAV' : 'Log In';
+    link.textContent = signedIn ? 'My NAV' : 'Sign In';
     link.href = new URL(signedIn ? 'account/' : 'account/auth.html?mode=login', root).href;
   });
   document.querySelectorAll('[data-nav-signup]').forEach(link => { link.hidden = signedIn; });

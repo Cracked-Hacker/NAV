@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /NAV/account/
-
-Sitemap: https://cracked-hacker.github.io/NAV/sitemap.xml
+Disallow: /account/
+Sitemap: https://coach-nate.netlify.app/sitemap.xml

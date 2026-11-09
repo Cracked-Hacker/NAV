@@ -1,6 +1,10 @@
 # NAV Public Platform
 
-Public NAV company website, Classroom, and NAV Coach gateway.
+Public NAV company website, Classroom, and shared-identity My NAV member hub.
+
+Canonical public host: https://coach-nate.netlify.app/ (Netlify project `coach-nate`, site ID `0be37e53-123c-4019-83e0-8afdea1988a5`). The connected repository is `Cracked-Hacker/NAV`; NAV Coach remains a separate Vercel app.
+
+Use Node 24 for release checks.
 
 ## Architecture boundary
 
@@ -18,6 +22,10 @@ The gate protects required public routes, internal links, one-H1 page structure,
 ## Local check
 
 Serve the repository root with any static server, for example `python3 -m http.server 8000`, then inspect phone and desktop widths.
+
+## Reconciled release
+
+PR #16 public content and original research media are retained alongside PR #15’s canonical account implementation. `/account.html` redirects to `/account/`; website Sign In/Create Account use `/account/auth.html`. Product sessions remain separate; this is shared identity, not cross-domain SSO.
 
 ## My NAV
 

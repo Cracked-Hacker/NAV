@@ -5,6 +5,18 @@
 [build.environment]
   NODE_VERSION = "24"
 
+[[redirects]]
+  from = "/account.html"
+  to = "/account/"
+  status = 301
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+
 [[headers]]
   for = "/account/*"
   [headers.values]
