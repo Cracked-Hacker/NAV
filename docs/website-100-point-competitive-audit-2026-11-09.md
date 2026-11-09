@@ -16,14 +16,14 @@ Sources inspected for patterns:
 - NSCA: https://www.nsca.com/certification/continuing-education/ — structured education and credential disclosures.
 - Nielsen Norman Group: https://www.nngroup.com/articles/homepage-design-principles/ — clarity, concrete examples, precise labels, simplification.
 
-**Audit status counts (source-level only):** 78 assessed pass, 6 missing, 16 needs verification. These numbers are not a Lighthouse score and are not claims of production quality.
+**Initial audit baseline (before the remediation below):** 78 assessed pass, 6 missing, 16 needing verification. These are historical source-review judgments, not a current score or a Lighthouse result.
 
 ## Defects found and action
 
 1. **Repeat/AI-sounding philosophy:** the old homepage, About and NAV Coach pages explained the same principles three times. PR #16 changes those sections into examples and concrete tasks. The detailed principles remain where they serve a technical/education purpose.
 2. **Vague marketing CTAs:** first-level coaching links were less literal than needed. PR #16 emphasizes real coaching inquiry steps, app entry and Classroom.
-3. **Lack of visual evidence:** no source-backed production screenshots or real photos were added. These must use owner-approved authentic assets and must not contain real client details without permission.
-4. **Coach Nate science material:** public résumé and DOI link are present, but the poster, headshot and lab-image captions are not yet published and must be reconciled against original files and usage consent.
+3. **Visual evidence:** original user-supplied laboratory and conference photos, a poster preview, and the source PDF are now present in the branch; the Coach Nate profile and homepage display authentic material. Actual NAV Coach interface screenshots are still missing and must be taken with appropriately redacted/test data.
+4. **Coach Nate science material:** research poster PDF, original conference and lab images, public résumé, DOI, and academic-style profile have been added to this branch. Browser visual inspection and final owner confirmation of image publication remain separate release evidence.
 5. **Pricing/availability:** the site deliberately does not invent these. Service listings should be linked to actual live, approved offers and terms before public promotion.
 6. **Cross-domain account truth:** a static Netlify gateway links to Vercel authenticated forms; it is **not** a fully synchronized member dashboard or independent login system.
 7. **Classroom progress:** browser-local public progress should not be described as an authenticated, durable cross-device learning record.
@@ -100,11 +100,11 @@ Sources inspected for patterns:
 | 43 | Work hours sourced and qualified | Pass in reviewed source |
 | 44 | Peer-reviewed DOI accessible | Pass in reviewed source |
 | 45 | Research areas described | Pass in reviewed source |
-| 46 | Research poster available | Missing / needs implementation |
-| 47 | Actual headshots used | Missing / needs implementation |
+| 46 | Research poster available | Initially missing; now implemented in branch (not independently live-verified) |
+| 47 | Actual headshots used | Initially missing; original researcher portrait now on Coach Nate profile |
 | 48 | No AI image passed off as real | Not independently verified |
 | 49 | Clinical scope accurately bounded | Pass in reviewed source |
-| 50 | Lab-style research navigation | Missing / needs implementation |
+| 50 | Lab-style research navigation | Initially missing; academic-style Coach Nate profile and research route now exist |
 
 ### 6. Education
 
@@ -145,7 +145,7 @@ Sources inspected for patterns:
 | 73 | Visible keyboard focus | Pass in reviewed source |
 | 74 | Reduced-motion support | Pass in reviewed source |
 | 75 | Sufficient tap target sizes | Not independently verified |
-| 76 | Real photography in marketing | Missing / needs implementation |
+| 76 | Real photography in marketing | Initially missing; authentic research image now on homepage |
 | 77 | Screenshots of app workflow | Missing / needs implementation |
 | 78 | Consistent spacing | Not independently verified |
 | 79 | Readable contrast at all sizes | Not independently verified |
@@ -161,7 +161,7 @@ Sources inspected for patterns:
 | 84 | Meaningful meta descriptions | Pass in reviewed source |
 | 85 | Unique page titles | Pass in reviewed source |
 | 86 | Single H1 each page | Pass in reviewed source |
-| 87 | Alt text for real images | Not independently verified |
+| 87 | Alt text for real images | Source labels present; screen-reader review outstanding |
 | 88 | No deceptive schema claims | Not independently verified |
 | 89 | Keyboard tested on devices | Not independently verified |
 | 90 | Screen reader path tested | Not independently verified |
@@ -183,4 +183,12 @@ Sources inspected for patterns:
 
 ## Release decision
 
-Do not merge or claim production until: protected source tests pass; actual Netlify deploy preview is browser-reviewed at phone and desktop widths; account deep links work; no login form is embedded on static pages; and authentic visual assets are reviewed for privacy/copyright. Keep public website on Netlify and app on Vercel. No spending or paid dependencies authorized.
+Release evidence must distinguish static source checks, Netlify deploy-preview checks, GitHub Actions checks, and actual production HTTP/browser verification. The owner requested a production deployment on 2026-11-09; do not claim rendered-browser QA unless run. Continue using Netlify for the public site and Vercel for the authenticated app, without spending or new dependencies.
+
+## Execution reconciliation (later on 2026-11-09)
+
+- Added original user-provided research photo assets and conference poster PDF and WebP to the actual PR branch, and linked them into an expanded Coach Nate academic-style page; the homepage now uses an authentic research photograph.
+- Added a dedicated `research.html` page with poster preview, full PDF access, accurate authorship and DOI, rather than invented scientific findings.
+- Unified public account and Coach Nate navigation across all Classroom lessons and course weeks; course-week pages now include static mobile navigation so they remain navigable when classroom JavaScript does not load.
+- Corrected erroneous active-page selection on legal and 404 pages.
+- Prior to promotion, 44 static HTML pages were link-audited; final release verification is recorded separately from this historical audit.
