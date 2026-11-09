@@ -118,6 +118,26 @@ for (const file of htmlFiles) {
   }
 }
 
+// Conversion and accessibility regression checks for the public NAV entry points.
+const homeHtml = readFileSync(resolve(root, "index.html"), "utf8");
+for (const [route, label] of [
+  ["coaching.html", "coaching"],
+  ["nav-coach.html", "software"],
+  ["classroom/index.html", "learning"],
+  ["contact.html", "undecided visitor"]
+]) {
+  if (!homeHtml.includes('href="' + route + '"')) fail("index.html", "missing " + label + " journey");
+}
+if (!homeHtml.includes('id="choose-path-heading"')) fail("index.html", "missing audience choice anchor");
+if (!homeHtml.includes('href="#choose-path-heading"')) fail("index.html", "primary action does not lead to audience choices");
+if (!/Not sure where to start\?/i.test(homeHtml)) fail("index.html", "no path for undecided visitors");
+if (/B\.S\. in Kinesiology, a B\.A\. in Biology/.test(homeHtml)) fail("index.html", "potentially reversed degree credentials");
+for (const route of ["index.html", "coaching.html", "nav-coach.html", "classroom/index.html", "contact.html"]) {
+  const html = readFileSync(resolve(root, route), "utf8");
+  const active = (html.match(/aria-current=["']page["']/g) || []).length;
+  if (active > 2) fail(route, "more than one active navigation item per desktop/mobile navigation");
+}
+
 const classroomHub = readFileSync(resolve(root, "classroom/index.html"), "utf8");
 if (!/data-classroom-hub/.test(classroomHub)) fail("classroom/index.html", "missing Classroom hub enhancement hook");
 if (!/data-course-progress/.test(classroomHub)) fail("classroom/index.html", "missing Starter Kit progress control");
