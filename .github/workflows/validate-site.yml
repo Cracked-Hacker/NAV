@@ -65,6 +65,10 @@ jobs:
           }
           NODE
 
+      - name: Verify exact main commit and Classroom assessments on Netlify production
+        if: github.event_name == 'push'
+        run: node scripts/verify-classroom-production.mjs
+
       - name: Smoke-check live production and app routing
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
