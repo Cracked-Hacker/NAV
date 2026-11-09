@@ -70,6 +70,8 @@ jobs:
             echo "Verifying $url"
             curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "$url" >/dev/null
           done
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}" | grep -Fq "Human coaching"
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}nav-coach.html" | grep -Fq "A training workspace for coaches and athletes."
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 --output "${RUNNER_TEMP}/nav-home.html" "${base}"
+          grep -Fq "Human coaching" "${RUNNER_TEMP}/nav-home.html"
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 --output "${RUNNER_TEMP}/nav-product.html" "${base}nav-coach.html"
+          grep -Fq "A training workspace for coaches and athletes." "${RUNNER_TEMP}/nav-product.html"
           curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "https://nav-coach-app-eight.vercel.app/auth?mode=login" >/dev/null
