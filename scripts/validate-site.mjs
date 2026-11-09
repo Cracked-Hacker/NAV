@@ -138,6 +138,24 @@ for (const route of ["index.html", "coaching.html", "nav-coach.html", "classroom
   if (active > 2) fail(route, "more than one active navigation item per desktop/mobile navigation");
 }
 
+// Account and customer-action guardrails: do not mistake a gateway for a deployed member portal.
+const accountHtml = readFileSync(resolve(root, "account.html"), "utf8");
+for (const mode of ["login", "signup", "reset"]) {
+  if (!accountHtml.includes("auth?mode=" + mode)) fail("account.html", "missing " + mode + " route to NAV Coach authentication");
+}
+if (!/not yet released/i.test(accountHtml)) fail("account.html", "must disclose unreleased website member dashboard");
+if (/<form[^>]*(password|login|signup)/i.test(accountHtml)) fail("account.html", "public gateway must not collect authentication credentials");
+const coachingHtml = readFileSync(resolve(root, "coaching.html"), "utf8");
+if (!/docs\\.google\\.com\\/forms\\//.test(coachingHtml)) fail("coaching.html", "missing working coaching inquiry destination");
+const appHtml = readFileSync(resolve(root, "nav-coach.html"), "utf8");
+if (!appHtml.includes('href="account.html"')) fail("nav-coach.html", "missing account gateway for new visitors");
+if (!appHtml.includes("auth?mode=login")) fail("nav-coach.html", "missing existing-user sign-in");
+const firstCoaching = homeHtml.indexOf('class="path-card coaching-path"');
+const firstApp = homeHtml.indexOf('class="path-card app-path"');
+if (firstCoaching < 0 || firstApp < 0 || firstCoaching > firstApp) fail("index.html", "coaching customer path must precede software path");
+const heroBlock = homeHtml.match(/<section class="hero hero-home">([\\s\\S]*?)<\\/section>/)?.[1] || "";
+if ((heroBlock.match(/class="button lime"/g) || []).length !== 1) fail("index.html", "hero must have one clear primary action");
+
 const classroomHub = readFileSync(resolve(root, "classroom/index.html"), "utf8");
 if (!/data-classroom-hub/.test(classroomHub)) fail("classroom/index.html", "missing Classroom hub enhancement hook");
 if (!/data-course-progress/.test(classroomHub)) fail("classroom/index.html", "missing Starter Kit progress control");
