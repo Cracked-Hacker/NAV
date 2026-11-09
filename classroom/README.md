@@ -1,8 +1,12 @@
-# NAV Classroom
+# NAV Classroom authoring and release boundary
 
-NAV Classroom is the public learning surface for NAV's exercise-science education. It is intentionally separate from private coaching data and authenticated instructor publishing controls.
+**Owner instruction (November 9, 2026): unfinished or untested content is private by default.** The files below are authoring sources, not approved public releases. Because this GitHub repository is public, these existing files and older history may remain accessible through GitHub/Pages; move future unreleased content to private storage.
 
-## Student surfaces
+Netlify packaging publishes only `classroom/public-landing.html` as `classroom/index.html`. Quizzes, answers, course weeks, student records, and learning files are withheld from the Netlify artifact until reviewed and explicitly released. Source-level content validation is not public-release approval.
+
+Account-bound tester codes, course grants, private downloads, and owner publishing controls belong in NAV Coach on Vercel and private Supabase, as tracked in NAV-coach-App issue #668 and this site's issue #22.
+
+## Authoring source surfaces (not publicly approved)
 
 - `index.html` — Classroom overview and Starter Kit
 - `course.html` — Hard to Kill course map
