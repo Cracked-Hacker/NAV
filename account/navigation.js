@@ -6,11 +6,12 @@ let generation = 0;
 
 function ensureCoachNateLinks() {
   const coachUrl = new URL('coach-nate.html', root);
-  const currentPath = window.location.pathname.replace(/\/+$/, '');
-  const coachPath = coachUrl.pathname.replace(/\/+$/, '');
+  const normalizedPath = value => value.replace(/\.html$/, '').replace(/\/+$/, '');
+  const currentPath = normalizedPath(window.location.pathname);
+  const coachPath = normalizedPath(coachUrl.pathname);
 
   document.querySelectorAll('.desktop-nav, .mobile-nav nav[aria-label="Mobile primary"]').forEach(nav => {
-    if ([...nav.querySelectorAll('a')].some(link => new URL(link.href).pathname === coachUrl.pathname)) return;
+    if ([...nav.querySelectorAll('a')].some(link => normalizedPath(new URL(link.href).pathname) === coachPath)) return;
     const link = document.createElement('a');
     link.dataset.coachNateLink = '';
     link.href = coachUrl.href;

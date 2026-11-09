@@ -47,6 +47,7 @@ try{
       assert.equal(metrics.width,width);
       assert.ok(metrics.scrollWidth<=width+1,`${route}/${width}: horizontal overflow ${metrics.scrollWidth}`);
       assert.equal(metrics.h1,1,`${route}: one page heading`);
+      assert.equal(await page.locator('.desktop-nav a').filter({hasText:'Coach Nate'}).count(),1,`${route}: one Coach Nate link after Netlify Pretty URLs`);
       assert.deepEqual(metrics.brokenImages,[],`${route}: broken images`);
       if(metrics.cardWidth){assert.equal(metrics.columns,width>1100?2:1);assert.ok(metrics.cardWidth>=(width>=1440?520:240));}
       results.push({route,width,...metrics});
