@@ -245,19 +245,27 @@
   if (!data?.weeks) return;
   const key = "nav-classroom-full-course-v1";
   let storageOK = true;
-  let memory = { completed: { assignments: [], labs: [], quizzes: [] }, drafts: {}, quizAttempts: {} };
+  let memory = { completed: { assignments: [], labs: [], quizzes: [] }, drafts: {}, quizAttempts: {}, quizResults: {} };
 
   function normalize(value) {
     const base = value && typeof value === "object" ? value : {};
-    const completed = base.completed && typeof base.completed === "object" ? base.completed : {};
+    const old = base.completed && typeof base.completed === "object" ? base.completed : {};
+    const quizResults = base.quizResults && typeof base.quizResults === "object" ? base.quizResults : {};
+    const validQuizzes = data.weeks.map((week) => week.quiz.id).filter((id) => {
+      const result = quizResults[id];
+      return result?.version === "weekly-v2-2026-11-09" && result?.passed === true &&
+        Number.isInteger(result.correct) && result.correct >= 7 && result.total === 8;
+    });
     return {
       completed: {
-        assignments: Array.isArray(completed.assignments) ? [...new Set(completed.assignments)] : [],
-        labs: Array.isArray(completed.labs) ? [...new Set(completed.labs)] : [],
-        quizzes: Array.isArray(completed.quizzes) ? [...new Set(completed.quizzes)] : []
+        assignments: Array.isArray(old.assignments) ? [...new Set(old.assignments)] : [],
+        labs: Array.isArray(old.labs) ? [...new Set(old.labs)] : [],
+        // Legacy one-answer passes are deliberately not counted as new weekly assessments.
+        quizzes: validQuizzes
       },
       drafts: base.drafts && typeof base.drafts === "object" ? base.drafts : {},
-      quizAttempts: base.quizAttempts && typeof base.quizAttempts === "object" ? base.quizAttempts : {}
+      quizAttempts: base.quizAttempts && typeof base.quizAttempts === "object" ? base.quizAttempts : {},
+      quizResults
     };
   }
 
@@ -291,11 +299,11 @@
     const done = load().completed[type].includes(id);
     const span = document.createElement("span");
     span.className = `work-status${done ? " is-complete" : ""}`;
-    span.textContent = done ? "✓ Complete" : "Not complete";
+    span.textContent = done ? (type === "quizzes" ? "✓ 8-question practice target met" : "✓ Self-reported complete") : (type === "quizzes" ? "Practice target not met" : "Not self-marked");
     return span;
   }
 
-  function completionButton(type, id, onChange) {
+  function completionButton(type, id, onChange, canMark) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "work-complete-button";
@@ -303,10 +311,11 @@
       const done = load().completed[type].includes(id);
       button.classList.toggle("is-complete", done);
       button.setAttribute("aria-pressed", done ? "true" : "false");
-      button.textContent = done ? "✓ Complete" : "Mark complete";
+      button.textContent = done ? "✓ Self-reported complete" : "Self-mark practice complete";
     }
     button.addEventListener("click", () => {
       const done = load().completed[type].includes(id);
+      if (!done && typeof canMark === "function" && !canMark()) return;
       complete(type, id, !done);
       render();
       onChange?.();
@@ -368,22 +377,67 @@
     article.className = "coursework-card";
     article.dataset.workId = item.id;
     const head = weekHeader(week, label);
-    const status = statusPill(type, item.id);
+    let status = statusPill(type, item.id);
     head.append(status);
     const title = document.createElement("h3"); title.textContent = item.title;
     const summary = document.createElement("p"); summary.className = "coursework-summary"; summary.textContent = item.summary;
     const details = document.createElement("details"); details.className = "work-panel";
     const summaryEl = document.createElement("summary"); summaryEl.textContent = type === "assignments" ? "Open assignment workspace" : "Open lab notes";
     const body = document.createElement("div"); body.className = "work-panel-body";
-    const note = document.createElement("p"); note.className = "storage-note"; note.textContent = "Private browser-local draft. Nothing here is uploaded or sent to an instructor.";
-    const textarea = document.createElement("textarea"); textarea.className = "work-draft"; textarea.rows = 7; textarea.placeholder = type === "assignments" ? "Draft your reasoning, outline, or response here…" : "Record observations, data, limitations, and interpretation here…"; textarea.value = load().drafts[item.id] || "";
+    const note = document.createElement("p"); note.className = "storage-note";
+    note.textContent = "This is a browser-local practice workspace. Your writing is not submitted, independently graded, reviewed by an instructor, or a qualification for a NAV credential.";
+    const guide = document.createElement("div"); guide.className = "practice-rubric";
+    const rubricTitle = document.createElement("h4"); rubricTitle.textContent = type === "labs" ? "Lab report expectations" : "Assignment self-review checklist";
+    const criteria = type === "labs" ? [
+      "Specify a safe, feasible protocol and any nonphysical alternative or modification.",
+      "Document raw observations, units, equipment, timing and controls; do not invent measurements.",
+      "Interpret observations and identify measurement uncertainty or other limitations.",
+      "State the practical conclusion, next action and any safety/referral boundaries."
+    ] : [
+      "Identify the athlete or scenario, measurable goal and real constraints.",
+      "Explain the proposed answer or program with a scientifically relevant rationale.",
+      "Compare alternatives and acknowledge assumptions, tradeoffs or uncertainty.",
+      "Specify what feedback/data would change your recommendation and when referral is appropriate."
+    ];
+    const intro = document.createElement("p");
+    intro.textContent = "Include the following in the written response. Checking these boxes is your own review, not an instructor's evaluation.";
+    const checklist = document.createElement("div"); checklist.className = "practice-rubric-checklist";
+    const checks = criteria.map((criterion, index) => {
+      const row = document.createElement("label");
+      const input = document.createElement("input"); input.type = "checkbox"; input.value = String(index + 1);
+      const copy = document.createElement("span"); copy.textContent = criterion;
+      row.append(input, copy); checklist.append(row);
+      return input;
+    });
+    guide.append(rubricTitle, intro, checklist);
+    const textarea = document.createElement("textarea"); textarea.className = "work-draft"; textarea.rows = 10;
+    textarea.setAttribute("aria-label", `${item.title}: written evidence and analysis`);
+    textarea.placeholder = type === "assignments"
+      ? "Goal/constraints:\\nEvidence and proposed decision:\\nAlternatives and uncertainty:\\nMonitoring or referral:"
+      : "Question/protocol and safety:\\nRaw observations with units:\\nInterpretation and limitations:\\nNext action:";
+    textarea.value = load().drafts[item.id] || "";
     const controls = document.createElement("div"); controls.className = "work-controls";
-    const saveButton = document.createElement("button"); saveButton.type = "button"; saveButton.className = "work-save-button"; saveButton.textContent = "Save draft";
+    const saveButton = document.createElement("button"); saveButton.type = "button"; saveButton.className = "work-save-button";
+    saveButton.textContent = "Save draft";
     const saved = document.createElement("span"); saved.className = "saved-copy"; saved.setAttribute("aria-live", "polite");
-    saveButton.addEventListener("click", () => { const state = load(); save({ ...state, drafts: { ...state.drafts, [item.id]: textarea.value } }); saved.textContent = "Saved on this device."; });
-    const doneButton = completionButton(type, item.id, () => { const fresh = statusPill(type, item.id); status.replaceWith(fresh); });
+    const saveDraft = () => { const state = load(); save({ ...state, drafts: { ...state.drafts, [item.id]: textarea.value } }); };
+    saveButton.addEventListener("click", () => { saveDraft(); saved.textContent = "Draft saved only in this browser. It was not submitted or graded."; });
+    const canMark = () => {
+      const count = textarea.value.trim().length;
+      const countChecked = checks.filter((input) => input.checked).length;
+      if (count < 150 || countChecked !== checks.length) {
+        saved.textContent = `To self-mark, write at least 150 characters of actual evidence (${count} now) and review all ${checks.length} criteria (${countChecked} checked). This does not certify quality.`;
+        return false;
+      }
+      saveDraft();
+      saved.textContent = "Evidence saved and practice self-marked. No instructor assessed it.";
+      return true;
+    };
+    const doneButton = completionButton(type, item.id, () => {
+      const fresh = statusPill(type, item.id); status.replaceWith(fresh); status = fresh;
+    }, canMark);
     controls.append(saveButton, doneButton, saved);
-    body.append(note, textarea, controls);
+    body.append(note, guide, textarea, controls);
     details.append(summaryEl, body);
     article.append(head, title, summary, details);
     return article;
@@ -401,43 +455,152 @@
     data.weeks.forEach((week) => week.labs.forEach((lab) => root.append(workspaceCard(week, "labs", lab, "Solo gym lab"))));
   }
 
+  function weeklyItems(week) {
+    const bank = window.NAV_CLASSROOM_WEEKLY_BANK;
+    const details = window.NAV_WEEK_DETAILS?.[week.week];
+    const tuples = bank?.rows?.[week.week];
+    if (!Array.isArray(tuples) || tuples.length !== 7 || !details?.objectives || details.objectives.length !== 4) return null;
+    const items = [{
+      id: `${week.quiz.id}-core`, objective: bank.originalObjective[week.week],
+      level: "understand", prompt: week.quiz.question,
+      options: week.quiz.options, correct: week.quiz.correct, explanation: week.quiz.explanation
+    }, ...tuples.map(([objective, level, prompt, options, correct, explanation], i) => ({
+      id: `${week.quiz.id}-supplement-${i + 2}`, objective, level, prompt, options, correct, explanation
+    }))];
+    if (items.length !== 8 || new Set(items.map((q) => q.id)).size !== 8 ||
+        items.some((q) => ![1, 2, 3, 4].includes(q.objective) || !Array.isArray(q.options) ||
+          q.options.length !== 4 || !Number.isInteger(q.correct) || q.correct < 0 || q.correct > 3)) return null;
+    // Shuffle displayed choices using Fisher-Yates so item-bank answer-index patterns
+    // do not teach learners to select a position instead of understanding the concept.
+    return items.map((item) => {
+      const choices = item.options.map((label, original) => ({ label, original }));
+      for (let i = choices.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      return { ...item, options: choices.map((choice) => choice.label),
+        correct: choices.findIndex((choice) => choice.original === item.correct) };
+    });
+  }
+
   function renderQuizzes() {
     const root = document.querySelector("[data-quiz-list]");
     if (!root) return;
+    root.replaceChildren();
     data.weeks.forEach((week) => {
-      const quiz = week.quiz;
+      const items = weeklyItems(week);
       const card = document.createElement("article");
       card.className = "full-quiz-card";
-      card.append(weekHeader(week, "Quiz"));
-      const status = statusPill("quizzes", quiz.id); card.querySelector(".coursework-head")?.append(status);
-      const h2 = document.createElement("h2"); h2.textContent = quiz.title;
-      const form = document.createElement("form"); form.className = "full-quiz-form";
-      const fieldset = document.createElement("fieldset"); const legend = document.createElement("legend"); legend.textContent = quiz.question; fieldset.append(legend);
-      quiz.options.forEach((option, index) => { const label = document.createElement("label"); const input = document.createElement("input"); input.type = "radio"; input.name = quiz.id; input.value = String(index); const span = document.createElement("span"); span.textContent = option; label.append(input, span); fieldset.append(label); });
-      const actions = document.createElement("div"); actions.className = "quiz-actions";
-      const button = document.createElement("button"); button.type = "submit"; button.className = "quiz-submit"; button.textContent = "Check answer";
-      const feedback = document.createElement("p"); feedback.className = "quiz-feedback"; feedback.setAttribute("aria-live", "polite");
-      actions.append(button, feedback); form.append(fieldset, actions);
-      const explanation = document.createElement("div"); explanation.className = "quiz-explanation"; explanation.hidden = true;
-      const p = document.createElement("p"); p.textContent = quiz.explanation; explanation.append(p);
-      if (load().completed.quizzes.includes(quiz.id)) { feedback.textContent = "✓ Passed on this device."; feedback.classList.add("correct"); explanation.hidden = false; }
+      card.append(weekHeader(week, "8-question formative assessment"));
+      let status = statusPill("quizzes", week.quiz.id);
+      card.querySelector(".coursework-head")?.append(status);
+      const heading = document.createElement("h2");
+      heading.textContent = week.quiz.title;
+      card.append(heading);
+      if (!items) {
+        const error = document.createElement("p");
+        error.setAttribute("role", "alert");
+        error.textContent = "This assessment is unavailable because its complete question bank did not load. No grade or completion was recorded.";
+        card.append(error);
+        root.append(card);
+        return;
+      }
+      const note = document.createElement("p");
+      note.className = "storage-note";
+      note.textContent = "Eight questions across four learning objectives. Answer every question; 7/8 correct meets the 80% practice target. Feedback follows submission. Scores are browser-local practice, never a verified NAV credential.";
+      const form = document.createElement("form");
+      form.className = "full-quiz-form";
+      const fields = [];
+      items.forEach((q, index) => {
+        const field = document.createElement("fieldset");
+        field.className = "quiz-question";
+        const legend = document.createElement("legend");
+        legend.textContent = `Question ${index + 1} of ${items.length}. ${q.prompt}`;
+        const objective = document.createElement("p");
+        objective.className = "quiz-objective";
+        objective.textContent = `Objective ${q.objective} · ${q.level} — ${window.NAV_WEEK_DETAILS[week.week].objectives[q.objective - 1]}`;
+        field.append(legend, objective);
+        q.options.forEach((option, optionIndex) => {
+          const label = document.createElement("label");
+          const input = document.createElement("input");
+          input.type = "radio";
+          input.name = q.id;
+          input.value = String(optionIndex);
+          const span = document.createElement("span");
+          span.textContent = option;
+          label.append(input, span);
+          field.append(label);
+        });
+        const explanation = document.createElement("div");
+        explanation.className = "quiz-explanation quiz-item-feedback";
+        explanation.hidden = true;
+        explanation.setAttribute("aria-live", "polite");
+        field.append(explanation);
+        form.append(field);
+        fields.push({ field, explanation, q });
+      });
+      const actions = document.createElement("div");
+      actions.className = "quiz-actions";
+      const submit = document.createElement("button");
+      submit.type = "submit";
+      submit.className = "quiz-submit";
+      submit.textContent = "Score all 8 answers";
+      const feedback = document.createElement("p");
+      feedback.className = "quiz-feedback";
+      feedback.setAttribute("aria-live", "polite");
+      const prior = load().quizResults[week.quiz.id];
+      if (prior?.version === "weekly-v2-2026-11-09") {
+        feedback.textContent = `Best previous practice score: ${prior.correct}/8 (${prior.score}%). ${prior.passed ? "Target met." : "Keep practicing."}`;
+      }
+      actions.append(submit, feedback);
+      form.append(actions);
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        form.querySelectorAll("label").forEach((label) => label.classList.remove("quiz-correct", "quiz-incorrect"));
-        feedback.classList.remove("correct", "incorrect");
-        const selected = form.querySelector("input:checked");
-        if (!selected) { feedback.textContent = "Choose an answer first."; feedback.classList.add("incorrect"); return; }
-        const selectedIndex = Number(selected.value);
-        const correct = selectedIndex === quiz.correct;
-        selected.closest("label")?.classList.add(correct ? "quiz-correct" : "quiz-incorrect");
+        const selected = fields.map(({ field }) => field.querySelector("input:checked"));
+        const firstMissing = selected.findIndex((item) => !item);
+        if (firstMissing >= 0) {
+          feedback.textContent = `Answer all eight questions before scoring; question ${firstMissing + 1} is unanswered.`;
+          feedback.classList.remove("correct");
+          feedback.classList.add("incorrect");
+          fields[firstMissing].field.querySelector("input")?.focus();
+          return;
+        }
+        const correct = fields.reduce((sum, { q }, index) => sum + (Number(selected[index].value) === q.correct ? 1 : 0), 0);
+        const percent = Math.round((100 * correct) / fields.length);
+        const passedThisAttempt = correct >= 7;
         const state = load();
-        const attempts = (state.quizAttempts[quiz.id] || 0) + 1;
-        save({ ...state, quizAttempts: { ...state.quizAttempts, [quiz.id]: attempts } });
-        explanation.hidden = false;
-        if (correct) { complete("quizzes", quiz.id, true); feedback.textContent = `✓ Correct${attempts > 1 ? ` after ${attempts} attempts` : ""}.`; feedback.classList.add("correct"); const fresh = statusPill("quizzes", quiz.id); status.replaceWith(fresh); }
-        else { feedback.textContent = "Not quite. Read the explanation, then try again."; feedback.classList.add("incorrect"); }
+        const oldResult = state.quizResults[week.quiz.id];
+        const prev = oldResult?.version === "weekly-v2-2026-11-09" ? oldResult : null;
+        const bestCorrect = Math.max(prev?.correct ?? 0, correct);
+        const bestPercent = Math.round((100 * bestCorrect) / fields.length);
+        const result = { version: "weekly-v2-2026-11-09", correct: bestCorrect, total: fields.length,
+          score: bestPercent, passed: bestCorrect >= 7, lastCorrect: correct, lastScore: percent };
+        save({ ...state, quizAttempts: { ...state.quizAttempts, [week.quiz.id]: (state.quizAttempts[week.quiz.id] || 0) + 1 },
+          quizResults: { ...state.quizResults, [week.quiz.id]: result },
+          completed: { ...state.completed, quizzes: result.passed
+            ? [...new Set([...state.completed.quizzes, week.quiz.id])]
+            : state.completed.quizzes.filter((id) => id !== week.quiz.id) } });
+        fields.forEach(({ field, explanation, q }, index) => {
+          field.querySelectorAll("label").forEach((label) => label.classList.remove("quiz-correct", "quiz-incorrect"));
+          const chosen = Number(selected[index].value);
+          const wasCorrect = chosen === q.correct;
+          selected[index].closest("label")?.classList.add(wasCorrect ? "quiz-correct" : "quiz-incorrect");
+          const answer = document.createElement("p");
+          answer.textContent = `${wasCorrect ? "✓ Correct" : "✕ Not yet"} — Correct answer: ${q.options[q.correct]}`;
+          const why = document.createElement("p");
+          why.textContent = q.explanation;
+          explanation.replaceChildren(answer, why);
+          explanation.hidden = false;
+        });
+        feedback.classList.remove("correct", "incorrect");
+        feedback.classList.add(passedThisAttempt ? "correct" : "incorrect");
+        feedback.textContent = `This attempt: ${correct}/8 (${percent}%). ${passedThisAttempt ? "Practice target met." : "Review the explanations and try again."} Best: ${bestCorrect}/8. This is formative practice, not certification.`;
+        const updatedStatus = statusPill("quizzes", week.quiz.id);
+        status.replaceWith(updatedStatus);
+        status = updatedStatus;
+        submit.textContent = "Score another practice attempt";
       });
-      card.append(h2, form, explanation);
+      card.append(note, form);
       root.append(card);
     });
   }
@@ -454,11 +617,11 @@
     const percent = Math.round((done / totals.total) * 100);
     root.innerHTML = `
       <div class="progress-overview-grid">
-        <section class="progress-hero-card"><p class="eyebrow">Full course activity progress</p><strong>${percent}%</strong><p>${done} of ${totals.total} quizzes, labs, and assignments complete on this device.</p><div class="progress-track" role="progressbar" aria-label="Full course activity progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span class="progress-fill" style="width:${percent}%"></span></div></section>
+        <section class="progress-hero-card"><p class="eyebrow">Full course activity progress</p><strong>${percent}%</strong><p>${done} of ${totals.total} practice activities logged on this device. Assignments/labs are self-reported, not instructor assessed.</p><div class="progress-track" role="progressbar" aria-label="Full course activity progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span class="progress-fill" style="width:${percent}%"></span></div></section>
         <section class="progress-stat-card"><span>${starterCompleted}/8</span><strong>Starter modules complete</strong><small>${starterQuizPassed} quick checks passed</small></section>
-        <section class="progress-stat-card"><span>${state.completed.quizzes.length}/10</span><strong>Weekly quizzes passed</strong><small>${Object.values(state.quizAttempts).reduce((sum, value) => sum + Number(value || 0), 0)} total attempts</small></section>
-        <section class="progress-stat-card"><span>${state.completed.labs.length}/${totals.labs}</span><strong>Solo labs complete</strong><small>Physical or analytical alternative</small></section>
-        <section class="progress-stat-card"><span>${state.completed.assignments.length}/10</span><strong>Assignments complete</strong><small>Local completion only</small></section>
+        <section class="progress-stat-card"><span>${state.completed.quizzes.length}/10</span><strong>8-question practice targets met</strong><small>${Object.values(state.quizAttempts).reduce((sum, value) => sum + Number(value || 0), 0)} total attempts</small></section>
+        <section class="progress-stat-card"><span>${state.completed.labs.length}/${totals.labs}</span><strong>Labs self-marked</strong><small>Not graded or independently verified</small></section>
+        <section class="progress-stat-card"><span>${state.completed.assignments.length}/10</span><strong>Assignments self-marked</strong><small>Not graded or independently verified</small></section>
       </div>
       <div class="week-progress-list" data-week-progress></div>
       <div class="progress-actions"><button type="button" class="course-reset" data-reset-full-course>Reset full-course local progress</button></div>`;
@@ -469,7 +632,7 @@
       const weekDone = ids.assignments.filter((id) => state.completed.assignments.includes(id)).length + ids.labs.filter((id) => state.completed.labs.includes(id)).length + ids.quizzes.filter((id) => state.completed.quizzes.includes(id)).length;
       const row = document.createElement("div"); row.className = "week-progress-row"; row.innerHTML = `<span>Week ${week.week}</span><strong>${week.title}</strong><small>${weekDone}/${weekTotal} activities</small>`; weekRoot.append(row);
     });
-    root.querySelector("[data-reset-full-course]")?.addEventListener("click", () => { if (!confirm("Reset all full-course quiz, lab, assignment, and draft progress stored in this browser?")) return; save({ completed: { assignments: [], labs: [], quizzes: [] }, drafts: {}, quizAttempts: {} }); renderProgress(); });
+    root.querySelector("[data-reset-full-course]")?.addEventListener("click", () => { if (!confirm("Reset all full-course quiz, lab, assignment, and draft progress stored in this browser?")) return; save({ completed: { assignments: [], labs: [], quizzes: [] }, drafts: {}, quizAttempts: {}, quizResults: {} }); renderProgress(); });
   }
 
   function renderDashboardSummary() {
@@ -479,7 +642,7 @@
     const totals = activityTotals();
     const done = state.completed.assignments.length + state.completed.labs.length + state.completed.quizzes.length;
     const firstWeek = data.weeks.find((week) => !state.completed.quizzes.includes(week.quiz.id) || week.labs.some((lab) => !state.completed.labs.includes(lab.id)) || !state.completed.assignments.includes(week.assignment.id));
-    const nextText = firstWeek ? `Week ${firstWeek.week}: ${firstWeek.title}` : "Full course activity set complete";
+    const nextText = firstWeek ? `Week ${firstWeek.week}: ${firstWeek.title}` : "Practice activity checklist complete — not a credential";
     root.innerHTML = `<div class="lms-summary-copy"><p class="eyebrow">Full course</p><h2>${data.course.title}</h2><p>${data.course.subtitle}</p><div class="course-facts"><span>${data.course.length}</span><span>${done}/${totals.total} activities complete</span><span>${nextText}</span></div></div><div class="lms-summary-actions"><a class="button lime" href="course.html">Open course</a><a class="button secondary" href="progress.html">View progress</a></div>`;
   }
 

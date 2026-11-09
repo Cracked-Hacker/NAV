@@ -23,7 +23,7 @@
       if (!badge) return;
       const done = readCompleted(type, id);
       badge.classList.toggle("is-complete", done);
-      badge.textContent = done ? "✓ Complete" : "Not complete";
+      badge.textContent = done ? "✓ Self-reported complete" : "Not self-marked";
     });
   });
 })();
