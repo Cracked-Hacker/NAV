@@ -15,7 +15,7 @@ Use Node 24 for release checks.
 
 ## Release gate
 
-Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, and `npm run build` before publishing. Existing public-site checks and account runtime tests are configured for pull requests, GitHub Pages production deployment, and the existing Netlify build through `netlify.toml`. Only `.site-build/` public assets are uploaded on either host.
+Run `npm ci --ignore-scripts`, `npm run verify`, `npm audit --audit-level=high`, and `npm run build` before publishing. Existing public-site checks and account runtime tests run for pull requests and the existing Netlify build through `netlify.toml`. Netlify publishes only `.site-build/`; the former Pages workflow verifies the canonical Netlify site and no longer publishes a competing website.
 
 The gate protects required public routes, internal links, one-H1 page structure, viewport/title metadata, reduced-motion/focus/safe-area CSS, and rejects placeholder content plus localhost/127.0.0.1 production references.
 
