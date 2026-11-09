@@ -71,5 +71,5 @@ jobs:
             curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "$url" >/dev/null
           done
           curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}" | grep -Fq "Human coaching"
-          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}nav-coach.html" | grep -Fq "A simpler place to coach"
+          curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "${base}nav-coach.html" | grep -Fq "A training workspace for coaches and athletes."
           curl --fail --silent --show-error --location --retry 4 --retry-all-errors --retry-delay 2 --max-time 30 "https://nav-coach-app-eight.vercel.app/auth?mode=login" >/dev/null
