@@ -21,7 +21,7 @@ function requireMatch(path, html, pattern, message) {
 for (const page of keyPages) {
   const html = text(page);
   requireMatch(page, html, /<meta\s+name=["']description["'][^>]+content=["'][^"']{40,}["']/i, "missing useful meta description");
-  requireMatch(page, html, /<link\s+rel=["']canonical["'][^>]+href=["']https:\/\/cracked-hacker\.github\.io\/NAV\//i, "missing canonical URL");
+  requireMatch(page, html, /<link\s+rel=["']canonical["'][^>]+href=["']https:\/\/coach-nate\.netlify\.app\//i, "missing canonical URL");
   requireMatch(page, html, /<meta\s+property=["']og:title["']/i, "missing Open Graph title");
   requireMatch(page, html, /<meta\s+property=["']og:description["']/i, "missing Open Graph description");
   requireMatch(page, html, /<meta\s+property=["']og:url["']/i, "missing Open Graph URL");
