@@ -14,3 +14,5 @@
 .starter-preview .eyebrow,.lime-panel .eyebrow{color:var(--lime-ink)}
 /* Keep long names and research headings within narrow viewports across system fonts. */
 h1,h2,h3{overflow-wrap:anywhere}
+/* Decorative rings must not cover coaching steps or account actions. */
+.hero-system:after,.final-cta:after{display:none}
