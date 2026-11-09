@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { runInNewContext } from "node:vm";
+import { runInNewContext, Script } from "node:vm";
 import { strict as assert } from "node:assert";
 import { resolve } from "node:path";
 
@@ -52,6 +52,7 @@ if (index("lms-data.js") < 0 || index("week-data.js") < index("lms-data.js") ||
     index("weekly-question-bank.js") < index("week-data.js") ||
     index("classroom.js") < index("weekly-question-bank.js")) error("quiz page scripts must load course, objectives, question bank, then quiz renderer");
 const js = readFileSync(resolve(root, "classroom/classroom.js"),"utf8");
+new Script(js, { filename: "classroom/classroom.js" });
 for (const marker of [
  "weeklyItems(week)", "new Set(items.map", "Score all 8 answers", "Answer all eight questions",
  "Legacy one-answer passes are deliberately not counted", "practice-rubric-checklist",
