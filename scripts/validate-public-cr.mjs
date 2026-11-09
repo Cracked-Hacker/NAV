@@ -91,7 +91,7 @@ for (const page of keyPages) {
 
 const robots = text("robots.txt");
 if (!robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`)) failures.push("robots.txt: sitemap declaration missing or wrong");
-if (!robots.includes("Disallow: /classroom/")) failures.push("robots.txt: invitation-only beta must not be indexed");
+// Permit crawlers to see the explicit noindex on the beta landing; robots blocking it would hide that directive.
 const sitemap = text("sitemap.xml");
 if (sitemap.includes(`${canonicalBase}classroom/`)) failures.push("sitemap.xml: unreleased Classroom must not be indexed");
 for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "research.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
