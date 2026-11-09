@@ -3,7 +3,7 @@ import process from "node:process";
 
 const failures = [];
 const root = process.cwd();
-const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "coach-nate.html", "resume.html", "account.html"];
+const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "coach-nate.html", "resume.html", "research.html", "account.html"];
 const canonicalBase = "https://coach-nate.netlify.app/";
 const appUrl = "https://nav-coach-app-eight.vercel.app/auth?mode=login";
 
@@ -84,7 +84,7 @@ for (const page of keyPages) {
 const robots = text("robots.txt");
 if (!robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`)) failures.push("robots.txt: sitemap declaration missing or wrong");
 const sitemap = text("sitemap.xml");
-for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "coaching.html", "classroom/", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
+for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "research.html", "coaching.html", "classroom/", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
   if (!sitemap.includes(`<loc>${canonicalBase}${route}</loc>`)) failures.push(`sitemap.xml: missing ${route}`);
 }
 
