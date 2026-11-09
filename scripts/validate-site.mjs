@@ -109,7 +109,7 @@ for (const file of htmlFiles) {
     if (!rawHref || rawHref.startsWith("#") || rawHref.startsWith("mailto:") || rawHref.startsWith("tel:") || rawHref.startsWith("http://") || rawHref.startsWith("https://") || rawHref.startsWith("data:")) continue;
     const href = rawHref.split("#", 1)[0].split("?", 1)[0];
     if (!href) continue;
-    if (href.startsWith("/")) { fail(rel, `root-absolute internal link is unsafe for the current /NAV/ Pages base: ${rawHref}`); continue; }
+    if (href.startsWith("/")) { fail(rel, `root-absolute internal link is disallowed by the site-relative link convention: ${rawHref}`); continue; }
     let target = normalize(resolve(dirname(file), href));
     if (href.endsWith("/")) target = join(target, "index.html");
     if (existsSync(target) && statSync(target).isDirectory()) target = join(target, "index.html");
