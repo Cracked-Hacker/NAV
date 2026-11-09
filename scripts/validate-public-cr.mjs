@@ -42,8 +42,8 @@ requireMatch("index.html", home, /Prescription ≠ performance/i, "missing core 
 
 const product = text("nav-coach.html");
 requireMatch("nav-coach.html", product, /human coach in control/i, "missing human-coach-control positioning");
-requireMatch("nav-coach.html", product, /Status:\s*In development/i, "spreadsheet migration must be visibly labeled in development");
-requireMatch("nav-coach.html", product, /Spreadsheet import is not presented here as a currently released production feature/i, "missing explicit migration availability boundary");
+requireMatch("nav-coach.html", product, /Open NAV Coach/i, "working app access must remain visible");
+if (/Status:\s*In development|Spreadsheet program import is not released yet/i.test(product)) failures.push("nav-coach.html: unfinished features must not be advertised publicly");
 requireMatch("nav-coach.html", product, /private coaching information.{0,180}(?:authenticated|private).{0,40}app/i, "missing public/private boundary");
 
 const science = text("science.html");
@@ -52,10 +52,18 @@ requireMatch("science.html", science, /A finding is not the same thing as a pres
 requireMatch("science.html", science, /not medical care/i, "missing scope boundary");
 
 const resources = text("resources.html");
-for (const question of ["What is NAV?", "Does NAV replace a coach?", "Can coaches bring existing spreadsheet programs into NAV?", "What happens to private client data?", "Is NAV medical care?", "How do I sign in?"]) {
+for (const question of ["What is NAV?", "Does NAV replace a coach?", "How do I access NAV beta features?", "What happens to private client data?", "Is NAV medical care?", "How do I sign in?"]) {
   if (!resources.includes(question)) failures.push(`resources.html: missing FAQ question: ${question}`);
 }
 requireMatch("resources.html", resources, /"@type":"FAQPage"/, "missing FAQPage structured data");
+
+const privateBeta = text("classroom/index.html");
+requireMatch("classroom/index.html", privateBeta, /Private beta access/i, "unfinished Classroom must show invitation-only introduction");
+requireMatch("classroom/index.html", privateBeta, /noindex,nofollow/i, "unreleased learning entry must not be indexed");
+requireMatch("classroom/index.html", privateBeta, /https:\/\/nav-coach-app-eight\.vercel\.app\/beta/, "redemption must occur in authenticated app");
+if (/href="(?:quizzes|labs|course)\.html"/i.test(privateBeta)) failures.push("classroom/index.html: unreleased activities linked publicly");
+const packaging = text("scripts/package-site.mjs");
+requireMatch("scripts/package-site.mjs", packaging, /cpSync\('classroom\/index\.html'/, "site build must ship only the public beta intro, not course files");
 
 const accountEntry = text("account/auth.html");
 for (const id of ["login-form", "signup-form", "reset-form"]) {
@@ -83,8 +91,10 @@ for (const page of keyPages) {
 
 const robots = text("robots.txt");
 if (!robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`)) failures.push("robots.txt: sitemap declaration missing or wrong");
+if (!robots.includes("Disallow: /classroom/")) failures.push("robots.txt: invitation-only beta must not be indexed");
 const sitemap = text("sitemap.xml");
-for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "research.html", "coaching.html", "classroom/", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
+if (sitemap.includes(`${canonicalBase}classroom/`)) failures.push("sitemap.xml: unreleased Classroom must not be indexed");
+for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "research.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
   if (!sitemap.includes(`<loc>${canonicalBase}${route}</loc>`)) failures.push(`sitemap.xml: missing ${route}`);
 }
 
