@@ -12,3 +12,5 @@
 
 .desktop-nav>a:not(.nav-signup){min-height:48px;display:inline-flex;align-items:center}.app-footer-link{font-size:.9rem;font-weight:750}.home-hero-side-heading{font-size:clamp(1.8rem,2.8vw,2.5rem);line-height:1.1;margin:18px 0 24px}.hero-system>.button{align-self:start;margin-top:24px}.hero-home .hero-system{min-height:470px}
 .starter-preview .eyebrow,.lime-panel .eyebrow{color:var(--lime-ink)}
+/* Keep long names and research headings within narrow viewports across system fonts. */
+h1,h2,h3{overflow-wrap:anywhere}
