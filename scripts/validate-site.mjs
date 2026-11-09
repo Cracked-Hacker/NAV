@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, extname, join, normalize, relative, resolve, sep } from "node:path";
 import process from "node:process";
+import "./validate-classroom-assessments.mjs";
 
 const root = process.cwd();
 const failures = [];
@@ -50,6 +51,8 @@ const requiredFiles = [
   "classroom/classroom.css",
   "classroom/classroom.js",
   "classroom/lms-data.js",
+  "classroom/weekly-question-bank.js",
+  "scripts/validate-classroom-assessments.mjs",
   "classroom/workspace-sync.js",
   "classroom/week.css",
   "classroom/week.js",
