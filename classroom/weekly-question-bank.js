@@ -175,7 +175,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
         "RPE is irrelevant"
       ],
       0,
-      "Changing two task variables confounds the comparison."
+      "Changing both load and range of motion prevents attributing performance changes to only one of those factors."
     ],
     [
       4,
@@ -255,7 +255,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
         "Recruitment alone proves hypertrophy"
       ],
       1,
-      "Neural behavior is graded and task dependent."
+      "Motor-unit recruitment and discharge are graded and task-dependent, so one simple on/off rule is misleading."
     ],
     [
       1,
@@ -301,7 +301,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
     [
       2,
       "understand",
-      "Mechanotransduction is:",
+      "What does mechanotransduction describe in training adaptation?",
       [
         "Turning mechanical signals into cellular responses",
         "Converting food into gravity",
@@ -374,7 +374,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
         "The response may diminish with exposure"
       ],
       2,
-      "Soreness alone does not predict muscle growth."
+      "Muscle soreness is not a direct measurement of later hypertrophy and cannot establish which training dose is optimal."
     ]
   ],
   "5": [
@@ -575,7 +575,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
         "0.004 W"
       ],
       2,
-      "Power = force × velocity: 450 × 2 = 900 W."
+      "Instantaneous mechanical power equals force times velocity in the direction of the force: 450 N × 2 m/s = 900 W."
     ],
     [
       2,
@@ -619,7 +619,7 @@ window.NAV_CLASSROOM_WEEKLY_BANK = {
     [
       1,
       "understand",
-      "Impulse describes:",
+      "Which statement correctly describes mechanical impulse?",
       [
         "Force integrated over time",
         "Velocity multiplied by soreness",
