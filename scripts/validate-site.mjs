@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve, dirname, normalize, join, sep, extname } from "node:path";
 import "./validate-classroom-assessments.mjs";
+import {PUBLIC_RELEASE_FILES} from "./public-release-manifest.mjs";
 
 // This validates the FINISHED-ONLY public artifact, not that every file in
 // GitHub (including development source) is public or release-ready.
@@ -15,19 +16,12 @@ const required = [
 const mustExist = path => {if (!existsSync(path)) failures.push(path+": missing public artifact source");};
 for (const p of required) mustExist(p);
 const root = process.cwd();
-const publishable = new Set(["classroom/index.html"]);
-for (const name of readdirSync(".")) {
- if (/\.(?:html|css|xml|txt)$/.test(name)) publishable.add(name);
-}
-function collect(folder) {
- if(!existsSync(folder))return;
- for(const item of readdirSync(folder,{withFileTypes:true})){
-  const full=join(folder,item.name);
-  if(item.isDirectory())collect(full);
-  else publishable.add(full.replaceAll("\\","/"));
- }
-}
-for (const folder of ["account","assets","vendor"]) collect(folder);
+const publishable = new Set(PUBLIC_RELEASE_FILES);
+if(publishable.size!==PUBLIC_RELEASE_FILES.length)failures.push("public-release-manifest: duplicate entries");
+if(!publishable.has("classroom/index.html"))failures.push("public-release-manifest: missing beta information entry");
+if([...publishable].some(p=>p.startsWith("classroom/")&&p!=="classroom/index.html"))
+ failures.push("public-release-manifest: unpublished Classroom lessons must never ship");
+for(const file of publishable)mustExist(file);
 const visibleHtml=[...publishable].filter(p=>p.endsWith(".html"));
 const absoluteLinks=/<a\b[^>]*\bhref\s*=\s*["']([^"']+)["']/gi;
 const blockedCopy=[
@@ -62,8 +56,8 @@ if(!/Private beta access/i.test(hub)||!/noindex,nofollow/i.test(hub)||!/nav-coac
  failures.push("classroom/index.html: invitation-only authenticated entry is missing");
 if(/(?:href|src)=["'][^"']*(?:quizzes\.html|labs\.html|weekly-question-bank\.js)/i.test(hub))
  failures.push("classroom/index.html: direct public course material link");
-if(!/cpSync\('classroom\/index\.html'/.test(readFileSync("scripts/package-site.mjs","utf8")))
- failures.push("package-site.mjs: Classroom content must be allowlisted to the beta intro only");
+if(!/PUBLIC_RELEASE_FILES/.test(readFileSync("scripts/package-site.mjs","utf8")))
+ failures.push("package-site.mjs: release packaging must obey the explicit public manifest");
 for(const asset of ["assets/coach-nate-lab-portrait.webp","assets/coach-nate-acs-conference.webp","assets/coach-nate-lab-bench.webp","assets/coach-nate-research-poster.webp","assets/coach-nate-research-poster.pdf"]){
  if(!existsSync(asset)||statSync(asset).size<1000)failures.push("Missing real research asset: "+asset);
 }
