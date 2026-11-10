@@ -72,31 +72,23 @@ try{
   await page.locator('#reset-form a.button').click();
   await page.getByRole('heading',{name:"We'll send you a reset link.",exact:true}).waitFor({state:'visible'});
   await page.goto(new URL('account/',base).href);await page.waitForURL(/account\/auth(?:\.html)?\?mode=login/);
-  // Release privacy supersedes the previous public-course smoke test.
-  // Published learning assets must be explicitly allowlisted; drafts must
-  // never be reachable through a direct URL or an old bookmark.
-  const publicLanding=await page.goto(new URL('classroom/',base).href);
-  assert.ok(publicLanding.ok(),'Approved Classroom landing remains public');
-  assert.match(await page.locator('h1').textContent(),/Exercise science that improves decisions/);
-  assert.equal(await page.getByRole('link',{name:'Start Week 1'}).count(),0);
-  for(const privateRoute of [
-    'classroom/course.html',
-    'classroom/quizzes.html',
-    'classroom/progress.html',
-    'classroom/lms-data.js',
-    'classroom/weekly-question-bank.js',
-    'classroom/course/week-1/index.html',
-    'classroom/how-training-works/index.html'
-  ]) {
-    const response=await context.request.get(new URL(privateRoute,base).href);
-    assert.equal(response.status(),404,`${privateRoute}: no public draft delivery`);
+  // Unreleased lessons are excluded from the public artifact rather than
+  // cosmetically hidden behind a browser-only code form.
+  await page.goto(new URL("classroom/",base).href);
+  assert.match(await page.locator("h1").textContent(),/Private beta access/i);
+  assert.equal(await page.locator('a[href="https://nav-coach-app-eight.vercel.app/beta"]').count(),1);
+  for (const hidden of ["classroom/quizzes.html","classroom/labs.html",
+    "classroom/course/week-1/index.html","classroom/weekly-question-bank.js",
+    "classroom/classroom.js"]) {
+    const response=await context.request.get(new URL(hidden,base).href);
+    assert.equal(response.status(),404,`${hidden}: unreleased file must not ship to Netlify`);
   }
-  console.log('PASS public Classroom landing and direct-route denial for unapproved course materials');
+  console.log("PASS public catalog has no unpublished course pages or quiz answer bank");
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
   writeFileSync(`${out}/report.json`,JSON.stringify({base,checkedAt:new Date().toISOString(),results,accessibility,errors,missing,
-    journeys:['mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
+    journeys:['public beta intro → private account/code portal','unpublished course assets return 404','mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
     notVerified:['new-user email confirmation','authenticated website/app round trip','real client/coach/dual-role production sessions','password recovery email and expiry']},null,2));
   const violations=accessibility.flatMap(a=>a.violations.map(v=>({...v,route:a.route,width:a.width})));
   assert.deepEqual(violations,[],'Automated WCAG A/AA violations; see report.json');
