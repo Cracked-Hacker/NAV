@@ -1,47 +1,45 @@
-// Production-only, read-only verification: actual Netlify deployment must
-// match the exact main commit and keep unreleased Classroom pages unavailable.
-// Public GitHub Pages and repository-history exposure require a separate audit.
-import assert from 'node:assert/strict';
-const root='https://coach-nate.netlify.app/';
+// Production-only, read-only verification of a finished-only Netlify release.
+// Stale GitHub commits, published question banks, and unpublished course files fail.
+import assert from "node:assert/strict";
+const root="https://coach-nate.netlify.app/";
 const expected=process.env.GITHUB_SHA;
-assert.match(expected||'',/^[a-f0-9]{40}$/,'Expected exact main commit SHA from GitHub Actions');
+assert.match(expected||"",/^[a-f0-9]{40}$/,"Expected GitHub main SHA");
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-async function responseFor(path){
+async function request(path){
   const url=new URL(path,root);
-  url.searchParams.set('qa',expected.slice(0,9));
-  return fetch(url,{headers:{'Cache-Control':'no-cache'},signal:AbortSignal.timeout(15000)});
+  url.searchParams.set("qa",expected.slice(0,9));
+  return fetch(url,{headers:{"Cache-Control":"no-cache"},signal:AbortSignal.timeout(15000)});
 }
 let last;
 for(let attempt=1;attempt<=15;attempt++){
   try{
-    const manifestResponse=await responseFor('release.json');
-    assert.ok(manifestResponse.ok,'Netlify release manifest should be publicly readable');
-    const release=await manifestResponse.json();
-    assert.equal(release.repository,'Cracked-Hacker/NAV');
+    const releaseResponse=await request("release.json");
+    assert.equal(releaseResponse.status,200);
+    const release=await releaseResponse.json();
+    assert.equal(release.repository,"Cracked-Hacker/NAV");
     assert.equal(release.dirty,false);
-    assert.equal(release.commit,expected,'Netlify must serve exact SHA');
-    const landing=await responseFor('classroom/');
-    assert.equal(landing.status,200,'Approved Classroom landing should remain accessible');
-    const html=await landing.text();
-    assert.match(html,/Exercise science that improves decisions/);
-    assert.doesNotMatch(html,/Hard to Kill|Start Week 1|10 quizzes|quiz-1/);
-    for(const path of [
-      'classroom/course.html',
-      'classroom/quizzes.html',
-      'classroom/progress.html',
-      'classroom/lms-data.js',
-      'classroom/weekly-question-bank.js',
-      'classroom/course/week-1/index.html',
-      'classroom/how-training-works/index.html'
-    ]){
-      const privateResponse=await responseFor(path);
-      assert.equal(privateResponse.status,404,`${path} must not be public`);
+    assert.equal(release.commit,expected,"Netlify must serve exact current main release");
+    const teaser=await request("classroom/");
+    assert.equal(teaser.status,200);
+    const html=await teaser.text();
+    assert.match(html,/Private beta access/i);
+    assert.match(html,/https:\/\/nav-coach-app-eight\.vercel\.app\/beta/);
+    assert.match(html,/noindex,nofollow/);
+    const withheld=[
+      "classroom/quizzes.html","classroom/assignments.html","classroom/labs.html",
+      "classroom/course/week-1/index.html","classroom/how-training-works/index.html",
+      "classroom/classroom.js","classroom/lms-data.js","classroom/weekly-question-bank.js"
+    ];
+    for(const path of withheld){
+      const result=await request(path);
+      assert.equal(result.status,404,`${path}: unreleased coursework must not be publicly accessible`);
     }
-    console.log(JSON.stringify({site:root,releaseCommit:release.commit,attempt,verified:['public educational landing','direct-route 404 for unreleased materials','no draft titles on landing']},null,2));
+    console.log(JSON.stringify({site:root,releaseCommit:release.commit,attempt,
+      result:"PASS finished-only public release",withheld,publicTeaser:true},null,2));
     process.exit(0);
   }catch(error){
     last=error;
-    console.log(`Attempt ${attempt}/15: Netlify release not yet verified: ${error.message}`);
+    console.log(`Attempt ${attempt}/15: Netlify release not confirmed: ${error.message}`);
     if(attempt<15)await sleep(12000);
   }
 }

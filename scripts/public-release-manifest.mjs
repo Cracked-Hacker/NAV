@@ -1,0 +1,43 @@
+/** Owner-approved finished-only Netlify release inventory.
+ * Every new public file requires an explicit reviewed manifest change.
+ * No wildcard root pages, no wildcard assets, no bulk course directories.
+ */
+export const PUBLIC_RELEASE_FILES = Object.freeze([
+  "404.html",
+  "about.html",
+  "accessibility.html",
+  "coach-nate.html",
+  "coaching.html",
+  "contact.html",
+  "disclaimer.html",
+  "free-guide.html",
+  "index.html",
+  "nav-coach.html",
+  "privacy.html",
+  "research.html",
+  "resources.html",
+  "resume.html",
+  "robots.txt",
+  "science.html",
+  "services.html",
+  "sitemap.xml",
+  "style.css",
+  "terms.html",
+  "account/account.css",
+  "account/auth.html",
+  "account/auth.js",
+  "account/client.js",
+  "account/config.js",
+  "account/dashboard.js",
+  "account/index.html",
+  "account/navigation.js",
+  "account/security.mjs",
+  "vendor/SUPABASE-LICENSE",
+  "vendor/supabase-2.112.4.js",
+  "assets/coach-nate-acs-conference.webp",
+  "assets/coach-nate-lab-bench.webp",
+  "assets/coach-nate-lab-portrait.webp",
+  "assets/coach-nate-research-poster.pdf",
+  "assets/coach-nate-research-poster.webp",
+  "classroom/index.html"
+]);
