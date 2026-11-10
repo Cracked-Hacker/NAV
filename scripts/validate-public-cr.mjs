@@ -63,7 +63,12 @@ requireMatch("classroom/index.html", privateBeta, /noindex,nofollow/i, "unreleas
 requireMatch("classroom/index.html", privateBeta, /https:\/\/nav-coach-app-eight\.vercel\.app\/beta/, "redemption must occur in authenticated app");
 if (/href="(?:quizzes|labs|course)\.html"/i.test(privateBeta)) failures.push("classroom/index.html: unreleased activities linked publicly");
 const packaging = text("scripts/package-site.mjs");
-requireMatch("scripts/package-site.mjs", packaging, /cpSync\('classroom\/index\.html'/, "site build must ship only the public beta intro, not course files");
+requireMatch("scripts/package-site.mjs", packaging, /PUBLIC_RELEASE_FILES/, "site build must use an explicit approved public manifest");
+const manifest = text("scripts/public-release-manifest.mjs");
+if(!manifest.includes('"classroom/index.html"')) failures.push("release manifest: beta landing omitted");
+for (const privateFile of ["classroom/quizzes.html","classroom/labs.html","classroom/weekly-question-bank.js","classroom/course.html"]) {
+ if(manifest.includes('"'+privateFile+'"'))failures.push("release manifest: unpublished course asset "+privateFile);
+}
 
 const accountEntry = text("account/auth.html");
 for (const id of ["login-form", "signup-form", "reset-form"]) {
