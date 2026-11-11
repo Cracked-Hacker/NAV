@@ -41,5 +41,12 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-research-poster.webp",
   "assets/coach-nate-strength-showcase-muted.mp4",
   "assets/coach-nate-strength-showcase-poster.webp",
+  "assets/coach-nate-squat-9099-silent.mp4",
+  "assets/coach-nate-squat-9099-poster.webp",
+  "assets/coach-nate-squat-9078-silent.mp4",
+  "assets/coach-nate-squat-9078-poster.webp",
+  "assets/coach-nate-squat-8279-silent.mp4",
+  "assets/coach-nate-squat-8279-poster.webp",
+  "assets/coach-nate-training-gallery.js",
   "classroom/index.html"
 ]);
