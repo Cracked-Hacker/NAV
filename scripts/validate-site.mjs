@@ -64,11 +64,22 @@ for(const asset of ["assets/coach-nate-lab-portrait.webp","assets/coach-nate-acs
 for(const media of ["assets/coach-nate-strength-showcase-muted.mp4","assets/coach-nate-strength-showcase-poster.webp"]){
  if(!publishable.has(media)||!existsSync(media)||statSync(media).size<1000)failures.push("Approved Coach Nate showcase media missing: "+media);
 }
+// Every approved public squat set must have a packaged, real video and poster.
+for(const media of ["assets/coach-nate-squat-9099-silent.mp4","assets/coach-nate-squat-9099-poster.webp","assets/coach-nate-squat-9078-silent.mp4","assets/coach-nate-squat-9078-poster.webp","assets/coach-nate-squat-8279-silent.mp4","assets/coach-nate-squat-8279-poster.webp","assets/coach-nate-training-gallery.js"]){
+ if(!publishable.has(media)||!existsSync(media)||statSync(media).size<1000)
+  failures.push("Approved Coach Nate gallery asset missing: "+media);
+}
 const coach=readFileSync("coach-nate.html","utf8");
 if(!coach.includes('src="assets/coach-nate-strength-showcase-muted.mp4"')||!coach.includes('poster="assets/coach-nate-strength-showcase-poster.webp"')||!coach.includes('controls muted playsinline'))
  failures.push("Coach Nate silent video source, poster, or muted playback missing");
 for(const proof of ["Cycling of Ethanol and Acetaldehyde in Estuarine Waters","B.S. Kinesiology","B.A. Biology","10.1007/s10560-024-01000-y"])
  if(!coach.includes(proof))failures.push("Coach Nate research evidence missing: "+proof);
+for(const media of ["assets/coach-nate-squat-9099-silent.mp4","assets/coach-nate-squat-9099-poster.webp","assets/coach-nate-squat-9078-silent.mp4","assets/coach-nate-squat-9078-poster.webp","assets/coach-nate-squat-8279-silent.mp4","assets/coach-nate-squat-8279-poster.webp"]){
+ if(!coach.includes('assets/'+media.split('/').pop())) failures.push("Coach Nate gallery missing reference: "+media);
+}
+if(!coach.includes('data-training-gallery')||!coach.includes('data-training-track')||!coach.includes('data-gallery-next')||!coach.includes('data-gallery-prev')) failures.push("Coach Nate gallery navigation missing");
+if(!coach.includes('src="assets/coach-nate-training-gallery.js"'))failures.push("Coach Nate gallery script not loaded");
+if((coach.match(/<video controls muted playsinline preload="none"/g)||[]).length!==4)failures.push("Expected 4 silent, on-demand video players in Coach Nate gallery");
 if(failures.length){
  console.error("NAV finished-only public release gate FAILED:",failures.join("\n- "));
  process.exit(1);
