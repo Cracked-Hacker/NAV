@@ -39,5 +39,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-lab-portrait.webp",
   "assets/coach-nate-research-poster.pdf",
   "assets/coach-nate-research-poster.webp",
+  "assets/coach-nate-strength-showcase-muted.mp4",
+  "assets/coach-nate-strength-showcase-poster.webp",
   "classroom/index.html"
 ]);
