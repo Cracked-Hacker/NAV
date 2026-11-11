@@ -65,7 +65,7 @@ for(const media of ["assets/coach-nate-strength-showcase-muted.mp4","assets/coac
  if(!publishable.has(media)||!existsSync(media)||statSync(media).size<1000)failures.push("Approved Coach Nate showcase media missing: "+media);
 }
 const coach=readFileSync("coach-nate.html","utf8");
-if(!coach.includes('src="assets/coach-nate-strength-showcase-muted.mp4"')||!coach.includes('poster="assets/coach-nate-strength-showcase-poster.webp"')||!/<video\\b[^>]*\\bmuted\\b/.test(coach))
+if(!coach.includes('src="assets/coach-nate-strength-showcase-muted.mp4"')||!coach.includes('poster="assets/coach-nate-strength-showcase-poster.webp"')||!coach.includes('controls muted playsinline'))
  failures.push("Coach Nate silent video source, poster, or muted playback missing");
 for(const proof of ["Cycling of Ethanol and Acetaldehyde in Estuarine Waters","B.S. Kinesiology","B.A. Biology","10.1007/s10560-024-01000-y"])
  if(!coach.includes(proof))failures.push("Coach Nate research evidence missing: "+proof);
