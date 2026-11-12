@@ -40,9 +40,9 @@ jobs:
         run: npm run build
 
       - name: Install test browser
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
-      - name: Verify real pages at six widths and run accessibility audits
+      - name: Verify real pages at seven widths and run accessibility audits
         run: node scripts/qa-release-browser.mjs
 
       - name: Measure Lighthouse against the packaged homepage
