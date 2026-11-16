@@ -60,7 +60,10 @@ requireMatch("resources.html", resources, /"@type":"FAQPage"/, "missing FAQPage 
 const privateBeta = text("classroom/index.html");
 requireMatch("classroom/index.html", privateBeta, /Private beta access/i, "unfinished Classroom must show invitation-only introduction");
 requireMatch("classroom/index.html", privateBeta, /noindex,nofollow/i, "unreleased learning entry must not be indexed");
-requireMatch("classroom/index.html", privateBeta, /https:\/\/nav-coach-app-eight\.vercel\.app\/beta/, "redemption must occur in authenticated app");
+requireMatch("classroom/index.html", privateBeta, /Private testing is in development\./i, "beta entry must accurately state unreleased status");
+requireMatch("classroom/index.html", privateBeta, /href="\.\.\/contact\.html"/, "beta entry must offer a truthful inquiry path");
+if (/Enter your tester code|href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i.test(privateBeta)) failures.push("classroom/index.html: unsupported live beta redemption must not be advertised");
+if (/Redeem a private tester code|Invited testers can access approved beta areas with a code/i.test(home)) failures.push("index.html: unsupported live beta access must not be advertised");
 if (/href="(?:quizzes|labs|course)\.html"/i.test(privateBeta)) failures.push("classroom/index.html: unreleased activities linked publicly");
 const packaging = text("scripts/package-site.mjs");
 requireMatch("scripts/package-site.mjs", packaging, /PUBLIC_RELEASE_FILES/, "site build must use an explicit approved public manifest");
