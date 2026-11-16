@@ -75,8 +75,9 @@ try{
   // Unreleased lessons are excluded from the public artifact rather than
   // cosmetically hidden behind a browser-only code form.
   await page.goto(new URL("classroom/",base).href);
-  assert.match(await page.locator("h1").textContent(),/Private beta access/i);
-  assert.equal(await page.locator('a[href="https://nav-coach-app-eight.vercel.app/beta"]').count(),1);
+  assert.match(await page.locator("h1").textContent(),/Private testing is in development/i);
+  assert.equal(await page.locator('a[href="https://nav-coach-app-eight.vercel.app/beta"]').count(),0);
+  assert.equal(await page.locator('a[href="../contact.html"]').count() >= 1,true,"Contact option remains available");
   for (const hidden of ["classroom/quizzes.html","classroom/labs.html",
     "classroom/course/week-1/index.html","classroom/weekly-question-bank.js",
     "classroom/classroom.js"]) {
@@ -88,7 +89,7 @@ try{
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
   writeFileSync(`${out}/report.json`,JSON.stringify({base,checkedAt:new Date().toISOString(),results,accessibility,errors,missing,
-    journeys:['public beta intro → private account/code portal','unpublished course assets return 404','mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
+    journeys:['public beta status → contact; unverified redemption absent','unpublished course assets return 404','mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
     notVerified:['new-user email confirmation','authenticated website/app round trip','real client/coach/dual-role production sessions','password recovery email and expiry']},null,2));
   const violations=accessibility.flatMap(a=>a.violations.map(v=>({...v,route:a.route,width:a.width})));
   assert.deepEqual(violations,[],'Automated WCAG A/AA violations; see report.json');
