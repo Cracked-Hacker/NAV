@@ -52,8 +52,10 @@ for(const p of visibleHtml){
  }
 }
 const hub=readFileSync("classroom/index.html","utf8");
-if(!/Private beta access/i.test(hub)||!/noindex,nofollow/i.test(hub)||!/nav-coach-app-eight\.vercel\.app\/beta/.test(hub))
- failures.push("classroom/index.html: invitation-only authenticated entry is missing");
+if(!/Private testing is in development\./i.test(hub)||!/noindex,nofollow/i.test(hub)||!/href="\.\.\/contact\.html"/i.test(hub))
+ failures.push("classroom/index.html: must accurately mark beta as in development and preserve contact path");
+if(/Enter your tester code|href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i.test(hub))
+ failures.push("classroom/index.html: cannot link to unverified beta-code redemption");
 if(/(?:href|src)=["'][^"']*(?:quizzes\.html|labs\.html|weekly-question-bank\.js)/i.test(hub))
  failures.push("classroom/index.html: direct public course material link");
 if(!/PUBLIC_RELEASE_FILES/.test(readFileSync("scripts/package-site.mjs","utf8")))
