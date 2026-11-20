@@ -29,6 +29,10 @@ for(let attempt=1;attempt<=15;attempt++){
     assert.doesNotMatch(html,/href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i);
     assert.ok(hasVerifiedBetaContactLink(html), "Private Beta must include a safe working Contact action");
     assert.match(html,/noindex,nofollow/);
+    // Fail closed if CI silently supplies shallow history: deleted Classroom paths
+    // would otherwise disappear from the historical denylist without an error.
+    const shallow=execFileSync("git",["rev-parse","--is-shallow-repository"],{encoding:"utf8"}).trim();
+    assert.equal(shallow,"false","Confidentiality inventory requires a non-shallow Git checkout");
     // Discover all tracked, unpublished Classroom paths in this exact release source.
     const approved=new Set(PUBLIC_RELEASE_FILES);
     const tracked=execFileSync("git",["ls-files","-z","--","classroom/"],{encoding:"utf8"})
