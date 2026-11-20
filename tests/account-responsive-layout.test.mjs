@@ -14,7 +14,9 @@ test("desktop website login uses the full desktop canvas, not a 470px phone colu
   assert.doesNotMatch(html, /<iframe\b/i);
 });
 test("tablet and phone breakpoints retain readable fields and no forced horizontal overflow", () => {
-  has("@media (max-width: 1100px) {");
+  // Desktop-first website: 1024px keeps two columns; narrower viewports stack.
+  has("@media (max-width: 960px) {");
+  assert.doesNotMatch(css, /@media\s*\(max-width:\s*1100px\)\s*\{/);
   has("@media (max-width: 600px) {");
   has("grid-template-columns: minmax(0, 1fr);");
   has("width: min(calc(100% - 28px), 560px);");

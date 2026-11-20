@@ -33,7 +33,7 @@ page.on('pageerror',e=>errors.push(e.message));
 page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)missing.push({url:r.url(),status:r.status()});});
 const routes=['','coaching.html','nav-coach.html','coach-nate.html','resume.html','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset'];
 try{
-  for(const width of [320,390,768,1024,1440,1920]){
+  for(const width of [320,390,768,1024,1280,1440,1920]){
     await page.setViewportSize({width,height:1000});
     for(const route of routes){
       const response=await page.goto(new URL(route,base).href,{waitUntil:'networkidle'});
@@ -49,7 +49,7 @@ try{
       assert.equal(metrics.h1,1,`${route}: one page heading`);
       assert.equal(await page.locator('.desktop-nav a').filter({hasText:'Coach Nate'}).count(),1,`${route}: one Coach Nate link after Netlify Pretty URLs`);
       assert.deepEqual(metrics.brokenImages,[],`${route}: broken images`);
-      if(metrics.cardWidth){assert.equal(metrics.columns,width>1100?2:1);assert.ok(metrics.cardWidth>=(width>=1440?520:240));}
+      if(metrics.cardWidth){assert.equal(metrics.columns,width>960?2:1);assert.ok(metrics.cardWidth>=(width>=1440?520:240));}
       results.push({route,width,...metrics});
       const name=(route||'home').replaceAll(/[^a-z0-9]+/gi,'-');
       await page.screenshot({path:`${out}/${name}-${width}.png`,fullPage:true});
