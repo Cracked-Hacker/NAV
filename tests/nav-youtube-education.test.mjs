@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { runInNewContext } from "node:vm";
+import { Window } from "happy-dom";
 import test from "node:test";
 import { CHANNEL_HANDLE, EDUCATIONAL_LONGFORM_VIDEOS, getApprovedEducationalVideos, isApprovedEducationalLongform } from "../assets/nav-youtube-education-catalog.mjs";
 
@@ -53,4 +55,35 @@ test("real homepage and Coach Nate showcase share only reviewed catalog", () => 
   for (const file of ["assets/nav-youtube-education.js", "assets/nav-youtube-education-catalog.mjs"]) {
     assert.ok(manifest.includes('"' + file + '"'), file + " absent from approved release manifest");
   }
+});
+
+test("reviewed video actually renders and does not contact YouTube until play", () => {
+  const window = new Window();
+  window.document.body.innerHTML = `
+    <section data-youtube-showcase>
+      <div data-youtube-grid hidden></div>
+      <div data-youtube-empty>Only approved lessons</div>
+    </section>`;
+  const script = read("assets/nav-youtube-education.js")
+    .replace(/^import\s+\{[^}]+\}\s+from\s+"[^"]+";\s*/m, "");
+  assert.ok(!/\bimport\b/.test(script), "client script must be import-free in simulated runtime");
+  runInNewContext(script, {
+    document: window.document,
+    getApprovedEducationalVideos: () => [sample],
+    CHANNEL_HANDLE: "NAV-nate"
+  });
+  assert.equal(window.document.querySelectorAll(".nav-youtube-card").length, 1);
+  assert.equal(window.document.querySelector("[data-youtube-grid]").hidden, false);
+  assert.equal(window.document.querySelector("[data-youtube-empty]").hidden, true);
+  assert.equal(window.document.querySelectorAll("iframe").length, 0, "no third-party iframe until click");
+  const action = window.document.querySelector(".nav-youtube-play");
+  assert.match(action.getAttribute("aria-label"), /squat mechanics explained/i);
+  assert.equal(window.document.querySelector(".nav-youtube-card h3").textContent, sample.title);
+  assert.equal(window.document.querySelector(".nav-youtube-card a").href, sample.watchUrl);
+  action.click();
+  const iframe = window.document.querySelector("iframe");
+  assert.ok(iframe, "click-to-load should create an actual YouTube iframe");
+  assert.equal(iframe.getAttribute("src"), "https://www.youtube-nocookie.com/embed/Ab1Cd2Ef3Gh?autoplay=1&rel=0");
+  assert.match(iframe.title, /squat mechanics/i);
+  window.happyDOM.abort();
 });
