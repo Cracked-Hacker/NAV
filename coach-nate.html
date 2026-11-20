@@ -90,6 +90,27 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 .instagram-notice{margin:5px 0 0}
 @media(max-width:700px){.instagram-heading{align-items:flex-start}.instagram-controls{width:100%;justify-content:space-between}.instagram-card{flex-basis:min(78vw,315px)}}
 
+
+/* Coach Nate: educational Shorts share the existing horizontal carousel. */
+.youtube-caption{padding:14px 16px 17px;display:flex;flex-direction:column;gap:8px}
+.youtube-caption strong{color:var(--ink);font-size:.88rem;line-height:1.4}
+.youtube-caption a{font-size:.8rem;font-weight:750}
+.youtube-short-card .instagram-cover{background:linear-gradient(150deg,#173753,#0d3657)}
+.youtube-lessons{border-top:1px solid var(--line)}
+.youtube-video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.youtube-video-card{background:#fff;border:1px solid var(--line);border-radius:7px;overflow:hidden;min-width:0}
+.youtube-video-screen{position:relative;aspect-ratio:16/9;background:#122f4a;color:#fff;display:flex;align-items:center;justify-content:center;padding:18px}
+.youtube-video-kicker{position:absolute;left:14px;top:12px;font-size:.72rem;letter-spacing:.05em;color:#d8e8f5}
+.youtube-long-load{background:#bad80a;color:#203400;border:0;border-radius:6px;padding:12px 18px;min-height:46px;cursor:pointer;font:800 .9rem var(--sans)}
+.youtube-long-load:hover{background:#e0ef7d}
+.youtube-video-screen iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.youtube-video-screen:has(iframe) .youtube-video-kicker{display:none}
+.youtube-video-caption{padding:18px}
+.youtube-video-caption h3{margin:0 0 10px;font:normal 1.4rem/1.25 var(--serif)}
+.youtube-video-caption a{font-size:.85rem;font-weight:750}
+@media(max-width:900px){.youtube-video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:630px){.youtube-video-grid{grid-template-columns:1fr}}
+
 </style>
 </head><body><a href="#content" class="skip">Skip to main content</a>
 <header><div class="container topbar">
@@ -141,8 +162,8 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
   <p class="training-gallery-help">Swipe or scroll for more · Select play on any video · Audio removed</p>
 </div>
 <div class="instagram-showcase" id="instagram-reels">
-  <div class="instagram-heading"><div><p class="eyebrow">More from Coach Nate · Instagram</p><h3>Video collection</h3><p class="instagram-intro">Six Instagram reels shared by Coach Nate. Browse the collection and load a video to watch it here, or open it directly on Instagram.</p></div>
-    <div class="instagram-controls" aria-label="Instagram video carousel controls"><button type="button" data-instagram-prev aria-label="Previous Instagram reel">← Previous</button><span data-instagram-status role="status" aria-live="polite" aria-atomic="true">1 of 6</span><button type="button" data-instagram-next aria-label="Next Instagram reel">Next →</button></div></div>
+  <div class="instagram-heading"><div><p class="eyebrow">More from Coach Nate · Instagram</p><h3>Video collection</h3><p class="instagram-intro">Six original Instagram reels plus three additional educational YouTube Shorts. Swipe or use the controls to browse, and choose a video to load it.</p></div>
+    <div class="instagram-controls" aria-label="Reels and educational Shorts carousel controls"><button type="button" data-instagram-prev aria-label="Previous Instagram reel">← Previous</button><span data-instagram-status role="status" aria-live="polite" aria-atomic="true">1 of 9</span><button type="button" data-instagram-next aria-label="Next Instagram reel">Next →</button></div></div>
   <div class="instagram-gallery" data-instagram-gallery>
     <div class="instagram-track" data-instagram-track role="region" aria-label="Instagram reels. Swipe or use the previous and next controls." tabindex="0"><article class="instagram-card" data-instagram-card data-reel-code="DU67U4xAbgg" aria-label="Instagram reel 1 of 6">
   <div class="instagram-media" data-reel-media>
@@ -185,10 +206,49 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
     <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 6 here">Load reel 6</button>
   </div>
   <div class="instagram-caption"><strong>Instagram reel 6</strong><a href="https://www.instagram.com/reel/DVZrxHgAWpp/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 6 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card youtube-short-card" data-youtube-short-card data-youtube-id="l6mn8OVIhiM" data-video-title="Muscle anatomy — tissue to sarcomere" aria-label="Educational YouTube Short 1 of 3">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">07 / 09</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">YouTube Short · Muscle anatomy — tissue to sarcomere</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load educational YouTube Short 1 here">Load Short 1</button>
+  </div>
+  <div class="youtube-caption"><strong>Muscle anatomy — tissue to sarcomere</strong><a href="https://www.youtube.com/shorts/l6mn8OVIhiM" target="_blank" rel="noopener noreferrer" aria-label="Watch Muscle anatomy — tissue to sarcomere on YouTube (new tab)">Open on YouTube</a></div>
+</article>
+<article class="instagram-card youtube-short-card" data-youtube-short-card data-youtube-id="qKc7Pgy0_I4" data-video-title="Deadlift form and coaching cues" aria-label="Educational YouTube Short 2 of 3">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">08 / 09</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">YouTube Short · Deadlift form and coaching cues</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load educational YouTube Short 2 here">Load Short 2</button>
+  </div>
+  <div class="youtube-caption"><strong>Deadlift form and coaching cues</strong><a href="https://www.youtube.com/shorts/qKc7Pgy0_I4" target="_blank" rel="noopener noreferrer" aria-label="Watch Deadlift form and coaching cues on YouTube (new tab)">Open on YouTube</a></div>
+</article>
+<article class="instagram-card youtube-short-card" data-youtube-short-card data-youtube-id="WyrwYLIxhvc" data-video-title="Putting on knee sleeves" aria-label="Educational YouTube Short 3 of 3">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">09 / 09</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">YouTube Short · Putting on knee sleeves</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load educational YouTube Short 3 here">Load Short 3</button>
+  </div>
+  <div class="youtube-caption"><strong>Putting on knee sleeves</strong><a href="https://www.youtube.com/shorts/WyrwYLIxhvc" target="_blank" rel="noopener noreferrer" aria-label="Watch Putting on knee sleeves on YouTube (new tab)">Open on YouTube</a></div>
 </article></div>
   </div>
-  <p class="instagram-notice">Instagram videos load only when selected. Loading a video shares data with Instagram; playback and sign-in requirements depend on Instagram. The direct links remain available if an embed does not work.</p>
+  <p class="instagram-notice">Instagram and YouTube videos load only when selected. Loading a video shares data with Instagram; playback and sign-in requirements depend on Instagram. The direct links remain available if an embed does not work.</p>
 </div>
+</section>
+<section id="youtube-lessons" aria-labelledby="youtube-lessons-title" class="youtube-lessons">
+  <div class="sectionhead"><div><p class="eyebrow">Coach Nate · Original lessons</p><h2 id="youtube-lessons-title">Educational video lectures</h2></div><p>Long-form lessons on anatomy, scientific reasoning, and muscle contraction. No gaming content. These creator-led recordings are educational drafts, not independently peer-reviewed instruction.</p></div>
+  <div class="youtube-video-grid" data-youtube-long-gallery>
+    <article class="youtube-video-card" data-youtube-long data-youtube-id="50DcRryZoTM" data-video-title="Anatomy foundations">
+      <div class="youtube-video-screen"><span class="youtube-video-kicker">Lesson 1 · 1 hr 17 min</span><button type="button" class="youtube-long-load" aria-label="Load Anatomy foundations video">▶ Watch lesson</button></div>
+      <div class="youtube-video-caption"><h3>Anatomy foundations</h3><a href="https://www.youtube.com/watch?v=50DcRryZoTM" target="_blank" rel="noopener noreferrer">Watch directly on YouTube</a></div>
+    </article>
+    <article class="youtube-video-card" data-youtube-long data-youtube-id="Lt7uXl7eL4o" data-video-title="How scientific fields connect">
+      <div class="youtube-video-screen"><span class="youtube-video-kicker">Lesson 2 · 59 min</span><button type="button" class="youtube-long-load" aria-label="Load How scientific fields connect video">▶ Watch lesson</button></div>
+      <div class="youtube-video-caption"><h3>How scientific fields connect</h3><a href="https://www.youtube.com/watch?v=Lt7uXl7eL4o" target="_blank" rel="noopener noreferrer">Watch directly on YouTube</a></div>
+    </article>
+    <article class="youtube-video-card" data-youtube-long data-youtube-id="LFA-6Gnm7wA" data-video-title="Excitation–contraction coupling">
+      <div class="youtube-video-screen"><span class="youtube-video-kicker">Lesson 3 · 16 min</span><button type="button" class="youtube-long-load" aria-label="Load Excitation–contraction coupling video">▶ Watch lesson</button></div>
+      <div class="youtube-video-caption"><h3>Excitation–contraction coupling</h3><a href="https://www.youtube.com/watch?v=LFA-6Gnm7wA" target="_blank" rel="noopener noreferrer">Watch directly on YouTube</a></div>
+    </article>
+  </div>
+  <p class="instagram-notice">YouTube players load only when clicked. Viewing shares data with YouTube. This section highlights original educational recordings; scientific details may require updates or corrections against current evidence.</p>
 </section>
 <section id="research"><div class="sectionhead"><div><p class="eyebrow">Independent project · WWU</p><h2>Environmental chemistry research</h2></div><p>Undergraduate laboratory research and the original conference poster, presented independently from my other academic and community experiences.</p></div>
 <div class="twocol"><article class="paper"><span class="tag">Chemistry · Original conference poster</span><h3>Cycling of Ethanol and Acetaldehyde in Estuarine Waters</h3><p class="citation">Jefferson Crosland, Nate Holochwost, Warren de Bruyn, Catherine Clark · Western Washington University / Chapman University.</p><p>The project studied the balance of biological degradation and production of ethanol and acetaldehyde in Southern California estuarine waters, with water-quality observations, microbial characterization, and chemical measurements. The poster reports biological contributions and discusses implications for exchange with the atmosphere.</p><p><a href="assets/coach-nate-research-poster.pdf" target="_blank" rel="noopener">View original research poster (PDF) →</a></p><figure class="posterfigure"><a href="assets/coach-nate-research-poster.pdf" target="_blank" rel="noopener"><img loading="lazy" src="assets/coach-nate-research-poster.webp" alt="Original full scientific conference poster with figures on ethanol and acetaldehyde cycling" width="1447" height="976"></a><figcaption>Original poster supplied by a coauthor. Open the full PDF for legible figures and author credits.</figcaption></figure></article>
