@@ -1,6 +1,7 @@
 // Production-only, read-only verification of a finished-only Netlify release.
 // Stale GitHub commits, published question banks, and unpublished course files fail.
 import assert from "node:assert/strict";
+import {hasVerifiedBetaContactLink} from "./site-link-check.mjs";
 const root="https://coach-nate.netlify.app/";
 const expected=process.env.GITHUB_SHA;
 assert.match(expected||"",/^[a-f0-9]{40}$/,"Expected GitHub main SHA");
@@ -24,7 +25,7 @@ for(let attempt=1;attempt<=15;attempt++){
     const html=await teaser.text();
     assert.match(html,/Private testing is in development\./i);
     assert.doesNotMatch(html,/href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i);
-    assert.match(html,/href="\.\.\/contact\.html"/);
+    assert.ok(hasVerifiedBetaContactLink(html), "Private Beta must include a safe working Contact action");
     assert.match(html,/noindex,nofollow/);
     const withheld=[
       "classroom/quizzes.html","classroom/assignments.html","classroom/labs.html",
