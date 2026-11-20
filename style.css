@@ -16,3 +16,34 @@
 h1,h2,h3{overflow-wrap:anywhere}
 /* Decorative rings must not cover coaching steps or account actions. */
 .hero-system:after,.final-cta:after{display:none}
+
+/* NAV-nate: reviewed long-form education only; separate from Instagram Shorts and gaming uploads. */
+.nav-youtube-showcase{scroll-margin-top:106px}
+.nav-youtube-head{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:25px}
+.nav-youtube-intro{max-width:750px}
+.nav-youtube-head h2{font-size:clamp(1.9rem,3.6vw,3.1rem);line-height:1.13;letter-spacing:-.045em;margin:.4rem 0 .75rem}
+.nav-youtube-intro>p:last-child{margin:0;color:var(--muted,#5f7180);max-width:67ch}
+.nav-youtube-channel{flex-shrink:0;min-height:48px;display:inline-flex;align-items:center;gap:10px;justify-content:center;text-align:center}
+.nav-youtube-empty{display:flex;gap:26px;align-items:center;border:1px solid var(--line,#c6d0d8);border-radius:18px;background:var(--card,#fff);padding:clamp(24px,3vw,42px)}
+.nav-youtube-empty-mark{flex:0 0 110px;aspect-ratio:16/10;display:grid;place-items:center;color:#fff;background:#003f87;border-radius:14px}
+.nav-youtube-empty-mark span{font-size:1.9rem}
+.nav-youtube-empty h3{margin:0 0 8px;font-size:1.22rem;line-height:1.24}
+.nav-youtube-empty p{color:var(--muted,#5f7180);margin:0 0 8px;max-width:73ch}
+.nav-youtube-empty .nav-youtube-small{font-size:.86rem;margin:0}
+.nav-youtube-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.nav-youtube-grid[hidden],.nav-youtube-empty[hidden]{display:none}
+.nav-youtube-card{min-width:0;overflow:hidden;border:1px solid var(--line,#c6d0d8);border-radius:17px;background:var(--card,#fff);display:flex;flex-direction:column}
+.nav-youtube-player{aspect-ratio:16/9;background:linear-gradient(140deg,#002651,#003f87 65%,#155f9d);position:relative;display:grid;place-items:center}
+.nav-youtube-play{height:100%;width:100%;border:0;background:transparent;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;cursor:pointer;padding:20px;text-align:center}
+.nav-youtube-play:hover,.nav-youtube-play:focus-visible{background:rgba(255,255,255,.08)}
+.nav-youtube-play:focus-visible{outline:3px solid #bad80a;outline-offset:-5px}
+.nav-youtube-play-icon{width:66px;height:46px;border-radius:14px;display:grid;place-items:center;background:#bad80a;color:#002651;font-size:1.6rem;font-weight:900}
+.nav-youtube-play-note{font-size:.85rem;font-weight:750}
+.nav-youtube-player iframe{display:block;width:100%;height:100%;border:0}
+.nav-youtube-card-body{padding:19px;display:flex;flex-direction:column;gap:11px;flex:1}
+.nav-youtube-card-meta{display:flex;flex-wrap:wrap;gap:8px;color:#526679;font-size:.74rem;font-weight:750;text-transform:uppercase;letter-spacing:.06em}
+.nav-youtube-card h3{margin:0;font-size:1.15rem;line-height:1.28}
+.nav-youtube-card-body>p{margin:0;color:var(--muted,#5f7180);font-size:.9rem;flex:1}
+.nav-youtube-card-body>a{font-weight:800;color:#003f87;min-height:44px;display:inline-flex;align-items:center}
+@media(max-width:900px){.nav-youtube-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-youtube-head{align-items:flex-start;flex-direction:column;gap:18px}}
+@media(max-width:640px){.nav-youtube-grid{grid-template-columns:1fr}.nav-youtube-empty{flex-direction:column;align-items:flex-start;gap:18px}.nav-youtube-empty-mark{flex:initial;width:100%;max-width:180px}.nav-youtube-channel{width:100%}}
