@@ -32,7 +32,7 @@ for(let attempt=1;attempt<=15;attempt++){
     // Discover all tracked, unpublished Classroom paths in this exact release source.
     const approved=new Set(PUBLIC_RELEASE_FILES);
     const tracked=execFileSync("git",["ls-files","-z","--","classroom/"],{encoding:"utf8"})
-      .split("\\0").filter(Boolean);
+      .split("\0").filter(Boolean);
     const withheld=tracked.filter(path=>!approved.has(path));
     assert.ok(withheld.length>0,"Unexpected empty withheld Classroom inventory");
     const failures=[];
