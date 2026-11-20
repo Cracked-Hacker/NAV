@@ -12,8 +12,13 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
   assert.ok(existsSync(root + "/account/auth.html"), "NAV sign-in remains available");
   const landing = readFileSync(root + "/classroom/index.html", "utf8");
   assert.match(landing, /Private beta access/i);
-  assert.match(landing, /Enter your tester code/);
-  assert.match(landing, /nav-coach-app-eight\.vercel\.app\/beta/);
+  assert.match(landing, /Private testing is in development\./i);
+  assert.match(landing, /Ask about future testing/);
+  assert.match(landing, /href="\.\.\/contact\.html"/);
+  assert.doesNotMatch(landing, /Enter your tester code|nav-coach-app-eight\.vercel\.app\/beta/i);
+  const home = readFileSync(root + "/index.html", "utf8");
+  assert.match(home, /Account-bound tester access is in development/i);
+  assert.doesNotMatch(home, /Redeem a private tester code|Invited testers can access approved beta areas with a code/i);
   assert.match(landing, /noindex,nofollow/);
   assert.doesNotMatch(landing, /Hard to Kill|Start Week 1|10 quizzes|Starter Kit|quiz-1/i);
   assert.equal(existsSync(root + "/classroom/public-landing.html"),false,"unapproved parallel landing must not publish");

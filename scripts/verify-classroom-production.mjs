@@ -22,8 +22,9 @@ for(let attempt=1;attempt<=15;attempt++){
     const teaser=await request("classroom/");
     assert.equal(teaser.status,200);
     const html=await teaser.text();
-    assert.match(html,/Private beta access/i);
-    assert.match(html,/https:\/\/nav-coach-app-eight\.vercel\.app\/beta/);
+    assert.match(html,/Private testing is in development\./i);
+    assert.doesNotMatch(html,/href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i);
+    assert.match(html,/href="\.\.\/contact\.html"/);
     assert.match(html,/noindex,nofollow/);
     const withheld=[
       "classroom/quizzes.html","classroom/assignments.html","classroom/labs.html",
