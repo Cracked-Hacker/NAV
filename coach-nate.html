@@ -63,6 +63,33 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 @media(max-width:1170px){.desktop-nav{display:none}.mobile-nav{display:block}.topbar{flex-direction:row;align-items:center}}
 @media(max-width:620px){.topbar{flex-direction:row;align-items:center;padding:12px 0}.brand-text{font-size:1rem}.brand-mark{font-size:.86rem}.mobile-nav nav{right:0}.hero{padding-top:34px}.hero figure img{height:auto}.footer-nav{gap:10px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Owner-shared Instagram reels: accessible, privacy-first click-to-load cards. */
+.instagram-showcase{margin-top:40px;padding-top:40px;border-top:1px solid var(--line)}
+.instagram-heading{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:22px;flex-wrap:wrap}
+.instagram-heading h3{font:normal clamp(1.9rem,3.5vw,2.7rem)/1.1 var(--serif);letter-spacing:-.035em;margin:0 0 10px}
+.instagram-intro,.instagram-notice{max-width:67ch;color:var(--muted);font-size:.88rem;margin:0}
+.instagram-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.instagram-controls button{min-height:44px;border-radius:6px;border:1px solid var(--green);background:var(--green);color:#fff;font:700 .82rem var(--sans);padding:10px 14px;cursor:pointer}
+.instagram-controls button:disabled{background:#e8edf1;border-color:#b8c6d3;color:#576b7d;cursor:not-allowed}
+.instagram-controls [data-instagram-status]{font-weight:750;font-size:.85rem;min-width:50px;text-align:center}
+.instagram-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:2px;overscroll-behavior-inline:contain;touch-action:pan-x pan-y;padding:3px 2px 18px;scrollbar-width:thin}
+.instagram-card{flex:0 0 clamp(235px,27vw,315px);min-width:0;overflow:hidden;scroll-snap-align:start;background:#fff;border:1px solid var(--line);border-radius:7px}
+.instagram-media{position:relative;min-height:370px;aspect-ratio:9/14;background:#122f4a;color:#fff;display:flex;align-items:center;justify-content:center;flex-direction:column}
+.instagram-cover{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;width:100%;height:100%;padding:25px;text-align:center;background:linear-gradient(160deg,#173753,#0a2136)}
+.instagram-counter{position:absolute;top:18px;left:20px;font-size:.75rem;letter-spacing:.12em;font-weight:800;color:#d7e6f5}
+.instagram-play-symbol{width:74px;height:74px;display:grid;place-items:center;padding-left:5px;border-radius:50%;border:2px solid #d9e6f1;color:#bad80a;font-size:1.7rem}
+.instagram-cover-text{font-size:.95rem;letter-spacing:.04em;font-weight:750}
+.instagram-load{position:absolute;left:50%;bottom:25px;transform:translateX(-50%);min-width:150px;min-height:46px;padding:10px 16px;border-radius:7px;background:#bad80a;color:#233500;border:2px solid #bad80a;font:800 .85rem var(--sans);cursor:pointer}
+.instagram-load:hover{background:#e0ef7d}
+.instagram-cover[hidden],.instagram-load[hidden]{display:none}
+.instagram-media iframe{width:100%;height:100%;min-height:370px;border:0;display:block;background:#fff}
+.instagram-caption{padding:14px 16px 17px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px}
+.instagram-caption strong{color:var(--ink);font-size:.86rem}
+.instagram-caption a{font-size:.8rem;font-weight:750;white-space:nowrap}
+.instagram-notice{margin:5px 0 0}
+@media(max-width:700px){.instagram-heading{align-items:flex-start}.instagram-controls{width:100%;justify-content:space-between}.instagram-card{flex-basis:min(78vw,315px)}}
+
 </style>
 </head><body><a href="#content" class="skip">Skip to main content</a>
 <header><div class="container topbar">
@@ -112,7 +139,57 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 </figure>
   </div>
   <p class="training-gallery-help">Swipe or scroll for more · Select play on any video · Audio removed</p>
-</div></section>
+</div>
+<div class="instagram-showcase" id="instagram-reels">
+  <div class="instagram-heading"><div><p class="eyebrow">More from Coach Nate · Instagram</p><h3>Video collection</h3><p class="instagram-intro">Six Instagram reels shared by Coach Nate. Browse the collection and load a video to watch it here, or open it directly on Instagram.</p></div>
+    <div class="instagram-controls" aria-label="Instagram video carousel controls"><button type="button" data-instagram-prev aria-label="Previous Instagram reel">← Previous</button><span data-instagram-status role="status" aria-live="polite" aria-atomic="true">1 of 6</span><button type="button" data-instagram-next aria-label="Next Instagram reel">Next →</button></div></div>
+  <div class="instagram-gallery" data-instagram-gallery>
+    <div class="instagram-track" data-instagram-track role="region" aria-label="Instagram reels. Swipe or use the previous and next controls." tabindex="0"><article class="instagram-card" data-instagram-card data-reel-code="DU67U4xAbgg" aria-label="Instagram reel 1 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">01 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 1 here">Load reel 1</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 1</strong><a href="https://www.instagram.com/reel/DU67U4xAbgg/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 1 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card" data-instagram-card data-reel-code="DVH2BmojR-X" aria-label="Instagram reel 2 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">02 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 2 here">Load reel 2</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 2</strong><a href="https://www.instagram.com/reel/DVH2BmojR-X/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 2 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card" data-instagram-card data-reel-code="DVKLlgxkm7e" aria-label="Instagram reel 3 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">03 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 3 here">Load reel 3</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 3</strong><a href="https://www.instagram.com/reel/DVKLlgxkm7e/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 3 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card" data-instagram-card data-reel-code="DVO9SxBEkVh" aria-label="Instagram reel 4 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">04 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 4 here">Load reel 4</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 4</strong><a href="https://www.instagram.com/reel/DVO9SxBEkVh/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 4 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card" data-instagram-card data-reel-code="DVRlBK5EpBz" aria-label="Instagram reel 5 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">05 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 5 here">Load reel 5</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 5</strong><a href="https://www.instagram.com/reel/DVRlBK5EpBz/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 5 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article>
+<article class="instagram-card" data-instagram-card data-reel-code="DVZrxHgAWpp" aria-label="Instagram reel 6 of 6">
+  <div class="instagram-media" data-reel-media>
+    <div class="instagram-cover" data-reel-cover><span class="instagram-counter">06 / 06</span><span class="instagram-play-symbol" aria-hidden="true">▶</span><span class="instagram-cover-text">Instagram reel</span></div>
+    <button type="button" class="instagram-load" data-reel-load aria-label="Load Instagram reel 6 here">Load reel 6</button>
+  </div>
+  <div class="instagram-caption"><strong>Instagram reel 6</strong><a href="https://www.instagram.com/reel/DVZrxHgAWpp/" target="_blank" rel="noopener noreferrer" aria-label="Open Instagram reel 6 on Instagram (new tab)">Open on Instagram <span aria-hidden="true">↗</span></a></div>
+</article></div>
+  </div>
+  <p class="instagram-notice">Instagram videos load only when selected. Loading a video shares data with Instagram; playback and sign-in requirements depend on Instagram. The direct links remain available if an embed does not work.</p>
+</div>
+</section>
 <section id="research"><div class="sectionhead"><div><p class="eyebrow">Independent project · WWU</p><h2>Environmental chemistry research</h2></div><p>Undergraduate laboratory research and the original conference poster, presented independently from my other academic and community experiences.</p></div>
 <div class="twocol"><article class="paper"><span class="tag">Chemistry · Original conference poster</span><h3>Cycling of Ethanol and Acetaldehyde in Estuarine Waters</h3><p class="citation">Jefferson Crosland, Nate Holochwost, Warren de Bruyn, Catherine Clark · Western Washington University / Chapman University.</p><p>The project studied the balance of biological degradation and production of ethanol and acetaldehyde in Southern California estuarine waters, with water-quality observations, microbial characterization, and chemical measurements. The poster reports biological contributions and discusses implications for exchange with the atmosphere.</p><p><a href="assets/coach-nate-research-poster.pdf" target="_blank" rel="noopener">View original research poster (PDF) →</a></p><figure class="posterfigure"><a href="assets/coach-nate-research-poster.pdf" target="_blank" rel="noopener"><img loading="lazy" src="assets/coach-nate-research-poster.webp" alt="Original full scientific conference poster with figures on ethanol and acetaldehyde cycling" width="1447" height="976"></a><figcaption>Original poster supplied by a coauthor. Open the full PDF for legible figures and author credits.</figcaption></figure></article>
 <aside><article class="panel"><p class="eyebrow">Research appointment · 2021–2023</p><h3>Western Washington University</h3><p>Undergraduate environmental chemistry research with Dr. Catherine Clark. This laboratory work and conference poster are a distinct project from my journal publication, University of Washington shadowing, and SoundBio volunteering.</p><p class="citation">300+ research hours reported in the November 2026 CV.</p></article></aside></div></section>
@@ -126,4 +203,4 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 <section id="teaching"><div class="sectionhead"><div><p class="eyebrow">Education, service &amp; clinical foundation</p><h2>Beyond the weight room</h2></div><p>Scientific training and hands-on care experience inform my coaching philosophy without implying a medical-care service.</p></div><div class="credentials"><div class="panel"><h3>Education</h3><ul><li>B.S. Kinesiology (pre-healthcare specialization), WWU</li><li>B.A. Biology, WWU</li><li>Chemistry minor, WWU</li></ul><h3>Credentials listed on CV</h3><p>Certified Personal Trainer, Certified Nursing Assistant, BLS, CPR, First Aid, and Responsive Web Design. Issuing organizations, dates of renewal and active-status verification are not supplied.</p></div><div class="panel"><h3>Clinical &amp; community experience</h3><ul><li>CNA, North Cascades Health and Rehabilitation (2021–2023)</li><li>Clinical Aide, FYZICAL Therapy &amp; Balance Centers (2024)</li><li>CNA, Staffers LLC / Avalon Healthcare Solutions (2024–2025)</li><li>Volunteer powerlifting/athletic coaching (2023–2025)</li><li>Volunteer youth lacrosse coaching (2018–2019)</li></ul><p>Fitness coaching is not clinical diagnosis or treatment.</p></div></div></section>
 </div><section class="contact"><div class="container"><div><h2>Teaching, training, building.</h2><p>See NAV coaching, education, and product development, or get in touch.</p></div><div class="actions"><a href="index.html" class="btn">Explore NAV</a><a href="contact.html" class="btn alt">Contact</a></div></div></section></main>
 <footer><div class="container"><div><strong>NAV · Nathan G. Holochwost</strong><p class="source-notice" style="color:#d6e2ef">Published photographs and poster from Nate’s original WWU research archive. Other experiences are documented separately; career details follow the November 2026 CV.</p></div><nav class="footer-nav" aria-label="Footer"><a href="index.html">NAV Home</a><a href="science.html">Science</a><a href="resources.html">Resources</a><a href="privacy.html">Privacy</a><a href="contact.html">Contact</a><a href="https://www.instagram.com/the_nate_dawg/">Instagram</a><a href="https://www.youtube.com/@NAV-Nate">YouTube</a></nav></div><p class="app-footer-link"><a href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach →</a></p></footer>
-<script type="module" src="account/navigation.js"></script><script type="module" src="assets/coach-nate-training-gallery.js"></script></body></html>
+<script type="module" src="account/navigation.js"></script><script type="module" src="assets/coach-nate-training-gallery.js"></script><script defer src="assets/coach-nate-instagram-gallery.js"></script></body></html>
