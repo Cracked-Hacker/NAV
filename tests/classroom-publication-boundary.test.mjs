@@ -7,6 +7,11 @@ import test from "node:test";
 // artifact is a public release. This test runs the same packager as Netlify.
 test("Netlify public artifact never includes an unapproved Classroom product", () => {
   execFileSync(process.execPath, ["scripts/package-site.mjs"], { cwd: process.cwd(), stdio: "pipe" });
+  // A deploy manifest is not a secrecy boundary when repository source is public.
+  // This only protects future HEAD contents; historical Git objects require
+  // a separate repository visibility/history remediation.
+  assert.equal(existsSync("classroom/weekly-question-bank.js"), false,
+    "unpublished answer banks must not exist at the public repository tip");
   const root = ".site-build";
   assert.ok(existsSync(root + "/index.html"), "public marketing remains available");
   assert.ok(existsSync(root + "/account/auth.html"), "NAV sign-in remains available");
