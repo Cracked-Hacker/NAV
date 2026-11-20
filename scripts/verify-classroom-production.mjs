@@ -36,6 +36,15 @@ for(let attempt=1;attempt<=15;attempt++){
       const result=await request(path);
       assert.equal(result.status,404,`${path}: unreleased coursework must not be publicly accessible`);
     }
+    // Prove the six approved reels and click-to-load script reached production.
+    const coachResponse=await request("coach-nate.html");
+    assert.equal(coachResponse.status,200,"Coach Nate profile missing in production");
+    const coachHtml=await coachResponse.text();
+    for(const code of ["DU67U4xAbgg","DVH2BmojR-X","DVKLlgxkm7e","DVO9SxBEkVh","DVRlBK5EpBz","DVZrxHgAWpp"]){
+      assert.ok(coachHtml.includes('data-reel-code="'+code+'"') || coachHtml.includes("data-reel-code='"+code+"'"),"Missing published reel "+code);
+    }
+    const galleryScript=await request("assets/coach-nate-instagram-gallery.js");
+    assert.equal(galleryScript.status,200,"Instagram gallery script missing in production");
     console.log(JSON.stringify({site:root,releaseCommit:release.commit,attempt,
       result:"PASS finished-only public release",withheld,publicTeaser:true},null,2));
     process.exit(0);
