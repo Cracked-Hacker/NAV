@@ -33,15 +33,19 @@ for(let attempt=1;attempt<=15;attempt++){
     const approved=new Set(PUBLIC_RELEASE_FILES);
     const tracked=execFileSync("git",["ls-files","-z","--","classroom/"],{encoding:"utf8"})
       .split("\0").filter(Boolean);
-    // HEAD-only inventory omits files deleted from Git but possibly retained by
-    // an old Netlify deployment. Keep known historical sensitive paths in scope.
-    const historicallyWithheld=[
-      "classroom/weekly-question-bank.js"
-    ];
+    // Current HEAD alone cannot find deleted files that may still be served
+    // by a stale deployment. Include every Classroom path visible in local
+    // Git history, and keep the known sensitive answer bank as an explicit
+    // invariant even in a shallow checkout with incomplete history.
+    const historical=execFileSync("git",[
+      "log","--all","--format=","--name-only","--","classroom/"
+    ],{encoding:"utf8",maxBuffer:16*1024*1024})
+      .split("\n").map(path=>path.trim()).filter(path=>path.startsWith("classroom/"));
     const withheld=[...new Set([
-      ...tracked.filter(path=>!approved.has(path)),
-      ...historicallyWithheld
-    ])].sort();
+      ...tracked,
+      ...historical,
+      "classroom/weekly-question-bank.js"
+    ])].filter(path=>!approved.has(path)).sort();
     assert.ok(withheld.length>0,"Unexpected empty withheld Classroom inventory");
     for(const path of withheld){
       assert.ok(!approved.has(path),`Confidentiality denylist conflicts with public manifest: ${path}`);
