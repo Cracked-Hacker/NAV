@@ -37,6 +37,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-acs-conference.webp",
   "assets/coach-nate-lab-bench.webp",
   "assets/coach-nate-lab-portrait.webp",
+  "assets/Nathan-Holochwost-Resume-2026-11-09.pdf",
   "assets/coach-nate-research-poster.pdf",
   "assets/coach-nate-research-poster.webp",
   "classroom/index.html"
