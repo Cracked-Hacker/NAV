@@ -68,10 +68,10 @@ test('educational YouTube Shorts are mixed into the existing reel carousel witho
   assert.equal(doc.querySelectorAll('iframe').length, 0);
   shorts[0].querySelector('[data-reel-load]').click();
   assert.equal(doc.querySelectorAll('iframe').length, 1);
-  assert.match(doc.querySelector('iframe').src, /youtube-nocookie\\.com\\/embed\\/l6mn8OVIhiM/);
+  assert.ok(doc.querySelector('iframe').src.includes('youtube-nocookie.com/embed/l6mn8OVIhiM'));
   doc.querySelectorAll('[data-instagram-card]')[0].querySelector('[data-reel-load]').click();
   assert.equal(doc.querySelectorAll('iframe').length, 1);
-  assert.match(doc.querySelector('iframe').src, /instagram\\.com\\/reel\\/DU67U4xAbgg/);
+  assert.ok(doc.querySelector('iframe').src.includes('instagram.com/reel/DU67U4xAbgg'));
   window.happyDOM.abort();
 });
 
@@ -85,6 +85,6 @@ test('long-form educational videos load only on click, with direct-link fallback
   assert.equal(window.document.querySelectorAll('.youtube-video-caption a[href^="https://www.youtube.com/watch?"]').length, 3);
   cards[2].querySelector('.youtube-long-load').click();
   assert.equal(window.document.querySelectorAll('.youtube-video-screen iframe').length, 1);
-  assert.match(window.document.querySelector('.youtube-video-screen iframe').src, /youtube-nocookie\\.com\\/embed\\/LFA-6Gnm7wA/);
+  assert.ok(window.document.querySelector('.youtube-video-screen iframe').src.includes('youtube-nocookie.com/embed/LFA-6Gnm7wA'));
   window.happyDOM.abort();
 });
