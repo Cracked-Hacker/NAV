@@ -1,6 +1,5 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve, dirname, normalize, join, sep, extname } from "node:path";
-import "./validate-classroom-assessments.mjs";
 import {PUBLIC_RELEASE_FILES} from "./public-release-manifest.mjs";
 
 // This validates the FINISHED-ONLY public artifact, not that every file in
@@ -19,6 +18,7 @@ const root = process.cwd();
 const publishable = new Set(PUBLIC_RELEASE_FILES);
 if(publishable.size!==PUBLIC_RELEASE_FILES.length)failures.push("public-release-manifest: duplicate entries");
 if(!publishable.has("classroom/index.html"))failures.push("public-release-manifest: missing beta information entry");
+if(existsSync("classroom/weekly-question-bank.js")) failures.push("public source leak: unpublished answer bank must be stored privately, not committed to this public repository");
 if([...publishable].some(p=>p.startsWith("classroom/")&&p!=="classroom/index.html"))
  failures.push("public-release-manifest: unpublished Classroom lessons must never ship");
 for(const file of publishable)mustExist(file);
@@ -86,4 +86,4 @@ if(failures.length){
  console.error("NAV finished-only public release gate FAILED:",failures.join("\n- "));
  process.exit(1);
 }
-console.log(`NAV finished-only public release gate PASS (${visibleHtml.length} public HTML pages, unpublished coursework excluded, verified source bank audited)`);
+console.log(`NAV finished-only public release gate PASS (${visibleHtml.length} public HTML pages, unpublished coursework excluded, answer-bank source absent)`);
