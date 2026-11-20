@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test",
+    "test": "node --test --test-concurrency=1",
     "verify": "node scripts/validate-site.mjs && node scripts/validate-public-cr.mjs && npm test",
     "build": "node scripts/package-site.mjs",
     "test:browser": "node scripts/qa-release-browser.mjs"
