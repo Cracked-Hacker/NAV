@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
 const page=readFileSync(new URL('../resume.html',import.meta.url),'utf8');
+const profile=readFileSync(new URL('../coach-nate.html',import.meta.url),'utf8');
 const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
 const asset='assets/Nathan-Holochwost-Resume-2026-11-09.pdf';
 const pdf=readFileSync(new URL('../'+asset,import.meta.url),'latin1');
@@ -19,6 +20,7 @@ test('CV page accurately identifies the source degrees and distinct research rol
 
 test('View CV links to a real approved PDF in a new tab',()=>{
   assert.ok(page.includes('href="'+asset+'"'),'PDF link must resolve to the packaged asset');
+  assert.ok(profile.includes('href="'+asset+'"'),'Coach Nate profile must also link to the PDF');
   assert.match(page,/target="_blank" rel="noopener noreferrer" type="application\/pdf"/);
   assert.ok(manifest.includes('"'+asset+'"'),'PDF must be included in the approved public release manifest');
   assert.ok(pdf.startsWith('%PDF-1.4'),'Expected a PDF, not an HTML placeholder');
