@@ -56,3 +56,35 @@ test('reel players are consent-on-click; opening another removes the previous if
   assert.equal(doc.querySelectorAll('.instagram-caption a').length, 6, 'Direct-link fallback retained');
   window.happyDOM.abort();
 });
+
+
+test('educational YouTube Shorts are mixed into the existing reel carousel without changing the original six', () => {
+  const window = setup();
+  const doc = window.document;
+  const shorts = [...doc.querySelectorAll('[data-youtube-short-card]')];
+  assert.equal(shorts.length, 3);
+  assert.deepEqual(shorts.map(card => card.dataset.youtubeId), ['l6mn8OVIhiM','qKc7Pgy0_I4','WyrwYLIxhvc']);
+  assert.equal(doc.querySelectorAll('[data-instagram-card]').length, 6);
+  assert.equal(doc.querySelectorAll('iframe').length, 0);
+  shorts[0].querySelector('[data-reel-load]').click();
+  assert.equal(doc.querySelectorAll('iframe').length, 1);
+  assert.match(doc.querySelector('iframe').src, /youtube-nocookie\\.com\\/embed\\/l6mn8OVIhiM/);
+  doc.querySelectorAll('[data-instagram-card]')[0].querySelector('[data-reel-load]').click();
+  assert.equal(doc.querySelectorAll('iframe').length, 1);
+  assert.match(doc.querySelector('iframe').src, /instagram\\.com\\/reel\\/DU67U4xAbgg/);
+  window.happyDOM.abort();
+});
+
+test('long-form educational videos load only on click, with direct-link fallback', () => {
+  const window = new Window({url:'https://preview.example.invalid/coach-nate.html'});
+  window.document.write(page);
+  window.eval(script);
+  const cards = [...window.document.querySelectorAll('[data-youtube-long]')];
+  assert.deepEqual(cards.map(card => card.dataset.youtubeId), ['50DcRryZoTM','Lt7uXl7eL4o','LFA-6Gnm7wA']);
+  assert.equal(window.document.querySelectorAll('.youtube-video-screen iframe').length, 0);
+  assert.equal(window.document.querySelectorAll('.youtube-video-caption a[href^="https://www.youtube.com/watch?"]').length, 3);
+  cards[2].querySelector('.youtube-long-load').click();
+  assert.equal(window.document.querySelectorAll('.youtube-video-screen iframe').length, 1);
+  assert.match(window.document.querySelector('.youtube-video-screen iframe').src, /youtube-nocookie\\.com\\/embed\\/LFA-6Gnm7wA/);
+  window.happyDOM.abort();
+});
