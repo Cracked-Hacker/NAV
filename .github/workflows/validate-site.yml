@@ -17,6 +17,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # The production confidentiality verifier enumerates deleted Classroom paths.
+          # A default shallow checkout would silently omit older commits.
+          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
