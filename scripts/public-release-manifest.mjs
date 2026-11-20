@@ -49,5 +49,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-squat-8279-poster.webp",
   "assets/coach-nate-training-gallery.js",
   "assets/coach-nate-instagram-gallery.js",
+  "assets/nav-youtube-education.js",
+  "assets/nav-youtube-education-catalog.mjs",
   "classroom/index.html"
 ]);
