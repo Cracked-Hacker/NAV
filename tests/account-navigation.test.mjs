@@ -46,3 +46,19 @@ test('authenticated sessions display only My NAV; signup disappears',async()=>{
   }
   window.happyDOM.abort();
 });
+
+test('unverified stored session shows safe Account entry until identity is confirmed',async()=>{
+  const window=new Window({url:'https://preview.example.invalid/products.html'});
+  window.document.write('<nav class="desktop-nav"></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Mobile primary"></nav></details>');
+  window.localStorage.setItem('test-only','session-present');
+  Object.assign(window,{ACCOUNT_CONFIG:{storageKey:'test-only'},accountClient:async()=>{throw new Error('Synthetic auth outage')}});
+  window.eval(source);
+  await new Promise(resolve=>setImmediate(resolve));
+  for(const nav of window.document.querySelectorAll('.desktop-nav,.mobile-nav nav')){
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Account').length,1);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Create Account').length,0);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='My NAV').length,0);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='All Products').length,1);
+  }
+  window.happyDOM.abort();
+});
