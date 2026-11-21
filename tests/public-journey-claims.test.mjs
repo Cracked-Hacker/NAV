@@ -167,3 +167,11 @@ test('former long-term-care CNA role remains accurately described as pandemic-er
   assert.match(profile,/not independently audited individual task logs/i);
   assert.match(profile,/did not involve practicing as a physical therapist/i);
 });
+
+test('private beta landing does not imply unverified NAV Coach workflows are released',()=>{
+  const doc=documentFor('classroom/index.html');
+  const body=doc.body.textContent;
+  assert.match(body,/Tester-code redemption is not yet a verified available feature/i);
+  assert.match(body,/Learn about NAV Coach/i);
+  assert.doesNotMatch(body,/See released app workflows/i);
+});
