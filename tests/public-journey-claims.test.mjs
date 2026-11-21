@@ -59,3 +59,12 @@ test('404 page offers useful released destinations instead of unfinished beta',(
  const doc=documentFor('404.html');
  assert.deepEqual([...doc.querySelectorAll('main a')].map(a=>a.getAttribute('href')),['index.html','coaching.html','products.html']);
 });
+
+test('science page presents study-design categories without a universal rank',()=>{
+ const doc=documentFor('science.html');
+ const labels=[...doc.querySelectorAll('.principle-index')].map(x=>x.textContent.trim());
+ assert.deepEqual(labels,['SR','GL','CT','OB']);
+ assert.match(doc.body.textContent,/risk of bias, consistency, precision, relevance/i);
+ assert.ok(doc.querySelector('a[href^="https://www.cebm.ox.ac.uk/"]'));
+ assert.ok(doc.querySelector('a[href^="https://www.cdc.gov/acip-grade-handbook/"]'));
+});
