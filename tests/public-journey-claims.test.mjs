@@ -86,3 +86,17 @@ test('NAV Coach stays described as coach-and-client software without false check
   assert.match(doc.querySelector('main').textContent,/coaches and athletes/i);
   assert.doesNotMatch(doc.querySelector('main').textContent,/accredited|guaranteed income|checkout here/i);
 });
+
+test('NASM CPT dates reflect owner-provided certification without disclosing certificate number',()=>{
+  const about=documentFor('about.html');
+  const resume=documentFor('resume.html');
+  const coach=documentFor('coach-nate.html');
+  for(const page of [about,resume,coach]){
+    assert.match(page.body.textContent,/NASM Certified Personal Trainer \(CPT\)/);
+    assert.match(page.body.textContent,/May 29, 2025/);
+    assert.match(page.body.textContent,/May 29, 2027/);
+    assert.doesNotMatch(page.body.textContent,/1251515382/);
+  }
+  assert.match(resume.body.textContent,/not a real-time independent NASM registry check/i);
+  assert.match(coach.body.textContent,/not been verified/i);
+});
