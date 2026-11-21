@@ -68,3 +68,21 @@ test('science page presents study-design categories without a universal rank',()
  assert.ok(doc.querySelector('a[href^="https://www.cebm.ox.ac.uk/"]'));
  assert.ok(doc.querySelector('a[href^="https://www.cdc.gov/acip-grade-handbook/"]'));
 });
+
+test('online coaching page matches owner-confirmed offering without inventing packages or checkout',()=>{
+  const doc=documentFor('coaching.html');
+  const main=doc.querySelector('main');
+  assert.match(main.textContent,/online fitness coaching/i);
+  assert.match(main.textContent,/\$80[–-]\$300 per week/i);
+  assert.match(main.textContent,/sliding scale/i);
+  assert.match(main.textContent,/Venmo or Zelle/i);
+  assert.match(main.textContent,/No payments are collected through this website/i);
+  assert.doesNotMatch(main.textContent,/in-person coaching available|guaranteed results|buy now|subscribe today/i);
+  assert.equal([...main.querySelectorAll('a')].filter(a=>a.href.includes('docs.google.com/forms/')).length,1);
+});
+
+test('NAV Coach stays described as coach-and-client software without false checkout or accreditation',()=>{
+  const doc=documentFor('nav-coach.html');
+  assert.match(doc.querySelector('main').textContent,/coaches and athletes/i);
+  assert.doesNotMatch(doc.querySelector('main').textContent,/accredited|guaranteed income|checkout here/i);
+});
