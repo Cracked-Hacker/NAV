@@ -19,33 +19,71 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header"><a class="brand" href="index.html" aria-label="NAV home"><span class="brand-mark">NAV</span><span class="brand-copy">COACHING · EDUCATION · TRAINING</span></a><nav class="desktop-nav" aria-label="Primary"><a  href="index.html">Home</a><a  href="coaching.html">Coaching</a><a aria-current="page" href="nav-coach.html">NAV Coach</a><a  href="classroom/index.html">Private Beta</a><a  href="coach-nate.html">Coach Nate</a><a data-nav-login href="account/auth.html?mode=login">Sign In</a><a class="nav-signup" data-nav-signup href="account/auth.html?mode=signup">Create Account</a></nav><details class="mobile-nav"><summary aria-label="Open navigation">Menu</summary><nav aria-label="Mobile primary"><a  href="index.html">Home</a><a  href="coaching.html">Coaching</a><a aria-current="page" href="nav-coach.html">NAV Coach</a><a  href="classroom/index.html">Private Beta</a><a  href="coach-nate.html">Coach Nate</a><a data-nav-login href="account/auth.html?mode=login">Sign In</a><a class="nav-signup" data-nav-signup href="account/auth.html?mode=signup">Create Account</a></nav></details></header>
 <main id="main"><div class="wrap">
-  <section class="page-hero">
+  <section class="page-hero" aria-labelledby="product-heading">
     <p class="eyebrow">NAV Coach · human coach in control</p>
-    <h1>A training workspace for coaches and athletes.</h1>
-    <p class="lead">Coaches assign training. Athletes open sessions, log completed sets, and review progress. NAV Coach keeps those activities together in one authenticated app.</p>
-    <div class="button-row"><a class="button lime" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach</a><a class="button secondary" href="account/">Sign in or create an account</a></div>
-  </section>
-
-  <section class="section" aria-labelledby="athlete-flow">
-    <div class="section-head"><div><p class="eyebrow">For athletes</p><h2 id="athlete-flow">Know what to do. Record what happened. See what is changing.</h2></div><p>The daily workflow begins with the assigned session and ends with a saved record of the work performed.</p></div>
-    <div class="grid-3">
-      <article class="card"><p class="eyebrow">01 · Train</p><h3>Follow the assigned work.</h3><p>Open the training workspace, see the current plan, and use the app during the session.</p></article>
-      <article class="card"><p class="eyebrow">02 · Log</p><h3>Record performance as performance.</h3><p>What the coach prescribed and what the athlete actually completed remain different facts.</p></article>
-      <article class="card"><p class="eyebrow">03 · Progress</p><h3>Use history to add context.</h3><p>Training history and progress views help turn past work into better future coaching decisions.</p></article>
+    <h1 id="product-heading">Keep the training plan and the work performed connected.</h1>
+    <p class="lead">NAV Coach is a private training workspace. Coaches assign sessions, athletes record their work, and coaches use that history to inform what comes next. The coach remains responsible for the decisions.</p>
+    <div class="button-row">
+      <a class="button lime" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach</a>
+      <a class="button secondary" href="coaching.html">Looking for personal coaching?</a>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="coach-flow">
-    <div class="section-head"><div><p class="eyebrow">For coaches</p><h2 id="coach-flow">Keep the person, the plan, and the follow-up connected.</h2></div><p>A coach needs the client’s plan, completed work, and relevant feedback in context before making the next programming decision.</p></div>
-    <div class="grid-3"><article class="card"><p class="eyebrow">01 · Assign</p><h3>Program the next session.</h3><p>Set exercises and intended reps, loading, and effort without marking that work completed.</p></article><article class="card"><p class="eyebrow">02 · Review</p><h3>See what was actually logged.</h3><p>Compare the prescription with saved sets and athlete feedback. Unknown ≠ zero.</p></article><article class="card"><p class="eyebrow">03 · Adjust</p><h3>Change the next plan.</h3><p>Use recorded training and your coaching judgment, not a fabricated readiness score.</p></article></div>
+  <section class="section" aria-labelledby="product-paths">
+    <div class="section-head">
+      <div><p class="eyebrow">Choose your next step</p><h2 id="product-paths">How are you using NAV?</h2></div>
+      <p>Start with your role. You can use the same NAV identity across products, but each product may ask you to sign in separately.</p>
+    </div>
+    <div class="grid-2 product-choice-grid">
+      <article class="card product-choice">
+        <p class="eyebrow">I coach clients</p>
+        <h3>Plan, review, and make the next decision.</h3>
+        <p>Use your authorized coach workspace to assign training and review what clients actually logged.</p>
+        <ul class="feature-list">
+          <li>Prepare training prescriptions.</li>
+          <li>Review recorded sets and client feedback.</li>
+          <li>Make the next programming decision yourself.</li>
+        </ul>
+        <a class="button secondary" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Coach sign-in</a>
+        <p class="tiny muted">Creating an account does not automatically grant coach permissions.</p>
+      </article>
+      <article class="card product-choice">
+        <p class="eyebrow">I am an athlete</p>
+        <h3>See your session and record your training.</h3>
+        <p>Already working with a NAV coach? Sign in to open your assigned workouts and training history.</p>
+        <ul class="feature-list">
+          <li>See the session your coach assigned.</li>
+          <li>Log the sets and reps you performed.</li>
+          <li>Review your recorded training.</li>
+        </ul>
+        <a class="button secondary" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Athlete sign-in</a>
+        <p class="tiny muted">Not a coaching client yet? <a href="coaching.html">Learn how to inquire about coaching.</a></p>
+      </article>
+    </div>
   </section>
 
-  
+  <section class="section" aria-labelledby="product-workflow">
+    <div class="section-head">
+      <div><p class="eyebrow">How the training workflow fits together</p><h2 id="product-workflow">The plan is not the performance record.</h2></div>
+      <p>A coach's intended work and an athlete's completed work are different information. Keep them distinguishable when reviewing progress.</p>
+    </div>
+    <div class="grid-3">
+      <article class="card"><p class="eyebrow">01 · Assign</p><h3>The coach plans.</h3><p>Exercises, reps, loading, and intended effort describe what to do.</p></article>
+      <article class="card"><p class="eyebrow">02 · Record</p><h3>The athlete logs.</h3><p>Completed sets describe what happened, which can differ from the original plan.</p></article>
+      <article class="card"><p class="eyebrow">03 · Review</p><h3>The coach decides.</h3><p>Use actual training history and context rather than treating missing entries as zero.</p></article>
+    </div>
+  </section>
 
-
-
-  <p class="tiny muted">Client messages, workouts and other private coaching information belong in the authenticated private app, never on public pages.</p>
-  <section class="section final-cta" aria-labelledby="product-next"><p class="eyebrow inverse-eyebrow">Next step</p><h2 id="product-next">Open the training app.</h2><div class="button-row"><a class="button lime" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach</a><a class="button light-outline" href="coaching.html">Ask about coaching</a></div></section>
+  <p class="tiny muted">Private coaching information, including training records and client messages, belongs in the authenticated NAV Coach app—not on public website pages. An account alone does not create a coaching relationship or grant additional permissions.</p>
+  <section class="section final-cta" aria-labelledby="product-next">
+    <p class="eyebrow inverse-eyebrow">Ready for the next step?</p>
+    <h2 id="product-next">Choose the right starting point.</h2>
+    <div class="button-row">
+      <a class="button lime" href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach</a>
+      <a class="button light-outline" href="account/auth.html?mode=signup">Create a NAV account</a>
+      <a class="button light-outline" href="coaching.html">Ask about coaching</a>
+    </div>
+  </section>
 </div></main>
 <footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">NAV</span><span>NAV</span></a><p>Human coaching, useful exercise science, and a focused training platform.</p></div><nav aria-label="Footer"><a href="about.html">About</a><a href="coach-nate.html">Coach Nate</a><a href="resume.html">Résumé</a><a href="account/">My NAV</a><a href="science.html">Science</a><a href="resources.html">Resources</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="disclaimer.html">Disclaimer</a><a href="accessibility.html">Accessibility</a></nav><div class="footer-meta"><p>Follow NAV’s Coach Nate: <a href="https://www.instagram.com/the_nate_dawg/">Instagram</a> · <a href="https://www.youtube.com/@NAV-Nate">YouTube</a></p><p>© 2026 NAV. Fitness coaching and education; not medical care.</p></div></footer>
 <script type="module" src="account/navigation.js"></script></body></html>

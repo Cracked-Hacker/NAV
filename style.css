@@ -16,3 +16,12 @@
 h1,h2,h3{overflow-wrap:anywhere}
 /* Decorative rings must not cover coaching steps or account actions. */
 .hero-system:after,.final-cta:after{display:none}
+
+/* NAV Coach landing: role-based choices using the shared NAV design tokens. */
+.product-choice-grid .product-choice{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:clamp(24px,3vw,40px);border-top:4px solid var(--ink)}
+.product-choice-grid .product-choice .eyebrow{margin:0}
+.product-choice-grid .product-choice h3{max-width:22ch;margin:0;font-size:clamp(1.55rem,2.3vw,2.25rem);line-height:1.16}
+.product-choice-grid .product-choice>p{margin:0;max-width:62ch}
+.product-choice-grid .product-choice .feature-list{margin:4px 0 auto;min-width:0}
+.product-choice-grid .product-choice>.button{max-width:100%;margin-top:12px}
+.product-choice-grid .product-choice>.tiny{margin-top:4px}
