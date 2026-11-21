@@ -75,6 +75,10 @@ test('online coaching page matches owner-confirmed offering without inventing pa
   assert.match(main.textContent,/online fitness coaching/i);
   assert.match(main.textContent,/\$80[–-]\$300 per week/i);
   assert.match(main.textContent,/sliding scale/i);
+  assert.match(main.textContent,/one online coaching service/i);
+  assert.match(main.textContent,/based on affordability/i);
+  assert.match(main.textContent,/not separate packages or different levels/i);
+  assert.doesNotMatch(main.textContent,/\$56|Liam/i);
   assert.match(main.textContent,/Venmo or Zelle/i);
   assert.match(main.textContent,/No payments are collected through this website/i);
   assert.doesNotMatch(main.textContent,/in-person coaching available|guaranteed results|buy now|subscribe today/i);
