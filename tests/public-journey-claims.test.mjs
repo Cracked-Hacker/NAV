@@ -95,8 +95,40 @@ test('NASM CPT dates reflect owner-provided certification without disclosing cer
     assert.match(page.body.textContent,/NASM Certified Personal Trainer \(CPT\)/);
     assert.match(page.body.textContent,/May 29, 2025/);
     assert.match(page.body.textContent,/May 29, 2027/);
-    assert.doesNotMatch(page.body.textContent,/1251515382/);
+    assert.doesNotMatch(page.body.textContent,/\b(?:certificate|credential|license|training center)\s*(?:number|id)\s*:/i);
   }
   assert.match(resume.body.textContent,/not a real-time independent NASM registry check/i);
   assert.match(coach.body.textContent,/not been verified/i);
+});
+
+test('Red Cross First Aid/CPR/AED credential uses exact owner-provided validity dates',()=>{
+  for(const path of ['about.html','resume.html','coach-nate.html']){
+    const doc=documentFor(path);
+    const content=doc.body.textContent;
+    assert.match(content,/American Red Cross Adult and Pediatric First Aid\/CPR\/AED/);
+    assert.match(content,/March 7, 2026/);
+    assert.match(content,/March 7, 2028/);
+    assert.doesNotMatch(content,/credential number\s*:/i);
+  }
+});
+
+test('older CNA and BLS documentation is historical, not asserted currently active',()=>{
+  const resume=documentFor('resume.html').body.textContent;
+  const coach=documentFor('coach-nate.html').body.textContent;
+  assert.match(resume,/Washington Nursing Assistant Certification/);
+  assert.match(resume,/April 11, 2026/);
+  assert.match(resume,/renewal status has not been verified/i);
+  assert.match(resume,/October 2026/);
+  assert.match(resume,/freeCodeCamp Responsive Web Design/);
+  assert.match(resume,/September 21, 2023/);
+  assert.match(resume,/Scholars Week/);
+  assert.match(resume,/May 18, 2022/);
+  assert.match(coach,/Prior CNA and BLS renewals have not been verified/i);
+});
+
+test('WWU degrees and owner-approved résumé PDF remain unchanged',()=>{
+  const resume=documentFor('resume.html');
+  assert.match(resume.body.textContent,/B\.S\. Kinesiology/i);
+  assert.match(resume.body.textContent,/B\.A\. Biology/i);
+  assert.equal(resume.querySelector('a[aria-label="View Resume PDF in a new tab"]').getAttribute('href'),'assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
 });
