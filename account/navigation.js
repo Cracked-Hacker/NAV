@@ -12,8 +12,13 @@ function ensurePublicNavigation() {
     ['research.html','Research'],
     ['coach-nate.html','Coach Nate']
   ];
-  const activePath = window.location.pathname.replace(/\\.html$/, '').replace(/\\/+$/, '');
-  const normalizedPath = value => value.replace(/\\.html$/, '').replace(/\\/+$/, '');
+  const activePath = normalizedPath(window.location.pathname);
+  function normalizedPath(value) {
+    let path = value;
+    while (path.endsWith('/')) path = path.slice(0, -1);
+    if (path.endsWith('.html')) path = path.slice(0, -5);
+    return path;
+  }
   document.querySelectorAll('.desktop-nav, .mobile-nav nav[aria-label="Mobile primary"]').forEach(nav => {
     // The brand already links home; beta information has its own homepage path.
     [...nav.querySelectorAll('a')].forEach(link => {
