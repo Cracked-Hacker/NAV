@@ -36,9 +36,16 @@ for (const page of keyPages) {
 }
 
 const home = text("index.html");
-requireMatch("index.html", home, /Human coaching/i, "hero does not identify human coaching");
-requireMatch("index.html", home, /Explore NAV Coach/i, "missing primary NAV Coach path");
-requireMatch("index.html", home, /Prescription ≠ performance/i, "missing core data-truth principle");
+requireMatch("index.html", home, /human coaching|personal coaching|I want coaching/i, "homepage must offer human coaching");
+requireMatch("index.html", home, /I'm a coach/i, "homepage must offer a coaching-app path");
+requireMatch("index.html", home, /Explore products/i, "homepage must offer a products path");
+if ((home.match(/class="nav-home-action"/g) || []).length !== 3) failures.push("index.html: exactly three primary action cards are required");
+for (const route of ["coaching.html","nav-coach.html","products.html"]) {
+  if (!home.includes('href="'+route+'"')) failures.push("index.html: missing primary journey "+route);
+}
+if (!/Prescription ≠ performance/i.test(home) && !/Prescription ≠ performance/i.test(text("nav-coach.html")) && !/Prescription ≠ performance/i.test(text("science.html")) && !/Prescription ≠ performance/i.test(text("resources.html"))) {
+  failures.push("NAV public copy: prescribed and performed records must remain distinguished");
+}
 
 const product = text("nav-coach.html");
 requireMatch("nav-coach.html", product, /human coach in control/i, "missing human-coach-control positioning");
