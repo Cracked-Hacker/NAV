@@ -121,13 +121,13 @@ test('older CNA and BLS documentation is historical, not asserted currently acti
   const coach=documentFor('coach-nate.html').body.textContent;
   assert.match(resume,/Washington Nursing Assistant Certification/);
   assert.match(resume,/April 11, 2026/);
-  assert.match(resume,/renewal status has not been verified/i);
+  assert.match(resume,/owner confirms the Washington nursing assistant and American Heart Association BLS credentials were not renewed/i);
   assert.match(resume,/October 2026/);
   assert.match(resume,/freeCodeCamp Responsive Web Design/);
   assert.match(resume,/September 21, 2023/);
   assert.match(resume,/Scholars Week/);
   assert.match(resume,/May 18, 2022/);
-  assert.match(coach,/Prior CNA and BLS renewals have not been verified/i);
+  assert.match(coach,/prior Washington nursing assistant and AHA BLS credentials were not renewed/i);
 });
 
 test('WWU degrees and owner-approved résumé PDF remain unchanged',()=>{
@@ -135,4 +135,17 @@ test('WWU degrees and owner-approved résumé PDF remain unchanged',()=>{
   assert.match(resume.body.textContent,/B\.S\. Kinesiology/i);
   assert.match(resume.body.textContent,/B\.A\. Biology/i);
   assert.equal(resume.querySelector('a[aria-label="View Resume PDF in a new tab"]').getAttribute('href'),'assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
+});
+
+test('historical CNA and BLS learning stays visible without implying active authority',()=>{
+  const resume=documentFor('resume.html').body.textContent;
+  const about=documentFor('about.html').body.textContent;
+  const coach=documentFor('coach-nate.html').body.textContent;
+  assert.match(resume,/previously held Washington Nursing Assistant Certification/i);
+  assert.match(resume,/training and patient-care experience/i);
+  assert.match(about,/completed training and former nursing assistant and clinical aide work/i);
+  assert.match(coach,/earlier professional training and experience/i);
+  for(const body of [resume,about,coach]){
+    assert.doesNotMatch(body,/currently (?:certified|licensed) (?:nursing assistant|CNA)|active AHA BLS provider|renewed BLS/i);
+  }
 });
