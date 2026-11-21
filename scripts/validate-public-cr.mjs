@@ -43,7 +43,7 @@ if ((home.match(/class="nav-home-action"/g) || []).length !== 3) failures.push("
 for (const route of ["coaching.html","nav-coach.html","products.html"]) {
   if (!home.includes('href="'+route+'"')) failures.push("index.html: missing primary journey "+route);
 }
-if (!/Prescription ≠ performance/i.test(text("nav-coach.html")) && !/Prescription ≠ performance/i.test(text("science.html")) && !/Prescription ≠ performance/i.test(text("resources.html"))) {
+if (!/Prescription ≠ performance/i.test(home) && !/Prescription ≠ performance/i.test(text("nav-coach.html")) && !/Prescription ≠ performance/i.test(text("science.html")) && !/Prescription ≠ performance/i.test(text("resources.html"))) {
   failures.push("NAV public copy: prescribed and performed records must remain distinguished");
 }
 
