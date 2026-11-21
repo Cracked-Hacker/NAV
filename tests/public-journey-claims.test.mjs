@@ -149,3 +149,21 @@ test('historical CNA and BLS learning stays visible without implying active auth
     assert.doesNotMatch(body,/currently (?:certified|licensed) (?:nursing assistant|CNA)|active AHA BLS provider|renewed BLS/i);
   }
 });
+
+test('former long-term-care CNA role remains accurately described as pandemic-era supervised care',()=>{
+  const resume=documentFor('resume.html').body.textContent;
+  const about=documentFor('about.html').body.textContent;
+  const profile=documentFor('coach-nate.html').body.textContent;
+  for(const page of [resume,about,profile]){
+    assert.match(page,/COVID-19 pandemic/i);
+    assert.match(page,/long-term.care/i);
+    assert.match(page,/mobility/i);
+    assert.match(page,/shadowed physical therapists/i);
+    assert.doesNotMatch(page,/treated COVID-19 patients|COVID ward|independently diagnosed/i);
+  }
+  assert.match(about,/nursing direction and supervision/i);
+  assert.match(about,/Washington state nursing assistant job specifications/i);
+  assert.match(resume,/not a separately audited list of performed tasks/i);
+  assert.match(profile,/not independently audited individual task logs/i);
+  assert.match(profile,/did not involve practicing as a physical therapist/i);
+});
