@@ -58,7 +58,7 @@ try{
         accessibility.push({route,width,violations:audit.violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))}))});
       }
     }
-    if(width<=1024){await page.goto(base);await page.locator('.mobile-nav summary').click();await page.locator('.mobile-nav [data-nav-signup]').click();await page.locator('#signup-form').waitFor({state:'visible'});}
+    if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
   await page.setViewportSize({width:1440,height:1000});
