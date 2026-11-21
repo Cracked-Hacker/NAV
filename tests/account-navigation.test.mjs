@@ -19,7 +19,7 @@ for(const path of ['account/auth.html?mode=login','coach-nate.html','index.html'
     const window=view(path);
     for(const nav of window.document.querySelectorAll('.desktop-nav,.mobile-nav nav')){
       assert.equal(nav.children.length,5);
-      assert.deepEqual([...nav.children].map(el=>el.textContent.trim().split(/Sign In|NAV Coach app|About NAV/)[0].trim().slice(0,10)),['Home','Services','Products','About','Account']);
+      assert.deepEqual([...nav.children].map(el=>el.tagName==='DETAILS' ? el.querySelector('summary').textContent.trim() : el.textContent.trim()),['Home','Services','Products','About','Account']);
       assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Coach Nate').length,1);
       assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Create Account').length,1);
       for(const label of ['NAV Coach app','NAV Classroom','Study tools','Merch','Sign In']) assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent===label).length,1);
