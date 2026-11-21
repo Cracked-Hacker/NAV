@@ -13,6 +13,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "free-guide.html",
   "index.html",
   "nav-coach.html",
+  "products.html",
   "privacy.html",
   "research.html",
   "resources.html",
