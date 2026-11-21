@@ -27,3 +27,22 @@ for(const path of ['account/auth.html?mode=login','coach-nate.html','index.html'
     window.happyDOM.abort();
   });
 }
+
+test('authenticated sessions display only My NAV; signup disappears',async()=>{
+  const window=new Window({url:'https://preview.example.invalid/account/'});
+  window.document.write('<nav class="desktop-nav" aria-label="Primary"></nav><details class="mobile-nav"><summary>Menu</summary><nav aria-label="Mobile primary"></nav></details>');
+  window.localStorage.setItem('test-only','present');
+  Object.assign(window,{
+    ACCOUNT_CONFIG:{storageKey:'test-only'},
+    accountClient:async()=>({auth:{getUser:async()=>({data:{user:{id:'test-user'}},error:null})}})
+  });
+  window.eval(source);
+  await new Promise(resolve=>setImmediate(resolve));
+  for(const nav of window.document.querySelectorAll('.desktop-nav,.mobile-nav nav')){
+    assert.equal(nav.children.length,5);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='My NAV').length,1);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Create Account').length,0);
+    assert.equal([...nav.querySelectorAll('a')].filter(a=>a.textContent==='Sign In').length,0);
+  }
+  window.happyDOM.abort();
+});
