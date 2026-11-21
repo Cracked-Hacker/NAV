@@ -17,20 +17,19 @@ h1,h2,h3{overflow-wrap:anywhere}
 /* Decorative rings must not cover coaching steps or account actions. */
 .hero-system:after,.final-cta:after{display:none}
 
-
-/* NAV minimalist visual system: restrained color, lighter surfaces, and clearer paths. */
-:root{--ink:#233b4c;--ink-deep:#1e3240;--paper:#f7f8f5;--card:#fff;--muted:#53646a;--line:#d8dfdc;--lime:#b8cab4;--lime-ink:#20372c;--blue:#476e68;--radius:16px;--shadow:0 6px 18px rgba(31,54,65,.05);--max:1180px}
-body{background:var(--paper)}.site-header{background:rgba(247,248,245,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}.brand-mark{border-radius:9px;background:var(--ink-deep);color:#f7f8f5}
-.desktop-nav{gap:17px;font-size:.86rem;font-weight:650}.desktop-nav a[aria-current=page]{text-decoration-color:var(--blue);text-decoration-thickness:2px;text-underline-offset:9px}.desktop-nav>a:not(.nav-signup){min-height:42px}
-.nav-signup{min-height:42px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink-deep);padding:8px 12px;font-weight:700}.mobile-nav nav .nav-signup{background:#fff;color:var(--ink-deep)}
-.button,.nav-app{border-radius:10px;min-height:44px;font-weight:700}.button.lime{background:var(--ink);border-color:var(--ink);color:#fff}.eyebrow{font-weight:750;letter-spacing:.11em}.section{padding:52px 0}
-.card,.card-link{box-shadow:none;border-color:var(--line);border-radius:var(--radius)}.card-link:hover,.path-card:hover{transform:translateY(-1px);box-shadow:0 7px 22px rgba(31,54,65,.06);border-color:#93aaa2}
-.site-footer{margin-top:62px;padding-top:28px;gap:36px;color:var(--muted)}.site-footer nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 18px;font-size:.88rem}.site-footer nav a{text-decoration:none}.site-footer nav a:hover{text-decoration:underline}.footer-brand{color:var(--ink-deep)}
-.home-intro{grid-template-columns:minmax(0,1fr);padding:clamp(72px,9vw,128px) 0 56px;border-bottom:1px solid var(--line)}.home-intro .hero-copy-column{max-width:880px}.home-intro h1{max-width:850px;font-size:clamp(3rem,5.6vw,5.7rem);line-height:1.04;letter-spacing:-.056em;margin-bottom:24px}.home-intro .hero-copy{max-width:700px;margin:0;font-size:clamp(1.1rem,1.7vw,1.33rem);line-height:1.65;color:var(--muted)}.text-accent{color:var(--blue)}
-.audience-switcher{padding:48px 0 76px}.audience-switcher>h2{font-size:clamp(2rem,3.7vw,3.4rem);line-height:1.05;margin:16px 0 26px}.path-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.path-card,.path-card.app-path,.path-card.classroom-path{min-height:265px;padding:27px;background:var(--card);color:var(--ink-deep);box-shadow:none;border:1px solid var(--line);border-radius:var(--radius)}.path-card .eyebrow,.app-path .eyebrow,.app-path p:not(.eyebrow),.path-card p:not(.eyebrow){color:var(--muted)}.path-card h3{font-size:clamp(1.5rem,2.15vw,2rem);line-height:1.13;letter-spacing:-.03em}.path-card .card-action,.app-path .card-action{color:var(--ink);font-weight:750;margin-top:24px}
-.home-principle{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.4fr);gap:16px 40px;align-items:start;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.home-principle .eyebrow{grid-column:1/-1;margin-bottom:0}.home-principle h2{max-width:550px;margin:0;font-size:clamp(1.8rem,3vw,2.6rem);line-height:1.13;letter-spacing:-.04em}.home-principle p:last-child{max-width:650px;margin:3px 0 0;color:var(--muted);line-height:1.75}
-.home-founder{padding:74px 0 40px;gap:60px}.home-founder .coach-identity h2{font-size:clamp(1.8rem,3vw,2.75rem);line-height:1.11}.home-founder .identity-mark{width:88px;height:88px;border-radius:14px}.home-founder .coach-copy p{line-height:1.75}
-.starter-preview,.final-cta{background:#eef2ed;color:var(--ink-deep);border-radius:18px}a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #4c8075;outline-offset:3px}
-@media(max-width:980px){.path-grid{grid-template-columns:1fr}.path-card,.path-card.app-path,.path-card.classroom-path{min-height:0}.home-principle,.home-founder{grid-template-columns:1fr}.home-founder{gap:24px}}
-@media(max-width:620px){.home-intro{padding:66px 0 36px}.home-intro h1{font-size:clamp(2.45rem,10vw,3.4rem)}.audience-switcher{padding:36px 0 52px}.path-card,.path-card.app-path,.path-card.classroom-path{padding:24px}.home-founder .coach-identity{align-items:flex-start}.site-footer nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Homepage structure only: retain NAV's established palette, typography, and buttons. */
+.home-intro{grid-template-columns:minmax(0,1fr);padding:clamp(64px,8vw,100px) 0 45px;border-bottom:1px solid var(--line)}
+.home-intro .hero-copy-column{max-width:900px}
+.home-intro h1{max-width:840px;line-height:1.04;margin-bottom:22px}
+.home-intro .hero-copy{max-width:720px;margin-bottom:0;line-height:1.65}
+.audience-switcher{padding:48px 0 64px}
+.audience-switcher>h2{margin:20px 0 24px}
+.path-card{min-height:280px}
+.path-card .card-action{margin-top:26px}
+.home-principle{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:18px 40px;align-items:start;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.home-principle .eyebrow{grid-column:1/-1;margin-bottom:0}
+.home-principle h2{margin:0;max-width:560px;font-size:clamp(2rem,3.2vw,3.1rem);letter-spacing:-.045em;line-height:1.12}
+.home-principle p:last-child{max-width:650px;margin:0;color:var(--muted);line-height:1.7}
+.home-founder{padding-top:72px;padding-bottom:30px}
+@media(max-width:980px){.home-principle{grid-template-columns:1fr}.path-card{min-height:0}}
+@media(max-width:620px){.home-intro{padding:60px 0 36px}.audience-switcher{padding:36px 0 48px}.home-founder{gap:26px}}
