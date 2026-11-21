@@ -5,12 +5,22 @@ import {Window} from 'happy-dom';
 
 function documentFor(path){const window=new Window();window.document.write(readFileSync(new URL('../'+path,import.meta.url),'utf8'));return window.document;}
 
-test('homepage identifies the three owner-requested visitor journeys with working local destinations',()=>{
+test('homepage offers exactly three distinct, usable destinations',()=>{
  const doc=documentFor('index.html');
- const paths=[...doc.querySelectorAll('.path-card')];
- assert.deepEqual(paths.map(p=>p.querySelector('.eyebrow').textContent.trim()),['I am a coach','I want coaching','I am a software tester']);
- assert.deepEqual(paths.map(p=>p.getAttribute('href')),['nav-coach.html','coaching.html','classroom/index.html']);
- assert.doesNotMatch(paths[2].textContent,/enter your tester code|redeem a code|approved beta areas/i);
+ const cards=[...doc.querySelectorAll('.nav-home-action')];
+ assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching',"I'm a coach",'Explore products']);
+ assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html','products.html']);
+ assert.equal(new Set(cards.map(p=>p.getAttribute('href'))).size,3);
+ assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
+});
+
+test('products describe unreleased materials truthfully, without enabling checkout',()=>{
+ const doc=documentFor('products.html');
+ for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
+ assert.match(doc.getElementById('classroom').textContent,/in development/i);
+ assert.match(doc.getElementById('study-tools').textContent,/planned/i);
+ assert.match(doc.getElementById('merch').textContent,/not for sale/i);
+ assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now/i);
 });
 
 test('My NAV education directs members to published resources without promising open courses or completion records',()=>{
