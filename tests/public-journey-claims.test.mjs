@@ -38,3 +38,24 @@ test('research and account FAQ describe the actual available next steps',()=>{
  assert.equal([...faq.querySelectorAll('a')].some(a=>a.textContent.includes('Sign In to My NAV')&&a.getAttribute('href')==='account/auth.html?mode=login'),true);
  assert.match(faq.body.textContent,/may be asked to sign in again/);
 });
+
+test('public copy never claims unreleased Classroom or private testing is available',()=>{
+ const about=documentFor('about.html');
+ const science=documentFor('science.html');
+ assert.doesNotMatch(about.body.textContent,/available only to invited beta testers|Start learning/i);
+ assert.match(about.body.textContent,/not currently available as public offerings/i);
+ assert.doesNotMatch(science.body.textContent,/Request private education access|is being tested privately/i);
+ assert.match(science.body.textContent,/still in development and review/i);
+});
+
+test('Products page has canonical, Open Graph and sitemap coverage',()=>{
+ const doc=documentFor('products.html');
+ assert.equal(doc.querySelector('link[rel="canonical"]').href,'https://coach-nate.netlify.app/products.html');
+ assert.ok(doc.querySelector('meta[property="og:title"]'));
+ assert.ok(readFileSync(new URL('../sitemap.xml',import.meta.url),'utf8').includes('<loc>https://coach-nate.netlify.app/products.html</loc>'));
+});
+
+test('404 page offers useful released destinations instead of unfinished beta',()=>{
+ const doc=documentFor('404.html');
+ assert.deepEqual([...doc.querySelectorAll('main a')].map(a=>a.getAttribute('href')),['index.html','coaching.html','products.html']);
+});
