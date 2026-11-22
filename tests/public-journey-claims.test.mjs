@@ -231,3 +231,26 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
  assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
 });
+
+test('Blinnnergy service card links to the mapped location and distinguishes venue rating from a Nate-specific review',()=>{
+ const doc=documentFor('coaching.html');
+ const card=[...doc.querySelectorAll('#booking article')][1];
+ const map=card.querySelector('.blinnergy-location a');
+ assert.ok(map,'Google Maps address link required');
+ assert.match(map.textContent,/5817 238th St SE, Suite 1/);
+ assert.match(map.getAttribute('href'),/query_place_id=ChIJOWW7K-cGkFQRUZbL4UbOcx8/);
+ assert.equal(map.getAttribute('target'),'_blank');
+ assert.match(map.getAttribute('rel'),/noopener/);
+ assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Keep original booking app');
+ const image=card.querySelector('.blinnergy-coach-image img');
+ assert.equal(image?.getAttribute('src'),'assets/coach-nate-squat-9099-poster.webp');
+ assert.equal(image?.getAttribute('loading'),'lazy');
+ assert.equal(card.querySelector('.blinnergy-coach-image')?.getAttribute('href'),'coach-nate.html#training');
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ assert.ok(manifest.includes('"assets/coach-nate-squat-9099-poster.webp"'),'Use only the approved personal photo');
+ assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
+ assert.match(card.textContent,/164 Google reviews · checked Nov 22, 2026/);
+ assert.match(card.querySelector('.blinnergy-quote').textContent,/Nate is a great instructor and he was amazing/);
+ assert.ok(card.querySelector('a[href="https://www.loc8nearme.com/washington/everett/blinn-fitness/2805575/"]'),'Link to original Nate-specific review evidence');
+ assert.match(card.textContent,/visitor review/);
+});
