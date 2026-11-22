@@ -14,6 +14,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "index.html",
   "nav-coach.html",
   "products.html",
+  "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
   "privacy.html",
   "research.html",
   "resources.html",

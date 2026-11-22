@@ -14,32 +14,43 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('products show a functioning study-options menu with truthful $0–$100 manual fulfillment',()=>{
+test('products offer a real downloadable bundle, Quizlet password, and compact optional Venmo',()=>{
   const doc=documentFor('products.html');
   for(const id of ['nav-coach','classroom','study-tools','merch']) assert.ok(doc.getElementById(id),id);
   assert.match(doc.getElementById('classroom').textContent,/in development/i);
   const study=doc.getElementById('study-tools');
   assert.match(study.textContent,/Ultimate Muscle Card Set/i);
   assert.match(study.textContent,/379.card/i);
+  assert.match(study.textContent,/Quizlet password:\\s*nate/i);
+  assert.match(study.textContent,/\\$0[–-]\\$100/);
+  assert.match(study.textContent,/free at \\$0/i);
   const menu=study.querySelector('details#muscle-card-options');
-  assert.ok(menu,'view options must be an accessible native disclosure');
+  assert.ok(menu,'study options must be an accessible native disclosure');
   assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
-  assert.match(study.textContent,/\$0[–-]\$100/);
-  assert.match(study.textContent,/choosing \$0 is allowed/i);
-  for(const term of ['CSV','Anki-import TSV','duplex PDF','Classroom-format JSON','Anki .apkg']) assert.ok(study.textContent.includes(term),term);
   const quizlet=menu.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
   const venmo=menu.querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
-  const request=menu.querySelector('a[href^="mailto:NAVfitnessBrand@gmail.com"]');
+  const archive='downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip';
+  const download=menu.querySelector('a[href="'+archive+'"]');
   assert.ok(quizlet,'original Quizlet URL required');
   assert.ok(venmo,'owner-provided Venmo URL required');
-  assert.ok(request,'manual delivery must have a real request path');
+  assert.ok(download,'working direct download required');
+  assert.equal(download.textContent.trim(),'Download');
+  assert.equal(download.getAttribute('download'),'NAV_Ultimate_Muscle_All_Formats_2026-11.zip');
+  const actions=menu.querySelector('.study-download-actions');
+  assert.ok(actions,'group download and optional Venmo together');
+  assert.deepEqual([...actions.querySelectorAll('a')],[download,venmo],'Venmo should sit directly below Download');
+  assert.equal(actions.querySelector('p'),null,'avoid lengthy payment copy');
+  const bytes=readFileSync(new URL('../'+archive,import.meta.url));
+  assert.ok(bytes.length>100000,'download should contain a real complete archive');
+  assert.equal(bytes.subarray(0,4).toString('binary'),'PK\\x03\\x04','expected ZIP archive bytes');
+  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+  assert.ok(manifest.includes('"'+archive+'"'),'archive must be published by Netlify');
   for(const link of [quizlet,venmo]){
     assert.equal(link.getAttribute('target'),'_blank');
     assert.match(link.getAttribute('rel'),/noopener/);
     assert.match(link.getAttribute('rel'),/noreferrer/);
   }
-  assert.match(study.textContent,/mark the payment as a purchase \/ goods and services/i);
-  assert.match(study.textContent,/does not automatically unlock/i);
+  assert.equal(menu.querySelector('a[href^="mailto:"]'),null,'no email fulfillment');
   assert.match(doc.getElementById('merch').textContent,/not for sale/i);
   assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now|Instant download after payment/i);
 });
