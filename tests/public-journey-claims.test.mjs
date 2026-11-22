@@ -30,7 +30,7 @@ test('products distinguish downloadable study materials from unreleased services
  for(const heading of ['Study on Quizlet','Download the complete bundle','Anki deck'])assert.match(options.textContent,new RegExp(heading));
  assert.match(options.textContent,/Pay what you can: \$0[–-]\$100/);
  assert.match(options.textContent,/One complete bundle at every price/i);
- assert.equal(study.querySelectorAll('a').length,6);
+ assert.equal(study.querySelectorAll('a').length,7);
  const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
  assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
  assert.equal(quizlet.getAttribute('target'),'_blank');
@@ -153,8 +153,13 @@ test('Study Tools slider is bounded and does not collect payment or expose a spe
  assert.deepEqual([control.min,control.max,control.step,control.value],['0','100','1','0']);
  assert.equal(doc.querySelector('#muscle-contribution-value').textContent.trim(),'$0');
  assert.ok(doc.querySelector('script[src="assets/study-tools-options.js"]'));
- assert.doesNotMatch(doc.getElementById('study-tools').innerHTML,/venmo\.com\/|Create checkout|Buy now|stripe\.com/i);
- assert.match(doc.getElementById('study-tools').textContent,/Optional support:.*Venmo recipient details/i);
+ assert.doesNotMatch(doc.getElementById('study-tools').innerHTML,/Create checkout|Buy now|stripe\.com/i);
+ const venmo=doc.getElementById('study-tools').querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
+ assert.ok(venmo,'Owner-supplied Venmo link should remain optional');
+ assert.equal(venmo.getAttribute('target'),'_blank');
+ assert.match(venmo.getAttribute('rel'),/noopener/);
+ assert.match(venmo.getAttribute('rel'),/noreferrer/);
+ assert.match(doc.getElementById('study-tools').textContent,/Paying does not unlock or change any download/i);
 });
 
 test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
