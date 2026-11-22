@@ -146,3 +146,10 @@ h1,h2,h3{overflow-wrap:anywhere}
 /* Exos @ Google: factual workplace identification, not unapproved corporate logos. */
 .exos-gfit-label{margin:1rem 0 0;padding-top:.75rem;border-top:1px solid var(--line);font-size:.78rem;font-weight:800;line-height:1.5;color:var(--muted)}
 .exos-gfit-label span{padding-inline:.18rem;font-weight:600}
+
+/* Blinnergy carousel: do not let horizontal track enlarge the 320px mobile page. */
+#booking .grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+#booking .grid-3>.card{min-width:0}
+.blinnergy-review-track{min-width:0;max-width:100%}
+.blinnergy-review-heading h4{min-width:0;overflow-wrap:anywhere}
+@media(max-width:980px){#booking .grid-3{grid-template-columns:minmax(0,1fr)}}
