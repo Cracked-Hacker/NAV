@@ -5,6 +5,10 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Keep HTML study-page downloads as real .html files, not rewritten pretty URLs.
+[build.processing.html]
+  pretty_urls = false
+
 [[redirects]]
   from = "/account.html"
   to = "/account/"
