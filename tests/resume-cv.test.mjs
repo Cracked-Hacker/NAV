@@ -15,7 +15,7 @@ test('CV page accurately identifies the source degrees and distinct research rol
   for(const name of ['EXOS','Blinnergy','FYZICAL','North Cascades','Yang Lab','Sound Bio Labs','BIOL 348','Staffers LLC'])
     assert.ok(page.includes(name),'Missing documented CV experience: '+name);
   assert.match(page,/10\.1007\/s10560-024-01000-y/);
-  assert.match(page,/observational shadowing|Observational shadowing/);
+  assert.match(page,/Research shadowing|shadowing researchers/);
 });
 
 test('View CV links to a real approved PDF in a new tab',()=>{
@@ -33,6 +33,21 @@ test('View CV links to a real approved PDF in a new tab',()=>{
 
 test('Public CV page distinguishes self-reported totals from independently verified evidence',()=>{
   assert.match(page,/self-reported/);
-  assert.match(page,/renewal and current licensure status have not been independently established/);
-  assert.match(page,/Google is the client worksite/);
+  assert.match(page,/credential renewal status is being confirmed|Current renewal status for time-limited credentials is being confirmed/);
+  assert.match(page,/EXOS at Google\x27s South Lake Union campus/);
+});
+
+test('research and CV pages state achievements directly, without defensive filler',()=>{
+  const research=readFileSync(new URL('../research.html',import.meta.url),'utf8');
+  const publicPages=[research,profile,page];
+  for(const [index,source] of publicPages.entries()){
+    assert.doesNotMatch(source,/as listed on the poster|as recorded on the November 2026 résumé/i,'redundant source commentary in public page '+index);
+    assert.doesNotMatch(source,/not a claim of coauthorship|no university affiliation implied|not reconstructed by generative illustration/i,'defensive filler in public page '+index);
+  }
+  // Important factual distinctions remain visible despite shorter public copy.
+  assert.match(research,/University of Washington School of Social Work/);
+  assert.match(research,/research shadowing|shadowed researchers/i);
+  assert.match(profile,/Community volunteering/);
+  assert.match(page,/credential renewal status is being confirmed/i);
+  assert.match(page,/EXOS at Google's South Lake Union campus/);
 });
