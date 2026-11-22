@@ -1,4 +1,4 @@
-// Reviews are manually curated in coaching.html. Never infer individual star ratings from the venue average.
+// Reviews are manually curated in coaching.html. Only use individual five-star ratings documented in the original owner-supplied Google review screenshots.
 const carousel = document.querySelector('[data-blinnergy-reviews]');
 if (carousel) {
   const track = carousel.querySelector('[data-review-track]');
@@ -23,11 +23,19 @@ if (carousel) {
     return bestIndex;
   }
 
+  function fitActiveReview() {
+    const slide = slides[active];
+    if (!slide) return;
+    // Never clip full review text. The scroll track follows this slide's own content height.
+    track.style.height = `${Math.ceil(slide.offsetHeight) + 14}px`;
+  }
+
   function update() {
     active = closestSlide();
     status.textContent = `${active + 1} of ${slides.length}`;
     prev.disabled = active === 0;
     next.disabled = active >= slides.length - 1;
+    fitActiveReview();
   }
 
   function moveTo(index) {
@@ -51,6 +59,11 @@ if (carousel) {
       requestAnimationFrame(() => { pendingFrame = false; update(); });
     }, {passive: true});
     window.addEventListener('resize', update);
+    if (window.ResizeObserver) {
+      const observer = new ResizeObserver(fitActiveReview);
+      slides.forEach(slide => observer.observe(slide));
+    }
+    document.fonts?.ready?.then(fitActiveReview);
     update();
   }
 }
