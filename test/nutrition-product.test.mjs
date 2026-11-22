@@ -1,0 +1,21 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {existsSync,readFileSync} from 'node:fs';
+import {PUBLIC_RELEASE_FILES} from '../scripts/public-release-manifest.mjs';
+test('Free nutrition guide has one compact card, a real packaged PDF, and optional support',()=>{
+  const page=readFileSync('products.html','utf8');
+  const path='downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf';
+  assert.equal((page.match(/id="nutrition-guides"/g)||[]).length,1);
+  assert.match(page,/Nutrition &amp; Guides/);
+  assert.ok(page.includes('href="'+path+'" download'));
+  assert.ok(PUBLIC_RELEASE_FILES.includes(path));
+  assert.ok(PUBLIC_RELEASE_FILES.includes('assets/nutrition-guide-contribution.js'));
+  assert.ok(existsSync(path));
+  const pdf=readFileSync(path);
+  assert.equal(pdf.subarray(0,5).toString(),'%PDF-');
+  assert.ok(pdf.byteLength>20_000);
+  assert.ok(page.includes('id="nutrition-support-venmo"'));
+  assert.ok(page.includes('The PDF')||page.includes('No account or payment required'));
+  assert.match(page,/No account or payment required/);
+  assert.ok(page.includes('type="module" src="assets/nutrition-guide-contribution.js"'));
+});

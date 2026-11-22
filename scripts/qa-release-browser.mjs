@@ -89,7 +89,7 @@ try{
   await page.goto(new URL('products.html',base).href,{waitUntil:'networkidle'});
   await page.locator('#muscle-card-options > summary').click();
   const customAmount=page.locator('#muscle-contribution-custom');
-  const paymentLink=page.locator('.study-download-actions a[href^="https://venmo.com/"]');
+  const paymentLink=page.locator('#study-tools .study-download-actions a[href^="https://venmo.com/"]');
   await customAmount.fill('275');
   const suggestedPayment=new URL(await paymentLink.getAttribute('href'));
   assert.equal(suggestedPayment.searchParams.get('txn'),'pay');
@@ -113,6 +113,37 @@ try{
   await customAmount.fill('0');
   assert.equal(await paymentLink.getAttribute('href'),'https://venmo.com/u/Nate-Holochwost');
   console.log('PASS Study Tools dynamic amounts, Venmo prefill URL and copy feedback');
+
+  // Nutrition & Guides: real binary file, free path, compact actions, and optional support.
+  await page.goto(new URL('products.html',base).href,{waitUntil:'networkidle'});
+  assert.equal(await page.locator('#nutrition-guides').count(),1,'Exactly one compact nutrition product card');
+  const pdfHref=await page.locator('#nutrition-guides a[download]').getAttribute('href');
+  assert.equal(pdfHref,'downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf');
+  const nutritionPdf=await context.request.get(new URL(pdfHref,base).href);
+  assert.equal(nutritionPdf.status(),200,'Free nutrition PDF must return HTTP 200 without login');
+  const pdfBytes=await nutritionPdf.body();
+  assert.equal(pdfBytes.subarray(0,5).toString(),'%PDF-');
+  assert.ok(pdfBytes.length>20000,'Download must contain the full PDF, not a placeholder');
+  assert.equal(await page.locator('#nutrition-guides .study-download-actions a').count(),2,'Minimal two-action UI');
+  await page.locator('#nutrition-support-options > summary').click();
+  const nutritionCustom=page.locator('#nutrition-contribution-custom');
+  const nutritionVenmo=page.locator('#nutrition-support-venmo');
+  await nutritionCustom.fill('150');
+  const nutritionPayment=new URL(await nutritionVenmo.getAttribute('href'));
+  assert.equal(nutritionPayment.searchParams.get('amount'),'150.00');
+  assert.equal(nutritionPayment.searchParams.get('note'),'NAV Performance Nutrition Guide - optional support');
+  await nutritionCustom.fill('0');
+  assert.equal(await nutritionVenmo.getAttribute('href'),'https://venmo.com/u/Nate-Holochwost');
+  await page.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
+    writeText:async value=>{window.__copiedNutritionAmount=value;}
+  }}));
+  await page.locator('#nutrition-contribution').evaluate(el=>{
+    el.value='8';el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await page.waitForFunction(()=>window.__copiedNutritionAmount==='8.00');
+  assert.match(await page.locator('#nutrition-amount-status').textContent(),/Copied \$8\.00/);
+  console.log('PASS free nutrition PDF and optional contribution controls');
 
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
