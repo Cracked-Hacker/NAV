@@ -193,3 +193,21 @@ test('Coach Nate origin story is accurate, restrained, and linked to real resear
   const about=documentFor('about.html');
   assert.match(about.body.textContent,/65 pounds/i);
 });
+
+
+test('founder story follows the verified 65-pound sequence and does not inflate credentials',()=>{
+  const about=documentFor('about.html').body.textContent;
+  const coach=documentFor('coach-nate.html').body.textContent;
+  for(const body of [about,coach]){
+    assert.match(body,/65 pounds/i);
+    assert.match(body,/kinesiology/i);
+    assert.match(body,/biology/i);
+    assert.doesNotMatch(body,/\b6 pounds\b|six pounds/i);
+    assert.doesNotMatch(body,/licensed (?:nurse|physical therapist)|guaranteed (?:results|performance)/i);
+  }
+  assert.match(coach,/marine biologist/i);
+  assert.match(coach,/anatomy and physiology lab/i);
+  assert.match(coach,/shadowed physical therapists/i);
+  assert.match(coach,/youth lacrosse coach/i);
+  assert.ok(coach.indexOf('65 pounds')<coach.indexOf('That led me to add biology'));
+});
