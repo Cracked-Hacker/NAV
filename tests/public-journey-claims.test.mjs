@@ -135,6 +135,15 @@ test('coaching clearly separates NAV online coaching from employer-owned booking
  const applications=[...main.querySelectorAll('a[href^="https://docs.google.com/forms/"]')];
  assert.equal(applications.length,1);
  assert.equal(applications[0].textContent,'Apply for Coaching');
+ const availability=main.querySelector('[aria-labelledby="availability-heading"]');
+ const availableApply=availability?.querySelector('a[href^="https://docs.google.com/forms/"]');
+ assert.ok(availableApply,'Availability application instruction must be a functional link');
+ assert.equal(availableApply.getAttribute('href'),applications[0].getAttribute('href'),'Availability link should use same application');
+ assert.equal(availableApply.textContent,'Apply for Coaching');
+ assert.equal(availability.querySelectorAll('.button').length,0,'Do not add a duplicate primary button');
+ const disclaimer=main.querySelector('.coaching-example')?.parentElement?.querySelector('p.muted');
+ assert.ok(disclaimer,'Fitness versus clinical scope disclaimer must remain visible');
+ assert.equal(disclaimer.textContent.trim(),'NAV defines coaching as fitness and exercise guidance, not medical diagnosis, treatment, physical therapy, or medical nutrition therapy. For those services, consult an appropriately qualified healthcare professional.');
  assert.match(options[1].textContent,/In-person · Blinnergy/);
  assert.match(options[1].textContent,/separate from NAV and online coaching/);
  assert.ok(options[1].querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
