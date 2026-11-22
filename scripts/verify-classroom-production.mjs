@@ -67,7 +67,7 @@ for(let attempt=1;attempt<=15;attempt++){
       "downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf"
     ];
     assert.match(productHtml,/<h2>Learning Resources<\/h2>/);
-    assert.doesNotMatch(productHtml,/position[\\s–-]+pattern[\\s–-]+power|\\bEXOS\\b|Pillar Prep/i);
+    assert.doesNotMatch(productHtml,/position[\s–-]+pattern[\s–-]+power|\bEXOS\b|Pillar Prep/i);
     for(const path of downloads){
       const acceptableLinks=path.endsWith(".html") ? [path,path.slice(0,-5),path.slice(0,-5)+"/"] : [path];
       const foundLink=acceptableLinks.some(link=>
