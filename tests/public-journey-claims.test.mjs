@@ -9,7 +9,7 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  const doc=documentFor('index.html');
  const cards=[...doc.querySelectorAll('.nav-home-action')];
  assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching',"I'm a coach",'Explore products']);
- assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html','products.html']);
+ assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html#booking','nav-coach.html','products.html']);
  assert.equal(new Set(cards.map(p=>p.getAttribute('href'))).size,3);
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
@@ -68,3 +68,4 @@ test('science page presents study-design categories without a universal rank',()
  assert.ok(doc.querySelector('a[href^="https://www.cebm.ox.ac.uk/"]'));
  assert.ok(doc.querySelector('a[href^="https://www.cdc.gov/acip-grade-handbook/"]'));
 });
+
