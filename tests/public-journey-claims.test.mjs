@@ -18,7 +18,15 @@ test('products describe unreleased materials truthfully, without enabling checko
  const doc=documentFor('products.html');
  for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
  assert.match(doc.getElementById('classroom').textContent,/in development/i);
- assert.match(doc.getElementById('study-tools').textContent,/planned/i);
+ const study=doc.getElementById('study-tools');
+ assert.match(study.textContent,/Ultimate Muscle Card Set/i);
+ assert.match(study.textContent,/available now/i);
+ assert.match(study.textContent,/More NAV study tools are planned/i);
+ const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
+ assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
+ assert.equal(quizlet.getAttribute('target'),'_blank');
+ assert.match(quizlet.getAttribute('rel'),/noopener/);
+ assert.match(quizlet.getAttribute('rel'),/noreferrer/);
  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
  assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now/i);
 });
