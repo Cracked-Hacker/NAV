@@ -270,11 +270,13 @@ test('Blinnergy card links to the venue and shows only source-linked reviews wit
  assert.ok(carousel,'Carousel must be present');
  assert.equal(carousel.querySelector('[data-review-track]').getAttribute('tabindex'),'0','Allow keyboard focus');
  const slides=[...carousel.querySelectorAll('[data-review-slide]')];
- assert.equal(slides.length,3,'Three distinct reviews mentioning Nate must display');
+ assert.equal(slides.length,4,'Three reviews mentioning Nate, plus one clearly labeled general group-class review');
  assert.equal(slides[0].querySelector('blockquote')?.textContent.trim(),'“Great place. Nate is a great instructor and he was amazing. First time here and I highly recommend this place :)”','Full verified short review must not be clipped');
  assert.match(slides[0].textContent,/April 2026/);
  assert.ok(slides[0].querySelector('a[href="https://www.loc8nearme.com/washington/everett/blinn-fitness/2805575/"]'));
- assert.ok(slides.every(slide=>!slide.textContent.includes('★★★★★')),'No unverified individual five-star claims');
+ assert.ok(slides.every(slide=>slide.querySelector('.blinnergy-review-venue-stars')?.textContent.includes('★★★★★')),'Show requested stars only with explicit venue-wide attribution');
+ assert.ok(slides.every(slide=>slide.querySelector('.blinnergy-review-venue-stars')?.textContent.includes('Blinnergy overall')),'Stars must visibly identify the venue overall rating');
+ assert.ok(slides.every(slide=>slide.querySelector('.blinnergy-review-venue-stars')?.getAttribute('aria-label')?.includes('rating of this individual review is unverified')),'Stars must not imply individual review ratings');
  assert.match(slides[1].textContent,/Felicia · Lower Body Foundations/);
  assert.equal(slides[1].querySelector('blockquote'),null,'Never label a shortened third-party review as the full quotation');
  assert.match(slides[1].textContent,/complete review of Nate/);
@@ -286,11 +288,15 @@ test('Blinnergy card links to the venue and shows only source-linked reviews wit
  assert.match(slides[2].textContent,/Diane K/);
  assert.match(slides[2].textContent,/year not displayed/);
  assert.ok(slides[2].querySelector('a[href="https://hotfitness.net/fitness-near-me/blinnergy/"]'));
- assert.match(carousel.querySelector('.blinnergy-review-note').textContent,/Individual ratings are unverified/);
+ assert.match(carousel.querySelector('.blinnergy-review-note').textContent,/not an individual review score/);
  assert.equal(slides.filter(slide=>slide.querySelector('blockquote')).length,1,'Only one independently complete quoted review');
  assert.ok(card.querySelector('.blinnergy-review-more a[href^="https://classpass.com/"]'),'Link to all ClassPass reviews');
  assert.ok(card.querySelector('.blinnergy-review-more a[href^="https://www.google.com/maps"]'),'Link to Google review listing');
- assert.equal(carousel.querySelector('[data-review-status]').textContent,'1 of 3');
+ assert.match(slides[3].textContent,/Payton Brown · Group Classes/);
+ assert.match(slides[3].textContent,/does not name Nate individually/);
+ assert.ok(slides[3].querySelector('a[href="https://hotfitness.net/fitness-near-me/blinnergy/"]'));
+ assert.equal(slides[3].querySelector('blockquote'),null,'Do not fabricate or truncate Payton’s words');
+ assert.equal(carousel.querySelector('[data-review-status]').textContent,'1 of 4');
  for(const direction of ['prev','next']) {
    const button=carousel.querySelector('[data-review-'+direction+']');
    assert.ok(button,'Arrow button required: '+direction);
