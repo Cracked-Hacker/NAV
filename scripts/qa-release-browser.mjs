@@ -45,6 +45,12 @@ try{
         columns:document.querySelector('.account-auth-layout')?getComputedStyle(document.querySelector('.account-auth-layout')).gridTemplateColumns.split(' ').length:null,
         brokenImages:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.getAttribute('src'))}));
       assert.equal(metrics.width,width);
+      if(metrics.scrollWidth>width+1){
+        const culprits=await page.evaluate(()=>[...document.querySelectorAll('body *')]
+          .filter(el=>el.getBoundingClientRect().right>innerWidth+1)
+          .slice(0,15).map(el=>({tag:el.tagName,classes:el.className?.toString().slice(0,90),right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)})));
+        console.error('Horizontal overflow diagnostics',JSON.stringify({route,width,culprits}));
+      }
       assert.ok(metrics.scrollWidth<=width+1,`${route}/${width}: horizontal overflow ${metrics.scrollWidth}`);
       assert.equal(metrics.h1,1,`${route}: one page heading`);
       assert.equal(await page.locator('.desktop-nav a').filter({hasText:'Coach Nate'}).count(),1,`${route}: one Coach Nate link after Netlify Pretty URLs`);
