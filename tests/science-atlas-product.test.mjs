@@ -67,5 +67,5 @@ test('Published education products omit employer-branded teaching frameworks and
  const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
  assert.ok(csv.includes('Average velocity equals'));
  assert.ok(csv.includes('Displacement is final minus initial position'));
- assert.ok(html.includes('Citations credit the original researchers, not endorsements.'));
+ assert.ok(html.includes('Evans Love (2016)'), 'Metabolic map attribution must remain visible');
 });

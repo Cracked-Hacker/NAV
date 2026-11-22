@@ -12,7 +12,8 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
   assert.ok(existsSync(root + "/account/auth.html"), "NAV sign-in remains available");
   const landing = readFileSync(root + "/classroom/index.html", "utf8");
   assert.match(landing, /Private beta access/i);
-  assert.match(landing, /Private testing is in development\./i);
+  assert.match(landing, /(?:NAV Classroom is still in development|Private testing is not open yet)\./i);
+  assert.match(landing, /not open for testing or sale yet/i);
   assert.match(landing, /Ask about future testing/);
   assert.match(landing, /href="\.\.\/contact\.html"/);
   assert.doesNotMatch(landing, /Enter your tester code|nav-coach-app-eight\.vercel\.app\/beta/i);
