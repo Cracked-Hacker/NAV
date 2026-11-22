@@ -26,6 +26,8 @@ test('Study Tools provide a working direct download, compact Venmo, and the Quiz
  const menu=study.querySelector('details#muscle-card-options');
  assert.ok(menu,'native accessible View Options menu required');
  assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
+ assert.equal(menu.querySelector('a')?.textContent.trim(),'Download','NAV download is the first option');
+ assert.equal([...menu.querySelectorAll('a')].at(-1)?.hostname,'quizlet.com','Quizlet is a secondary option');
  const actions=menu.querySelector('.study-download-actions');
  assert.ok(actions);
  const buttons=[...actions.querySelectorAll('a')];
