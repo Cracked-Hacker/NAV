@@ -57,6 +57,16 @@ for(let attempt=1;attempt<=15;attempt++){
     assert.ok(productHtml.includes('href="https://venmo.com/u/Nate-Holochwost"'),"Venmo link missing");
     assert.ok(!productHtml.includes("Request files by email"),"Superseded email fulfillment is still live");
     // Ground every production digest in the exact checked-out commit, not stale fixed hashes.
+    assert.ok(productHtml.includes("Read the study notes for cards 045, 050, and 301"), "Study notes link missing");
+    const bundlePosition=productHtml.indexOf("downloads/NAV_Ultimate_Muscle_All_Formats");
+    const quizletPosition=productHtml.indexOf("https://quizlet.com/");
+    assert.ok(bundlePosition >= 0 && bundlePosition < quizletPosition, "NAV download must precede Quizlet");
+    const notesResponse=await request("muscle-card-notes.html");
+    assert.equal(notesResponse.status,200,"Study notes missing from production");
+    const notesHtml=await notesResponse.text();
+    for(const topic of ["045 · Serratus anterior","050 · Subclavius","301 · Gastrocnemius"]){
+      assert.ok(notesHtml.includes(topic),"Missing study note: "+topic);
+    }
     const downloads=[
       "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
       "downloads/NAV_Ultimate_Muscle_Card_Set.apkg",

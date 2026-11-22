@@ -14,6 +14,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "index.html",
   "nav-coach.html",
   "products.html",
+  "muscle-card-notes.html",
   "privacy.html",
   "research.html",
   "resources.html",

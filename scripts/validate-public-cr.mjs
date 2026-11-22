@@ -43,15 +43,12 @@ if ((home.match(/class="nav-home-action"/g) || []).length !== 3) failures.push("
 for (const route of ["coaching.html","nav-coach.html","products.html"]) {
   if (!home.includes('href="'+route+'"')) failures.push("index.html: missing primary journey "+route);
 }
-if (!/Prescription ≠ performance/i.test(home) && !/Prescription ≠ performance/i.test(text("nav-coach.html")) && !/Prescription ≠ performance/i.test(text("science.html")) && !/Prescription ≠ performance/i.test(text("resources.html"))) {
-  failures.push("NAV public copy: prescribed and performed records must remain distinguished");
-}
-
 const product = text("nav-coach.html");
-requireMatch("nav-coach.html", product, /human coach in control/i, "missing human-coach-control positioning");
+requireMatch("nav-coach.html", product, /original target alongside your result/i, "explain how completed work relates to the assigned plan");
+requireMatch("nav-coach.html", product, /You decide whether to repeat the session/i, "explain who adjusts the plan");
 requireMatch("nav-coach.html", product, /Open NAV Coach/i, "working app access must remain visible");
 if (/Status:\s*In development|Spreadsheet program import is not released yet/i.test(product)) failures.push("nav-coach.html: unfinished features must not be advertised publicly");
-requireMatch("nav-coach.html", product, /private coaching information.{0,180}(?:authenticated|private).{0,40}app/i, "missing public/private boundary");
+requireMatch("nav-coach.html", product, /Sign in to view your workout records and private coaching messages/i, "missing public/private boundary");
 
 const science = text("science.html");
 requireMatch("science.html", science, /Systematic reviews/i, "missing evidence hierarchy");
