@@ -8,8 +8,8 @@ function documentFor(path){const window=new Window();window.document.write(readF
 test('homepage offers exactly three distinct, usable destinations',()=>{
  const doc=documentFor('index.html');
  const cards=[...doc.querySelectorAll('.nav-home-action')];
- assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching',"I'm a coach",'Explore products']);
- assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html#booking','nav-coach.html','products.html']);
+ assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching','Use NAV Coach','Explore products']);
+ assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html','products.html']);
  assert.equal(new Set(cards.map(p=>p.getAttribute('href'))).size,3);
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
@@ -90,4 +90,33 @@ test('Coach Nate displays only selected, contextual, privacy-safe uploaded photo
    assert.equal(bytes.subarray(8,12).toString(),'WEBP');
  }
  assert.ok(doc.querySelector('img[src="assets/coach-nate-lab-portrait.webp"]'),'Existing research hero must remain');
+});
+
+test('NAV offering is one affordability-based online service with no unverified employer bookings',()=>{
+ const doc=documentFor('coaching.html');
+ const main=doc.querySelector('main');
+ assert.match(main.textContent,/\$80[–-]\$300 per week/i);
+ assert.match(main.textContent,/same online coaching service/i);
+ assert.match(main.textContent,/weekly amount is selected within the sliding scale based on what a person can afford/i);
+ assert.match(main.textContent,/Venmo or Zelle/i);
+ assert.doesNotMatch(main.textContent,/\$100 base price|Rain City Fit|Get the Blinnergy app|Boost for openings/i);
+ assert.equal([...main.querySelectorAll('a')].filter(a=>a.href.includes('docs.google.com/forms/')).length,1);
+});
+test('owner-provided NASM CPT dates are correct and the public site does not disclose private identifiers',()=>{
+ for(const path of ['about.html','resume.html','coach-nate.html']){
+   const body=documentFor(path).body.textContent;
+   assert.match(body,/NASM Certified Personal Trainer \(CPT\)/i);
+   assert.match(body,/May 29, 2025/);
+   assert.match(body,/May 29, 2027/);
+ }
+ const doc=documentFor('coach-nate.html');
+ const clinical=doc.querySelector('img[src="assets/coach-nate-clinical-ppe-selected.webp"]');
+ assert.ok(clinical);
+ assert.match(clinical.alt,/seated on a couch/i);
+ assert.doesNotMatch(doc.body.textContent,/Another day another butt/i);
+});
+test('My NAV presents one global app launch instead of redundant app links',()=>{
+ const doc=documentFor('account/index.html');
+ const links=[...doc.querySelectorAll('a[href="https://nav-coach-app-eight.vercel.app/"]')];
+ assert.equal(links.length,1);
 });
