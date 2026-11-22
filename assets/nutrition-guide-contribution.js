@@ -9,7 +9,7 @@ if(slider&&custom&&copy&&status&&venmo){
   const profile=venmo.href;
   const getAmount=()=>{
     const raw=custom.value.trim();
-    if(!/^[0-9]+(?:\\.[0-9]{1,2})?$/.test(raw)||!custom.validity.valid)return null;
+    if(!/^[0-9]+(?:\.[0-9]{1,2})?$/.test(raw)||!custom.validity.valid)return null;
     const n=Number(raw);
     return Number.isFinite(n)&&n>=0?n:null;
   };
