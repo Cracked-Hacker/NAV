@@ -40,7 +40,9 @@ test('Learning Resources preserves the flashcard download, Venmo, and Quizlet pa
  assert.ok(zip.length>100000);
  assert.deepEqual([...zip.subarray(0,4)],[80,75,3,4]);
  assert.ok(study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]'));
- for(const format of ['.apkg','.pdf','.csv','.html'])assert.ok([...study.querySelectorAll('.study-download-links a')].some(a=>a.getAttribute('href').endsWith(format)),format);
+ for(const format of ['.apkg','.pdf','.csv'])assert.ok([...study.querySelectorAll('.study-download-links a')].some(a=>a.getAttribute('href').endsWith(format)),format);
+ const offlineLink=study.querySelector('a[href="downloads/NAV_Muscle_Cards_Offline.bin"]');
+ assert.equal(offlineLink?.getAttribute('download'),'NAV_Muscle_Cards_Offline.html');
  assert.equal(study.querySelectorAll('a').length,7);
  assert.equal(study.querySelector('a[href^="mailto:"]'),null);
  assert.match(doc.getElementById('classroom').textContent,/in development/i);
@@ -188,7 +190,7 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
    'NAV_Ultimate_Muscle_Card_Set.apkg':20000,
    'NAV_Muscle_Cards_Print.pdf':100000,
    'NAV_Muscle_Cards.csv':50000,
-   'NAV_Muscle_Cards_Offline.html':50000
+   'NAV_Muscle_Cards_Offline.bin':50000
  };
  const links=[...section.querySelectorAll('a[download]')];
  assert.equal(links.length,5);
@@ -206,8 +208,11 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
      assert.equal(bytes.subarray(0,5).toString('latin1'),'%PDF-');
    if(name.endsWith('.csv'))
      assert.match(bytes.toString('utf8'),/^Front,Back/);
-   if(name.endsWith('.html'))
+   if(name.endsWith('.bin')){
      assert.match(bytes.toString('utf8'),/^<!doctype html>/);
+     assert.deepEqual(bytes,readFileSync(new URL('../downloads/NAV_Muscle_Cards_Offline.html',import.meta.url)));
+     assert.equal(link.getAttribute('download'),'NAV_Muscle_Cards_Offline.html');
+   }
  }
  const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
  const html=readFileSync(new URL('../downloads/NAV_Muscle_Cards_Offline.html',import.meta.url),'utf8');
