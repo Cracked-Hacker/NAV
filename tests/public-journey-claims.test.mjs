@@ -69,3 +69,25 @@ test('science page presents study-design categories without a universal rank',()
  assert.ok(doc.querySelector('a[href^="https://www.cdc.gov/acip-grade-handbook/"]'));
 });
 
+
+test('Coach Nate displays only selected, contextual, privacy-safe uploaded photos',()=>{
+ const doc=documentFor('coach-nate.html');
+ const photos=[...doc.querySelectorAll('#teaching img[src*="selected.webp"]')];
+ assert.equal(photos.length,2);
+ assert.deepEqual(photos.map(img=>img.getAttribute('src')),[ 
+  'assets/coach-nate-bod-pod-selected.webp',
+  'assets/coach-nate-clinical-ppe-selected.webp'
+ ]);
+ for(const img of photos){assert.equal(img.getAttribute('loading'),'lazy');assert.ok(img.getAttribute('alt')?.length>20);}
+ assert.doesNotMatch(doc.body.textContent,/Another day another butt|certified registered nurse/i);
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ for(const img of photos){
+   const relative=img.getAttribute('src');
+   assert.ok(manifest.includes('"'+relative+'"'),relative+' missing from finished-only build inventory');
+   const bytes=readFileSync(new URL('../'+relative,import.meta.url));
+   assert.ok(bytes.length<20000,'New photo unexpectedly large');
+   assert.equal(bytes.subarray(0,4).toString(),'RIFF');
+   assert.equal(bytes.subarray(8,12).toString(),'WEBP');
+ }
+ assert.ok(doc.querySelector('img[src="assets/coach-nate-lab-portrait.webp"]'),'Existing research hero must remain');
+});
