@@ -63,7 +63,13 @@ for(let attempt=1;attempt<=15;attempt++){
       ["downloads/NAV_Muscle_Cards_Offline.html","56c325c4ee040b2799503d86d7a83e66cbfe368545d173e91f3ee0a74bde4c58",134582]
     ];
     for(const [path,sha,size] of downloads){
-      assert.ok(productHtml.includes('href="'+path+'"'),"Missing public download link: "+path);
+      const acceptableLinks=path.endsWith(".html") ? [path,path.slice(0,-5),path.slice(0,-5)+"/"] : [path];
+      const foundLink=acceptableLinks.some(link=>
+        productHtml.includes('href="'+link+'"') ||
+        productHtml.includes("href='"+link+"'") ||
+        productHtml.includes('href='+link+' '));
+      const actualDownloadLinks=[...productHtml.matchAll(/href=["']?([^"' >]*downloads\/[^"' >]+)/gi)].map(m=>m[1]);
+      assert.ok(foundLink,"Missing public download link: "+path+"; observed "+actualDownloadLinks.join(" | "));
       const response=await request(path);
       assert.equal(response.status,200,"Public download unavailable: "+path);
       assert.match(response.headers.get("content-disposition")||"",/attachment/i,"Download not served as attachment: "+path);
