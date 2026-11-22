@@ -118,34 +118,34 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-tool-item h3{margin:.15rem 0 .75rem;font-size:1.35rem;line-height:1.25}
 @media(max-width:1100px){.study-tool-grid{grid-template-columns:1fr}.study-tool-item+.study-tool-item{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:1.5rem}}
 
-/* Blinnergy: source-only review carousel. */
+/* Blinnergy: complete, independently five-star-rated Google reviews. */
 .blinnergy-location{margin:1rem 0 .6rem;font-size:.88rem;font-weight:700;line-height:1.45}
 .blinnergy-location a{color:var(--blue);text-underline-offset:.16em;overflow-wrap:anywhere}
-.blinnergy-reviews{min-width:0;margin:1rem 0 .7rem;padding:.9rem 0 .65rem;border-top:1px solid var(--line)}
-.blinnergy-review-heading{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:.5rem}
-.blinnergy-review-controls{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.blinnergy-reviews{min-width:0;margin:1rem 0 .7rem;padding:.7rem 0 .4rem;border-top:1px solid var(--line)}
+.blinnergy-review-heading{display:flex;justify-content:flex-end;margin-bottom:.4rem}
+.blinnergy-review-controls{display:flex;align-items:center;gap:.4rem}
 .blinnergy-review-controls[hidden]{display:none}
 .blinnergy-review-controls button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-size:1.15rem;line-height:1;cursor:pointer}
 .blinnergy-review-controls button:disabled{opacity:.35;cursor:default}
 .blinnergy-review-controls button:not(:disabled):hover{border-color:var(--blue);color:var(--blue)}
 .blinnergy-review-controls button:focus-visible,.blinnergy-review-track:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.blinnergy-review-controls [data-review-status]{min-width:2.5rem;text-align:center;font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-.blinnergy-review-track{display:flex;gap:8px;min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;padding:2px 2px 8px}
-.blinnergy-review-slide{box-sizing:border-box;flex:0 0 calc(100% - 4px);min-width:0;min-height:166px;margin:0;padding:15px;border:1px solid var(--line);border-radius:10px;background:var(--card);display:flex;flex-direction:column;scroll-snap-align:start;overflow-wrap:anywhere}
-.blinnergy-review-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;width:100%;margin-bottom:.85rem;font-size:.72rem;line-height:1.4;color:var(--muted)}
-.blinnergy-review-source-name{font-weight:750;color:var(--ink)}
-.blinnergy-review-source-name small{font-weight:500;font-size:.67rem;color:var(--muted)}
-.blinnergy-review-venue-stars{display:inline-flex;align-items:flex-end;flex-direction:column;flex-shrink:0;line-height:1.05}
-.blinnergy-review-venue-stars > span{font-size:.95rem;letter-spacing:0;color:#ae8130}
-.blinnergy-review-venue-stars small{font-size:.59rem;font-weight:600;color:var(--muted);white-space:nowrap}
-.blinnergy-review-slide blockquote{margin:0 0 .9rem;padding:0}
-.blinnergy-review-slide blockquote p{margin:0;font-size:.93rem;font-weight:600;line-height:1.54;letter-spacing:-.005em}
+.blinnergy-review-controls [data-review-status]{min-width:2.65rem;text-align:center;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.blinnergy-review-track{display:flex;align-items:flex-start;gap:8px;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;transition:height .18s ease}
+.blinnergy-review-slide{box-sizing:border-box;flex:0 0 calc(100% - 4px);align-self:flex-start;min-width:0;min-height:154px;height:auto;margin:0;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--card);display:flex;flex-direction:column;scroll-snap-align:start;overflow-wrap:anywhere}
+.blinnergy-review-meta{display:flex;align-items:flex-start;justify-content:space-between;gap:.65rem;width:100%;margin:0 0 1rem}
+.blinnergy-review-byline{display:flex;flex-direction:column;gap:.12rem;min-width:0}
+.blinnergy-review-source-name{font-size:.84rem;font-weight:750;line-height:1.28;color:var(--ink)}
+.blinnergy-review-platform{font-size:.69rem;line-height:1.35;color:var(--muted)}
+.blinnergy-review-stars{font-size:1.02rem;line-height:1.2;color:#b88325;letter-spacing:.025em;white-space:nowrap;flex-shrink:0}
+.blinnergy-review-slide blockquote{margin:0 0 1rem;padding:0}
+.blinnergy-review-slide blockquote p{margin:0 0 .8rem;font-size:.91rem;font-weight:500;line-height:1.58;letter-spacing:0}
+.blinnergy-review-slide blockquote p:last-child{margin-bottom:0}
 .blinnergy-review-source{display:inline-block;align-self:flex-start;margin-top:auto;font-size:.77rem;font-weight:700;color:var(--blue);text-underline-offset:.18em}
 .blinnergy-rating{margin:.35rem 0 0;font-size:.81rem;font-weight:800;line-height:1.4}
 .blinnergy-rating span{color:var(--blue);letter-spacing:.02em;white-space:nowrap}
 .blinnergy-rating a{color:inherit;text-underline-offset:.15em}
-@media(max-width:420px){.blinnergy-review-slide{padding:12px}.blinnergy-review-meta{gap:6px}.blinnergy-review-source-name{max-width:60%}}
-@media(prefers-reduced-motion:reduce){.blinnergy-review-track{scroll-behavior:auto}}
+@media(max-width:420px){.blinnergy-review-slide{padding:12px}.blinnergy-review-meta{gap:.35rem}.blinnergy-review-stars{font-size:.89rem}}
+@media(prefers-reduced-motion:reduce){.blinnergy-review-track{scroll-behavior:auto;transition:none}}
 
 /* Exos @ Google: factual workplace identification, not unapproved corporate logos. */
 .exos-gfit-label{margin:1rem 0 0;padding-top:.75rem;border-top:1px solid var(--line);font-size:.78rem;font-weight:800;line-height:1.5;color:var(--muted)}
