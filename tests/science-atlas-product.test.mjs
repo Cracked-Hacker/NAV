@@ -21,12 +21,13 @@ test('Science Atlas is inside Learning Resources with a direct downloadable PDF'
  assert.ok(pdf.byteLength > 100000,'atlas PDF must be substantive');
 });
 test('Atlas offer and licensing are truthfully bounded',()=>{
- assert.ok(html.includes('These are self-published study resources, not peer-reviewed publications.'));
+ assert.ok(html.includes('<h1>Software, merch, and learning resources.</h1>'));
+ assert.ok(html.includes('Educational downloads are free, with optional sliding-scale contributions to Nate’s protein fund.'));
  assert.ok(html.includes('chart is <strong>not reproduced</strong>'));
  assert.ok(html.includes('Evans Love (2016)'));
  assert.ok(html.includes('creativecommons.org/licenses/by-sa/4.0/'));
- assert.ok(html.includes('Download free at $0.'));
- assert.ok(html.includes('Suggested contribution: $8'));
+ assert.ok(html.includes('Free at $0.'));
+ assert.ok(html.includes('Recommended contribution: $8'));
  assert.ok(html.includes('min="0" step="0.01"'));
  assert.ok(js.includes('Human Sciences Study Atlas'));
  assert.ok(js.includes('navigator.clipboard'));
@@ -50,7 +51,7 @@ test('Learning Resources includes all three direct-download products without req
  }
  assert.ok(section.includes('id="nutrition-venmo"'));
  assert.ok(section.includes('id="nutrition-contribution-custom" type="number" min="0" step="0.01"'));
- assert.ok(section.includes('Suggested contribution: $8'));
+ assert.ok(section.includes('Recommended contribution: $8'));
  assert.ok(js.includes('NAV Performance Nutrition Guide'));
  const nutritionPdf=readFileSync(new URL('../downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf',import.meta.url));
  assert.equal(nutritionPdf.subarray(0,5).toString('latin1'),'%PDF-');
