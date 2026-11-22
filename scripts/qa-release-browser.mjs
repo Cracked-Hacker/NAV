@@ -129,10 +129,40 @@ try{
   assert.equal(nutritionPayment.searchParams.get('note'),'NAV Performance Nutrition Guide');
   console.log('PASS Learning Resources downloads and separate optional contributions');
 
+  // Independent rendered copy crawl: source inventory also covers closed disclosure
+  // and metadata text. This checks actual released page copy and controls.
+  const copyCrawl=[];
+  const publicCopyRoutes=['404.html','about.html','accessibility.html','coach-nate.html',
+    'coaching.html','contact.html','disclaimer.html','index.html','nav-coach.html',
+    'products.html','privacy.html','research.html','resources.html','resume.html',
+    'science.html','terms.html','classroom/'];
+  for(const width of [390,1440]){
+    await page.setViewportSize({width,height:1000});
+    for(const route of publicCopyRoutes){
+      const response=await page.goto(new URL(route,base).href,{waitUntil:'domcontentloaded'});
+      assert.ok(response.ok(),route+' must render');
+      const visible=await page.evaluate(()=>{
+        for(const el of document.querySelectorAll('details'))el.open=true;
+        const interactive=[...document.querySelectorAll('button,summary,a')];
+        const unnamed=interactive.filter(el=>el.getClientRects().length&&
+          !(el.getAttribute('aria-label')||el.textContent||'').trim())
+          .map(el=>el.outerHTML.slice(0,160));
+        return {textLength:document.body.innerText.length,interactiveCount:interactive.length,
+          unnamed,scrollWidth:document.documentElement.scrollWidth,
+          h1:document.querySelectorAll('h1').length};
+      });
+      assert.equal(visible.h1,1,route+' heading');
+      assert.ok(visible.textLength>30,route+' should contain readable copy');
+      assert.deepEqual(visible.unnamed,[],route+' has an unnamed control');
+      assert.ok(visible.scrollWidth<=width+1,route+'/'+width+' horizontal overflow');
+      copyCrawl.push({route,width,...visible});
+    }
+  }
+  console.log('PASS rendered copy crawl of '+copyCrawl.length+' page/viewport combinations');
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
-  writeFileSync(`${out}/report.json`,JSON.stringify({base,checkedAt:new Date().toISOString(),results,accessibility,errors,missing,
+  writeFileSync(`${out}/report.json`,JSON.stringify({base,checkedAt:new Date().toISOString(),results,copyCrawl,accessibility,errors,missing,
     journeys:['public beta status → contact; unverified redemption absent','unpublished course assets return 404','mobile menu → Create Account','keyboard skip link','native empty-login validation','website recovery → canonical app reset form','signed-out My NAV guard','poster PDF bytes'],
     notVerified:['new-user email confirmation','authenticated website/app round trip','real client/coach/dual-role production sessions','password recovery email and expiry']},null,2));
   const violations=accessibility.flatMap(a=>a.violations.map(v=>({...v,route:a.route,width:a.width})));
