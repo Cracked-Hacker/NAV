@@ -85,6 +85,35 @@ try{
     assert.equal(response.status(),404,`${hidden}: unreleased file must not ship to Netlify`);
   }
   console.log("PASS public catalog has no unpublished course pages or quiz answer bank");
+  // Study Tools: verify uncapped custom amounts, Venmo URL data, and copy on slider release.
+  await page.goto(new URL('products.html',base).href,{waitUntil:'networkidle'});
+  await page.locator('#muscle-card-options > summary').click();
+  const customAmount=page.locator('#muscle-contribution-custom');
+  const paymentLink=page.locator('.study-download-actions a[href^="https://venmo.com/"]');
+  await customAmount.fill('275');
+  const suggestedPayment=new URL(await paymentLink.getAttribute('href'));
+  assert.equal(suggestedPayment.searchParams.get('txn'),'pay');
+  assert.equal(suggestedPayment.searchParams.get('amount'),'275.00');
+  assert.equal(suggestedPayment.searchParams.get('note'),'NAV Ultimate Muscle Card Set');
+  assert.equal(await customAmount.inputValue(),'275','Amounts over $100 stay available');
+  // Browser permission prompts vary; instrument the clipboard to verify truthful confirmation.
+  await page.evaluate(()=>{
+    Object.defineProperty(navigator,'clipboard',{configurable:true,value:{
+      writeText:async value=>{window.__copiedAmount=value;}
+    }});
+  });
+  await page.locator('#muscle-contribution').evaluate(el=>{
+    el.value='42';
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  await page.waitForFunction(()=>window.__copiedAmount==='42.00');
+  assert.equal(await customAmount.inputValue(),'42');
+  assert.match(await page.locator('#muscle-amount-explanation').textContent(),/Copied \$42\.00/);
+  await customAmount.fill('0');
+  assert.equal(await paymentLink.getAttribute('href'),'https://venmo.com/u/Nate-Holochwost');
+  console.log('PASS Study Tools dynamic amounts, Venmo prefill URL and copy feedback');
+
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
   assert.deepEqual(errors,[],'Browser script exceptions');assert.deepEqual(missing,[],'Missing public assets');
