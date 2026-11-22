@@ -133,6 +133,8 @@ h1,h2,h3{overflow-wrap:anywhere}
 .blinnergy-review-track{display:flex;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
 .blinnergy-review-slide{box-sizing:border-box;flex:0 0 100%;min-width:0;margin:0;padding:10px 1px 12px;scroll-snap-align:start}
 .blinnergy-review-slide p{margin:0 0 .45rem;font-size:.9rem;line-height:1.5}
+.blinnergy-review-slide .blinnergy-review-detail{color:var(--muted);font-size:.8rem;line-height:1.45}
+.blinnergy-review-note{font-size:.73rem;line-height:1.45;margin:.6rem 0 0}
 .blinnergy-review-slide footer{font-size:.75rem;color:var(--muted);line-height:1.4}
 .blinnergy-review-slide footer a{color:var(--blue);text-underline-offset:.16em}
 .blinnergy-rating{margin:.25rem 0 .35rem;font-size:.82rem;font-weight:800;line-height:1.4}
