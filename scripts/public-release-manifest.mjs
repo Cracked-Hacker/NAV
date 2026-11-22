@@ -62,5 +62,6 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "downloads/NAV_Muscle_Cards_Print.pdf",
   "downloads/NAV_Muscle_Cards.csv",
   "downloads/NAV_Muscle_Cards_Offline.html",
+  "downloads/NAV_Muscle_Cards_Offline.bin",
   "classroom/index.html"
 ]);
