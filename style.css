@@ -41,6 +41,7 @@ h1,h2,h3{overflow-wrap:anywhere}
 .nav-dropdown summary::after{content:"⌄";margin-left:.45em}
 .nav-dropdown-panel{display:grid;gap:3px;min-width:210px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
 .desktop-nav .nav-dropdown-panel{position:absolute;top:calc(100% + 10px);left:0;z-index:80}
+.desktop-nav > .nav-dropdown:last-child .nav-dropdown-panel{left:auto;right:0}
 .nav-dropdown-panel a{display:block;padding:10px 12px;border-radius:8px;text-decoration:none;white-space:nowrap}
 .nav-dropdown-panel a:hover,.nav-dropdown-panel a:focus-visible{background:var(--paper)}
 .nav-home-hero{padding:clamp(70px,9vw,145px) 0 130px;max-width:1100px}
