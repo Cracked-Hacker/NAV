@@ -117,3 +117,30 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-tool-item+.study-tool-item{border-left:1px solid var(--line);padding-left:clamp(1rem,3vw,2.5rem)}
 .study-tool-item h3{margin:.15rem 0 .75rem;font-size:1.35rem;line-height:1.25}
 @media(max-width:1100px){.study-tool-grid{grid-template-columns:1fr}.study-tool-item+.study-tool-item{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:1.5rem}}
+
+/* Blinnergy: compact, source-linked review carousel without unrelated gym photos. */
+.blinnergy-location{margin:1rem 0 .6rem;font-size:.88rem;font-weight:700;line-height:1.45}
+.blinnergy-location a{color:var(--blue);text-underline-offset:.16em;overflow-wrap:anywhere}
+.blinnergy-reviews{min-width:0;margin:1.1rem 0 .75rem;padding:12px 0 8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.blinnergy-review-heading{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.5rem}
+.blinnergy-review-heading h4{font-size:.92rem;line-height:1.3;margin:0}
+.blinnergy-review-controls{display:flex;align-items:center;gap:.4rem;flex-shrink:0}
+.blinnergy-review-controls[hidden]{display:none}
+.blinnergy-review-controls button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);font-size:1.5rem;cursor:pointer}
+.blinnergy-review-controls button:disabled{opacity:.4;cursor:default}
+.blinnergy-review-controls button:focus-visible,.blinnergy-review-track:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.blinnergy-review-controls [data-review-status]{font-size:.73rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.blinnergy-review-track{display:flex;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.blinnergy-review-slide{box-sizing:border-box;flex:0 0 100%;min-width:0;margin:0;padding:10px 1px 12px;scroll-snap-align:start}
+.blinnergy-review-slide p{margin:0 0 .45rem;font-size:.9rem;line-height:1.5}
+.blinnergy-review-slide footer{font-size:.75rem;color:var(--muted);line-height:1.4}
+.blinnergy-review-slide footer a{color:var(--blue);text-underline-offset:.16em}
+.blinnergy-rating{margin:.25rem 0 .35rem;font-size:.82rem;font-weight:800;line-height:1.4}
+.blinnergy-rating span{color:var(--blue);letter-spacing:.02em;white-space:nowrap}
+.blinnergy-rating a{color:inherit;text-underline-offset:.15em}
+@media(max-width:420px){.blinnergy-review-heading{flex-wrap:wrap}.blinnergy-review-heading h4{font-size:.88rem}}
+@media(prefers-reduced-motion:reduce){.blinnergy-review-track{scroll-behavior:auto}}
+
+/* Exos @ Google: factual workplace identification, not unapproved corporate logos. */
+.exos-gfit-label{margin:1rem 0 0;padding-top:.75rem;border-top:1px solid var(--line);font-size:.78rem;font-weight:800;line-height:1.5;color:var(--muted)}
+.exos-gfit-label span{padding-inline:.18rem;font-weight:600}

@@ -36,8 +36,8 @@ test("research statements preserve source links and distinguish contribution", (
 test("online NAV pricing is separate from employer booking and proposed partnerships", () => {
   const coaching = read("coaching.html");
   assert.match(coaching, /\$80–\$300 per week/);
-  assert.match(coaching, /Blinnergy manages its own bookings/);
-  assert.match(coaching, /EXOS manages these sessions separately from NAV/);
+  assert.match(coaching, /Book sessions, check availability, and view pricing directly through Blinnergy/);
+  assert.match(coaching, /Scheduling and availability are handled through EXOS, separately from NAV/);
   assert.doesNotMatch(coaching, /Rain City Fit|\$100 base price per session/);
 });
 
