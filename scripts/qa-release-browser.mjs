@@ -45,6 +45,12 @@ try{
         columns:document.querySelector('.account-auth-layout')?getComputedStyle(document.querySelector('.account-auth-layout')).gridTemplateColumns.split(' ').length:null,
         brokenImages:[...document.images].filter(i=>!i.naturalWidth).map(i=>i.getAttribute('src'))}));
       assert.equal(metrics.width,width);
+      if(metrics.scrollWidth>width+1){
+        const culprits=await page.evaluate(()=>[...document.querySelectorAll('body *')]
+          .filter(el=>el.getBoundingClientRect().right>innerWidth+1)
+          .slice(0,15).map(el=>({tag:el.tagName,classes:el.className?.toString().slice(0,90),right:Math.round(el.getBoundingClientRect().right),width:Math.round(el.getBoundingClientRect().width)})));
+        console.error('Horizontal overflow diagnostics',JSON.stringify({route,width,culprits}));
+      }
       assert.ok(metrics.scrollWidth<=width+1,`${route}/${width}: horizontal overflow ${metrics.scrollWidth}`);
       assert.equal(metrics.h1,1,`${route}: one page heading`);
       assert.equal(await page.locator('.desktop-nav a').filter({hasText:'Coach Nate'}).count(),1,`${route}: one Coach Nate link after Netlify Pretty URLs`);
@@ -61,6 +67,34 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
+  // Blinnergy review carousel: actual keyboard, click, swipe/scroll, and source links.
+  await page.setViewportSize({width:390,height:900});
+  await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
+  const reviewTrack=page.locator('[data-review-track]');
+  const reviewSlides=reviewTrack.locator('[data-review-slide]');
+  const reviewStatus=page.locator('[data-review-status]');
+  const reviewPrev=page.locator('[data-review-prev]');
+  const reviewNext=page.locator('[data-review-next]');
+  assert.equal(await reviewSlides.count(),3,'Three distinct Nate-related public reviews');
+  assert.equal((await reviewStatus.textContent()).trim(),'1 of 3');
+  assert.ok(await reviewPrev.isDisabled());
+  assert.ok(await reviewNext.isEnabled());
+  assert.equal(await page.locator('.blinnergy-reviews a[href^="https://"]').count(),3,'Three source links');
+  await reviewNext.click();
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
+  await reviewNext.click();
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 3');
+  assert.ok(await reviewNext.isDisabled());
+  await reviewPrev.click();
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
+  await reviewTrack.focus();
+  await reviewTrack.press('ArrowLeft');
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='1 of 3');
+  await reviewTrack.evaluate(el=>{el.scrollLeft=el.scrollWidth;el.dispatchEvent(new Event('scroll'));});
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 3');
+  assert.ok(await reviewNext.isDisabled());
+  assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
+  console.log('PASS three linked Blinnergy reviews: click, arrow keys, horizontal scroll, and booking CTA');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');
