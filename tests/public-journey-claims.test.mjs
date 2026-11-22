@@ -21,7 +21,7 @@ test('Study Tools provide a working direct download, compact Venmo, and the Quiz
  const study=doc.getElementById('study-tools');
  assert.ok(study.textContent.includes('379 text-only flashcards'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
- assert.ok(study.textContent.includes('Optional contribution · $0–$100'));
+ assert.ok(study.textContent.includes('Recommended contribution: $8'));
  assert.ok(study.textContent.includes('Free at $0'));
  const menu=study.querySelector('details#muscle-card-options');
  assert.ok(menu,'native accessible View Options menu required');
@@ -150,21 +150,32 @@ test('My NAV presents one global app launch instead of redundant app links',()=>
  assert.equal(links.length,1);
 });
 
-test('Study Tools slider is bounded and does not collect payment or expose a speculative Venmo address',()=>{
+test('Study Tools supports instant copy, optional prefilled Venmo, and unlimited custom amounts',()=>{
  const doc=documentFor('products.html');
- const control=doc.querySelector('#muscle-contribution');
- assert.ok(control);
- assert.equal(control.getAttribute('type'),'range');
- assert.deepEqual([control.min,control.max,control.step,control.value],['0','100','1','0']);
- assert.equal(doc.querySelector('#muscle-contribution-value').textContent.trim(),'$0');
+ const slider=doc.querySelector('#muscle-contribution');
+ assert.ok(slider);
+ assert.equal(slider.getAttribute('type'),'range');
+ assert.deepEqual([slider.min,slider.max,slider.step,slider.value],['0','100','1','8']);
+ const custom=doc.querySelector('#muscle-contribution-custom');
+ assert.ok(custom);
+ assert.equal(custom.getAttribute('type'),'number');
+ assert.equal(custom.min,'0');
+ assert.equal(custom.hasAttribute('max'),false,'No $100 cap on manual contribution');
+ assert.equal(custom.value,'8');
+ assert.ok(doc.querySelector('button#muscle-copy-amount'));
+ const script=readFileSync(new URL('../assets/study-tools-options.js',import.meta.url),'utf8');
+ assert.match(script,/navigator\.clipboard\.writeText/);
+ assert.match(script,/slider\.addEventListener\('change'/);
+ assert.match(script,/searchParams\.set\('amount'/);
+ assert.match(script,/searchParams\.set\('txn', 'pay'\)/);
  assert.ok(doc.querySelector('script[src="assets/study-tools-options.js"]'));
  assert.doesNotMatch(doc.getElementById('study-tools').innerHTML,/Create checkout|Buy now|stripe\.com/i);
  const venmo=doc.getElementById('study-tools').querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
- assert.ok(venmo,'Owner-supplied Venmo link should remain optional');
+ assert.ok(venmo,'Fallback Venmo profile remains available');
  assert.equal(venmo.getAttribute('target'),'_blank');
  assert.match(venmo.getAttribute('rel'),/noopener/);
  assert.match(venmo.getAttribute('rel'),/noreferrer/);
- assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download remains available without paying');
+ assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download must never require payment');
 });
 
 test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
@@ -192,4 +203,5 @@ test('Study Tools download links point to five byte-verified public assets, not 
  }
  assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
+ assert.ok(section.textContent.includes('Drag to copy'));
 });

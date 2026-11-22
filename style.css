@@ -101,8 +101,10 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-contribution .study-price-controls output{font-size:1.1rem}
 .study-contribution p{margin:.2rem 0 0}
 
-/* Uncapped voluntary contributions: compact, accessible manual dollar input. */
-.study-contribution .study-price-controls{gap:.4rem}
-.study-contribution .study-currency{font-size:1.1rem;font-weight:750;color:var(--ink)}
-.study-contribution .study-price-controls input[type="number"]{width:8rem;max-width:calc(100% - 1.4rem);padding:.5rem .65rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-weight:700}
-.study-contribution .study-price-controls input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+/* Optional contributions: quick slider plus uncapped custom amount. */
+.study-contribution .study-price-controls{gap:.6rem;flex-wrap:wrap}
+.study-contribution .study-price-controls input[type="range"]{flex:1 1 10rem;min-width:7rem;max-width:18rem}
+.study-custom-amount{display:inline-flex;align-items:center;gap:.1rem;border:1px solid var(--line);border-radius:8px;background:var(--card);padding:0 .55rem;font-weight:700;color:var(--ink)}
+.study-contribution .study-custom-amount input[type="number"]{width:5.5rem;min-width:0;padding:.48rem .2rem;border:0;background:transparent;color:var(--ink);font:inherit;font-variant-numeric:tabular-nums}
+.study-copy-amount{border:0;background:transparent;color:var(--blue);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:.16rem;cursor:pointer;padding:.45rem .25rem}
+.study-contribution .study-price-controls :is(input,button):focus-visible{outline:3px solid var(--blue);outline-offset:3px}

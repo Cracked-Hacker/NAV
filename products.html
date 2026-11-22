@@ -26,12 +26,14 @@
             <a class="button secondary" href="https://venmo.com/u/Nate-Holochwost" target="_blank" rel="noopener noreferrer">Venmo <span class="sr-only">(new tab)</span></a>
           </div>
           <div class="study-contribution">
-            <label id="muscle-price-heading" for="muscle-contribution">Recommended contribution: $8 (optional)</label>
+            <label id="muscle-price-heading" for="muscle-contribution">Recommended contribution: $8</label>
             <div class="study-price-controls">
-              <span class="study-currency" aria-hidden="true">$</span>
-              <input id="muscle-contribution" type="number" min="0" step="0.01" value="8" inputmode="decimal" aria-describedby="muscle-amount-explanation"/>
+              <input id="muscle-contribution" type="range" min="0" max="100" step="1" value="8" aria-describedby="muscle-amount-explanation"/>
+              <label class="sr-only" for="muscle-contribution-custom">Custom contribution in dollars, no maximum</label>
+              <span class="study-custom-amount"><span aria-hidden="true">$</span><input id="muscle-contribution-custom" type="number" min="0" step="0.01" value="8" inputmode="decimal" aria-describedby="muscle-amount-explanation"/></span>
+              <button id="muscle-copy-amount" class="study-copy-amount" type="button">Copy</button>
             </div>
-            <p id="muscle-amount-explanation" class="study-option-status" aria-live="polite">NAV sets no upper limit. Enter your contribution in Venmo; downloads remain free.</p>
+            <p id="muscle-amount-explanation" class="study-option-status" role="status" aria-live="polite">Free at $0. Download does not require payment. Drag to copy, or enter any amount over $100.</p>
           </div>
         </div>
         <div class="study-option">
