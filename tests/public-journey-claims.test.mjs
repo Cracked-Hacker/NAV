@@ -22,7 +22,13 @@ test('products describe unreleased materials truthfully, without enabling checko
  assert.match(study.textContent,/Ultimate Muscle Card Set/i);
  assert.match(study.textContent,/available now/i);
  assert.match(study.textContent,/379 flashcards/i);
- assert.match(study.textContent,/Purchase and NAV Classroom access are pending/i);
+ assert.match(study.textContent,/publicly downloadable files and a verified Venmo payment handoff are not released yet/i);
+ const options=study.querySelector('#muscle-card-options');
+ assert.ok(options, 'Study Tools must have a native expandable options menu');
+ assert.equal(options.querySelector('summary').textContent.trim(),'View Options');
+ for(const heading of ['Study on Quizlet','Download NAV bundle','Anki'])assert.match(options.textContent,new RegExp(heading));
+ assert.match(options.textContent,/Pay what you can: \$0[–-]\$100/);
+ assert.match(options.textContent,/One complete bundle at every price/i);
  assert.equal(study.querySelectorAll('a').length,1);
  const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
  assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
@@ -136,4 +142,16 @@ test('My NAV presents one global app launch instead of redundant app links',()=>
  const doc=documentFor('account/index.html');
  const links=[...doc.querySelectorAll('a[href="https://nav-coach-app-eight.vercel.app/"]')];
  assert.equal(links.length,1);
+});
+
+test('Study Tools slider is bounded and does not collect payment or expose a speculative Venmo address',()=>{
+ const doc=documentFor('products.html');
+ const control=doc.querySelector('#muscle-contribution');
+ assert.ok(control);
+ assert.equal(control.getAttribute('type'),'range');
+ assert.deepEqual([control.min,control.max,control.step,control.value],['0','100','1','0']);
+ assert.equal(doc.querySelector('#muscle-contribution-value').textContent.trim(),'$0');
+ assert.ok(doc.querySelector('script[src="assets/study-tools-options.js"]'));
+ assert.doesNotMatch(doc.getElementById('study-tools').innerHTML,/venmo\.com\/|Create checkout|Buy now|stripe\.com/i);
+ assert.match(doc.getElementById('study-tools').textContent,/Venmo:.*payment recipient/i);
 });
