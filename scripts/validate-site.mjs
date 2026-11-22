@@ -29,12 +29,12 @@ const blockedCopy=[
  [/HIPAA compliant/gi,"unsupported HIPAA claim"],
  [/FDA approved/gi,"unsupported FDA approval"],
  [/guaranteed results/gi,"guaranteed results"],
- [/Client Testimonial \\(Placeholder\\)/gi,"placeholder testimonial"],
- [/\\bowner[- ]provided (?:certificate|resume|r[eé]sum[eé]|document|photo)\\b/gi,"internal provenance label"],
- [/\\bthe approved (?:resume|r[eé]sum[eé]|CV|certificate)\\b/gi,"internal approval wording"],
- [/\\bas listed on (?:the |my )?(?:poster|resume|r[eé]sum[eé])\\b/gi,"unnecessary source narration"],
- [/\\bunlock your potential\\b|\\bseamless experience\\b|\\brevolutioniz(?:e|ing) (?:fitness|coaching)\\b/gi,"generic marketing filler"]
-];
+ [/Client Testimonial \(Placeholder\)/gi,"placeholder testimonial"],
+ [/\bowner[- ]provided (?:certificate|resume|r[eé]sum[eé]|document|photo)\b/gi,"internal provenance label"],
+ [/\bthe approved (?:resume|r[eé]sum[eé]|CV|certificate)\b/gi,"internal approval wording"],
+ [/\bas listed on (?:the |my )?(?:poster|resume|r[eé]sum[eé])\b/gi,"unnecessary source narration"],
+ [/\bunlock your potential\b|\bseamless experience\b|\brevolutioniz(?:e|ing) (?:fitness|coaching)\b/gi,"generic marketing filler"]
+]
 for(const p of visibleHtml){
  const html=readFileSync(p,"utf8");
  if(!/<meta\s+name=["']viewport["']/i.test(html))failures.push(p+": viewport missing");
