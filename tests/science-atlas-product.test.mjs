@@ -5,9 +5,15 @@ const html=readFileSync(new URL('../products.html',import.meta.url),'utf8');
 const js=readFileSync(new URL('../assets/science-atlas-payment.js',import.meta.url),'utf8');
 const pdf=readFileSync(new URL('../downloads/Human_Sciences_Atlas_2026.pdf',import.meta.url));
 const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
-test('Science Atlases is separate from Study Tools with a direct downloadable PDF',()=>{
- assert.ok(html.includes('id="science-atlases"') && html.includes('id="study-tools"'));
- assert.ok(html.indexOf('id="science-atlases"') < html.indexOf('id="study-tools"'));
+test('Science Atlas is inside Study Tools with a direct downloadable PDF',()=>{
+ const studyStart=html.indexOf('<article id="study-tools">');
+ const studyEnd=html.indexOf('</article>',studyStart);
+ const atlasStart=html.indexOf('<section id="science-atlases"');
+ assert.ok(studyStart>=0 && studyEnd>studyStart);
+ assert.ok(atlasStart>studyStart && atlasStart<studyEnd);
+ assert.ok(html.includes('<section id="muscle-cards"'));
+ assert.ok(html.includes('<h2>Study Tools</h2>'));
+ assert.ok(!html.includes('<article id="science-atlases">'));
  assert.ok(html.includes('href="downloads/Human_Sciences_Atlas_2026.pdf" download'));
  assert.ok(manifest.includes('"downloads/Human_Sciences_Atlas_2026.pdf"'));
  assert.ok(manifest.includes('"assets/science-atlas-payment.js"'));
