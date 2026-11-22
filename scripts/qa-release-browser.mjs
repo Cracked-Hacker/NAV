@@ -67,44 +67,18 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
-  // Blinnergy review carousel: actual keyboard, click, swipe/scroll, and source links.
+  // Blinnergy reviews: only complete verbatim source copy, without summaries or inactive arrows.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
   const reviewTrack=page.locator('[data-review-track]');
   const reviewSlides=reviewTrack.locator('[data-review-slide]');
-  const reviewStatus=page.locator('[data-review-status]');
-  const reviewPrev=page.locator('[data-review-prev]');
-  const reviewNext=page.locator('[data-review-next]');
-  assert.equal(await reviewSlides.count(),4,'Three directly Nate-related reviews and one team-class review');
-  assert.equal((await reviewStatus.textContent()).trim(),'1 of 4');
-  assert.ok(await reviewPrev.isDisabled());
-  assert.ok(await reviewNext.isEnabled());
-  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),4,'Four original review links');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars').count(),4,'One clearly qualified gym rating per slide');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars small').filter({hasText:'Blinnergy overall'}).count(),4);
-  assert.match(await reviewSlides.nth(3).textContent(),/does not name Nate individually/);
-  assert.equal(await reviewSlides.locator('blockquote').count(),1,'Only the complete short review is directly quoted');
+  assert.equal(await reviewSlides.count(),1,'One fully sourced review; no summary-only slides');
   assert.equal((await reviewSlides.first().locator('blockquote').textContent()).trim(),'“Great place. Nate is a great instructor and he was amazing. First time here and I highly recommend this place :)”');
-  assert.equal(await page.locator('.blinnergy-review-more a').count(),2,'Additional public review listings are linked');
-  await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 4');
-  await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 4');
-  await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='4 of 4');
-  assert.ok(await reviewNext.isDisabled());
-  await reviewPrev.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 4');
-  await reviewTrack.focus();
-  await reviewTrack.press('ArrowLeft');
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 4');
-  await reviewTrack.press('ArrowLeft');
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='1 of 4');
-  await reviewTrack.evaluate(el=>{el.scrollLeft=el.scrollWidth;el.dispatchEvent(new Event('scroll'));});
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='4 of 4');
-  assert.ok(await reviewNext.isDisabled());
+  assert.equal(await page.locator('.blinnergy-reviews .blinnergy-review-source').count(),1);
+  assert.ok(await page.locator('.blinnergy-review-controls').isHidden(),'No dead arrows on one review');
+  assert.equal(await page.locator('.blinnergy-review-access,.blinnergy-review-subject,.blinnergy-review-note,.blinnergy-review-more,.blinnergy-review-venue-stars').count(),0);
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  console.log('PASS four linked Blinnergy reviews: attributed venue stars, click, keyboard, scroll, booking CTA');
+  console.log('PASS full Blinnergy review quote, source link, clean presentation, no dead controls');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');
