@@ -89,7 +89,7 @@ try{
   await page.goto(new URL('products.html',base).href,{waitUntil:'networkidle'});
   await page.locator('#muscle-card-options > summary').click();
   const customAmount=page.locator('#muscle-contribution-custom');
-  const paymentLink=page.locator('.study-download-actions a[href^="https://venmo.com/"]');
+  const paymentLink=page.locator('#study-tools .study-download-actions a[href^="https://venmo.com/"]');
   await customAmount.fill('275');
   const suggestedPayment=new URL(await paymentLink.getAttribute('href'));
   assert.equal(suggestedPayment.searchParams.get('txn'),'pay');
