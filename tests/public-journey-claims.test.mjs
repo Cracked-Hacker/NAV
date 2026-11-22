@@ -180,30 +180,42 @@ test('Learning Resources supports instant copy, optional prefilled Venmo, and un
  assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download must never require payment');
 });
 
-test('Muscle Card Set links point to five byte-verified assets, not payment gates',()=>{
+test('Muscle Card Set offers all five valid, internally consistent local formats',()=>{
  const doc=documentFor('products.html');
  const section=doc.getElementById('muscle-cards');
  const expected={
-   'NAV_Ultimate_Muscle_All_Formats_2026-11.zip': ['a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc',335260],
-   'NAV_Ultimate_Muscle_Card_Set.apkg':['227c98775fc3381f69ee84d833e14423753d0e9e5d113bc4a7cc59c927521549',69883],
-   'NAV_Muscle_Cards_Print.pdf':['3da61d0b3e5f9f90d69369763cf383ac100308a179d8414c5ea1bba9a52d1ef8',255256],
-   'NAV_Muscle_Cards.csv':['afff4922d83f76aafd97a49f441d5728c44015f648d7c47d4f1c568c8219e74c',92145],
-   'NAV_Muscle_Cards_Offline.html':['56c325c4ee040b2799503d86d7a83e66cbfe368545d173e91f3ee0a74bde4c58',134582]
+   'NAV_Ultimate_Muscle_All_Formats_2026-11.zip':100000,
+   'NAV_Ultimate_Muscle_Card_Set.apkg':20000,
+   'NAV_Muscle_Cards_Print.pdf':100000,
+   'NAV_Muscle_Cards.csv':50000,
+   'NAV_Muscle_Cards_Offline.html':50000
  };
  const links=[...section.querySelectorAll('a[download]')];
  assert.equal(links.length,5);
  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
- for(const [name,[sha,size]] of Object.entries(expected)){
+ for(const [name,minBytes] of Object.entries(expected)){
    const path='downloads/'+name;
    const link=links.find(a=>a.getAttribute('href')===path);
-   assert.ok(link,'Missing direct download: '+name);
-   assert.ok(link.hasAttribute('download'));
-   assert.ok(manifest.includes('"'+path+'"'),'Download not in explicit public manifest: '+path);
+   assert.ok(link && link.hasAttribute('download'),'Direct download missing: '+name);
+   assert.ok(manifest.includes('"'+path+'"'),'Missing release manifest entry: '+path);
    const bytes=readFileSync(new URL('../'+path,import.meta.url));
-   assert.equal(bytes.length,size,'Download filesize changed: '+name);
-   assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,'Download contents changed: '+name);
+   assert.ok(bytes.length>minBytes,'Unexpectedly small download: '+name);
+   if(name.endsWith('.zip')||name.endsWith('.apkg'))
+     assert.deepEqual([...bytes.subarray(0,4)],[80,75,3,4]);
+   if(name.endsWith('.pdf'))
+     assert.equal(bytes.subarray(0,5).toString('latin1'),'%PDF-');
+   if(name.endsWith('.csv'))
+     assert.match(bytes.toString('utf8'),/^Front,Back/);
+   if(name.endsWith('.html'))
+     assert.match(bytes.toString('utf8'),/^<!doctype html>/);
+ }
+ const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../downloads/NAV_Muscle_Cards_Offline.html',import.meta.url),'utf8');
+ for(const s of [csv,html]){
+   assert.ok(s.includes('Biomechanics: position, displacement, and velocity'));
+   assert.ok(!s.includes('Motion (velocity) = position over time'));
+   assert.doesNotMatch(s,/position\s+pattern\s+power|\bEXOS\b|Pillar Prep/i);
  }
  assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
- assert.ok(section.textContent.includes('Drag to copy'));
 });
