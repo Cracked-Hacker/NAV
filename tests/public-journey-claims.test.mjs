@@ -264,6 +264,8 @@ test('Blinnergy carousel displays three authentic source-linked Nate references 
  assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Original Blinnergy booking CTA');
  assert.equal(card.querySelectorAll('img').length,0,'No wrongly attributed image');
  const carousel=card.querySelector('[data-blinnergy-reviews]');
+ assert.equal(carousel.querySelectorAll('h4,[id="blinnergy-reviews-title"]').length,0,'No redundant visible reviews heading');
+ assert.equal(carousel.getAttribute('aria-label'),'Reviews','Keep screen-reader label for untitled review section');
  const slides=[...carousel.querySelectorAll('[data-review-slide]')];
  assert.equal(slides.length,3);
  assert.equal(slides.filter(x=>x.querySelector('blockquote')).length,3,'Only review quotations, never generated summaries');
