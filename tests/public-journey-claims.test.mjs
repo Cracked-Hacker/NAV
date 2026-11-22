@@ -14,23 +14,34 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('products describe unreleased materials truthfully, without enabling checkout',()=>{
- const doc=documentFor('products.html');
- for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
- assert.match(doc.getElementById('classroom').textContent,/in development/i);
- const study=doc.getElementById('study-tools');
- assert.match(study.textContent,/Ultimate Muscle Card Set/i);
- assert.match(study.textContent,/available now/i);
- assert.match(study.textContent,/379 flashcards/i);
- assert.match(study.textContent,/Purchase and NAV Classroom access are pending/i);
- assert.equal(study.querySelectorAll('a').length,1);
- const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
- assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
- assert.equal(quizlet.getAttribute('target'),'_blank');
- assert.match(quizlet.getAttribute('rel'),/noopener/);
- assert.match(quizlet.getAttribute('rel'),/noreferrer/);
- assert.match(doc.getElementById('merch').textContent,/not for sale/i);
- assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now/i);
+test('products show a functioning study-options menu with truthful $0–$100 manual fulfillment',()=>{
+  const doc=documentFor('products.html');
+  for(const id of ['nav-coach','classroom','study-tools','merch']) assert.ok(doc.getElementById(id),id);
+  assert.match(doc.getElementById('classroom').textContent,/in development/i);
+  const study=doc.getElementById('study-tools');
+  assert.match(study.textContent,/Ultimate Muscle Card Set/i);
+  assert.match(study.textContent,/379.card/i);
+  const menu=study.querySelector('details#muscle-card-options');
+  assert.ok(menu,'view options must be an accessible native disclosure');
+  assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
+  assert.match(study.textContent,/\$0[–-]\$100/);
+  assert.match(study.textContent,/choosing \$0 is allowed/i);
+  for(const term of ['CSV','Anki-import TSV','duplex PDF','Classroom-format JSON','Anki .apkg']) assert.ok(study.textContent.includes(term),term);
+  const quizlet=menu.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
+  const venmo=menu.querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
+  const request=menu.querySelector('a[href^="mailto:NAVfitnessBrand@gmail.com"]');
+  assert.ok(quizlet,'original Quizlet URL required');
+  assert.ok(venmo,'owner-provided Venmo URL required');
+  assert.ok(request,'manual delivery must have a real request path');
+  for(const link of [quizlet,venmo]){
+    assert.equal(link.getAttribute('target'),'_blank');
+    assert.match(link.getAttribute('rel'),/noopener/);
+    assert.match(link.getAttribute('rel'),/noreferrer/);
+  }
+  assert.match(study.textContent,/mark the payment as a purchase \/ goods and services/i);
+  assert.match(study.textContent,/does not automatically unlock/i);
+  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
+  assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now|Instant download after payment/i);
 });
 
 test('My NAV education directs members to published resources without promising open courses or completion records',()=>{
