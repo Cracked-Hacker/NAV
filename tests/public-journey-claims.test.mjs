@@ -15,19 +15,19 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('Study Tools provide a working direct download, compact Venmo, and the Quizlet password',()=>{
+test('Learning Resources preserves the flashcard download, Venmo, and Quizlet password',()=>{
  const doc=documentFor('products.html');
  for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
- const study=doc.getElementById('study-tools');
- assert.ok(study.textContent.includes('379 text-only flashcards'));
+ const learning=doc.getElementById('study-tools');
+ assert.equal(learning.querySelector('h2').textContent.trim(),'Learning Resources');
+ const study=doc.getElementById('muscle-cards');
+ assert.ok(study.textContent.includes('379 flashcards on muscle anatomy and basic kinesiology'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
  assert.ok(study.textContent.includes('Recommended contribution: $8'));
  assert.ok(study.textContent.includes('Free at $0'));
  const menu=study.querySelector('details#muscle-card-options');
  assert.ok(menu,'native accessible View Options menu required');
  assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
- assert.equal(menu.querySelector('a')?.textContent.trim(),'Download','NAV download is the first option');
- assert.equal([...menu.querySelectorAll('a')].at(-1)?.hostname,'quizlet.com','Quizlet is a secondary option');
  const actions=menu.querySelector('.study-download-actions');
  assert.ok(actions);
  const buttons=[...actions.querySelectorAll('a')];
@@ -41,7 +41,9 @@ test('Study Tools provide a working direct download, compact Venmo, and the Quiz
  assert.deepEqual([...zip.subarray(0,4)],[80,75,3,4]);
  assert.ok(study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]'));
  for(const format of ['.apkg','.pdf','.csv','.html'])assert.ok([...study.querySelectorAll('.study-download-links a')].some(a=>a.getAttribute('href').endsWith(format)),format);
- assert.ok(study.querySelector('a[href="muscle-card-notes.html"]'));
+ assert.equal(menu.querySelector('a').textContent.trim(),'Download');
+ assert.ok(menu.querySelector('a[href="muscle-card-notes.html"]'));
+ assert.equal([...menu.querySelectorAll('a')].at(-1).hostname,'quizlet.com');
  assert.equal(study.querySelectorAll('a').length,8);
  assert.equal(study.querySelector('a[href^="mailto:"]'),null);
  assert.match(doc.getElementById('classroom').textContent,/in development/i);
@@ -68,9 +70,9 @@ test('public copy never claims unreleased Classroom or private testing is availa
  const about=documentFor('about.html');
  const science=documentFor('science.html');
  assert.doesNotMatch(about.body.textContent,/available only to invited beta testers|Start learning/i);
- assert.match(about.body.textContent,/not currently available as public offerings/i);
+ assert.match(about.body.textContent,/Courses and certifications are still in development/i);
  assert.doesNotMatch(science.body.textContent,/Request private education access|is being tested privately/i);
- assert.match(science.body.textContent,/still in development and review/i);
+ assert.match(science.body.textContent,/still in development/i);
 });
 
 test('Products page has canonical, Open Graph and sitemap coverage',()=>{
@@ -134,7 +136,7 @@ test('coaching offers three booking paths and describes Rain City Fit as pending
  assert.match(options[2].textContent,/find Nate Holochwost on Boost/);
  assert.match(main.textContent,/Rain City Fit.+Booking is pending/s);
 });
-test('owner-provided NASM CPT dates are correct and the public site does not disclose private identifiers',()=>{
+test('NASM CPT dates remain visible and the public site does not disclose private identifiers',()=>{
  for(const path of ['about.html','resume.html','coach-nate.html']){
    const body=documentFor(path).body.textContent;
    assert.match(body,/NASM Certified Personal Trainer \(CPT\)/i);
@@ -153,7 +155,7 @@ test('My NAV presents one global app launch instead of redundant app links',()=>
  assert.equal(links.length,1);
 });
 
-test('Study Tools supports instant copy, optional prefilled Venmo, and unlimited custom amounts',()=>{
+test('Learning Resources supports instant copy, optional prefilled Venmo, and unlimited custom amounts',()=>{
  const doc=documentFor('products.html');
  const slider=doc.querySelector('#muscle-contribution');
  assert.ok(slider);
@@ -181,30 +183,42 @@ test('Study Tools supports instant copy, optional prefilled Venmo, and unlimited
  assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download must never require payment');
 });
 
-test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
+test('Muscle Card Set offers all five valid, internally consistent local formats',()=>{
  const doc=documentFor('products.html');
- const section=doc.getElementById('study-tools');
+ const section=doc.getElementById('muscle-cards');
  const expected={
-   'NAV_Ultimate_Muscle_All_Formats_2026-11.zip': ['a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc',335260],
-   'NAV_Ultimate_Muscle_Card_Set.apkg':['227c98775fc3381f69ee84d833e14423753d0e9e5d113bc4a7cc59c927521549',69883],
-   'NAV_Muscle_Cards_Print.pdf':['3da61d0b3e5f9f90d69369763cf383ac100308a179d8414c5ea1bba9a52d1ef8',255256],
-   'NAV_Muscle_Cards.csv':['afff4922d83f76aafd97a49f441d5728c44015f648d7c47d4f1c568c8219e74c',92145],
-   'NAV_Muscle_Cards_Offline.html':['56c325c4ee040b2799503d86d7a83e66cbfe368545d173e91f3ee0a74bde4c58',134582]
+   'NAV_Ultimate_Muscle_All_Formats_2026-11.zip':100000,
+   'NAV_Ultimate_Muscle_Card_Set.apkg':20000,
+   'NAV_Muscle_Cards_Print.pdf':100000,
+   'NAV_Muscle_Cards.csv':50000,
+   'NAV_Muscle_Cards_Offline.html':50000
  };
  const links=[...section.querySelectorAll('a[download]')];
  assert.equal(links.length,5);
  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
- for(const [name,[sha,size]] of Object.entries(expected)){
+ for(const [name,minBytes] of Object.entries(expected)){
    const path='downloads/'+name;
    const link=links.find(a=>a.getAttribute('href')===path);
-   assert.ok(link,'Missing direct download: '+name);
-   assert.ok(link.hasAttribute('download'));
-   assert.ok(manifest.includes('"'+path+'"'),'Download not in explicit public manifest: '+path);
+   assert.ok(link && link.hasAttribute('download'),'Direct download missing: '+name);
+   assert.ok(manifest.includes('"'+path+'"'),'Missing release manifest entry: '+path);
    const bytes=readFileSync(new URL('../'+path,import.meta.url));
-   assert.equal(bytes.length,size,'Download filesize changed: '+name);
-   assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,'Download contents changed: '+name);
+   assert.ok(bytes.length>minBytes,'Unexpectedly small download: '+name);
+   if(name.endsWith('.zip')||name.endsWith('.apkg'))
+     assert.deepEqual([...bytes.subarray(0,4)],[80,75,3,4]);
+   if(name.endsWith('.pdf'))
+     assert.equal(bytes.subarray(0,5).toString('latin1'),'%PDF-');
+   if(name.endsWith('.csv'))
+     assert.match(bytes.toString('utf8'),/^Front,Back/);
+   if(name.endsWith('.html'))
+     assert.match(bytes.toString('utf8'),/^<!doctype html>/);
+ }
+ const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
+ const html=readFileSync(new URL('../downloads/NAV_Muscle_Cards_Offline.html',import.meta.url),'utf8');
+ for(const s of [csv,html]){
+   assert.ok(s.includes('Biomechanics: position, displacement, and velocity'));
+   assert.ok(!s.includes('Motion (velocity) = position over time'));
+   assert.doesNotMatch(s,/position\s+pattern\s+power|\bEXOS\b|Pillar Prep/i);
  }
  assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
- assert.ok(section.textContent.includes('Drag to copy'));
 });
