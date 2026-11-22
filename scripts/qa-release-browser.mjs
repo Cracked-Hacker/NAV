@@ -67,7 +67,7 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
-  // Blinnergy: all ten genuine five-star Google reviews, full text, and mobile-friendly carousel.
+  // Blinnergy: ten verified five-star reviews with brief excerpts, attribution and truthful Google Maps links.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
   const reviewTrack=page.locator('[data-review-track]');
@@ -76,8 +76,10 @@ try{
   const reviewPrev=page.locator('[data-review-prev]');
   const reviewNext=page.locator('[data-review-next]');
   assert.equal(await reviewSlides.count(),10,'Ten screenshot-verified individual five-star reviews');
-  assert.equal(await reviewSlides.locator('blockquote').count(),10,'Every card contains genuine review text');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),10,'Every card links to Google');
+  assert.equal(await reviewSlides.locator('blockquote').count(),10,'Every card shows an exact short review excerpt');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),10,'Every card opens the Blinnergy Google Maps listing');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-disclosure').count(),0,'Selection disclosure stays once above the slides');
+  assert.match(await page.locator('.blinnergy-review-disclosure').textContent(),/not individual reviews/);
   assert.equal(await reviewSlides.locator('.blinnergy-review-stars[aria-label="5 out of 5 stars"]').count(),10);
   assert.equal(await page.locator('.blinnergy-review-access,.blinnergy-review-subject,.blinnergy-review-note,.blinnergy-review-venue-stars').count(),0,'No summaries or gym-wide ratings masquerading as individual stars');
   assert.equal((await reviewStatus.textContent()).trim(),'1 of 10');
@@ -114,7 +116,7 @@ try{
   await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='1 of 10');
   assert.ok(await reviewPrev.isDisabled());
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  console.log('PASS ten full Google review texts, individually verified stars, adaptive height, arrows/keyboard/swipe, booking');
+  console.log('PASS ten exact five-star review excerpts, honest source-link labels, adaptive height, arrows/keyboard/swipe, booking');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');
