@@ -21,7 +21,7 @@ test('Learning Resources preserves the flashcard download, Venmo, and Quizlet pa
  const learning=doc.getElementById('study-tools');
  assert.equal(learning.querySelector('h2').textContent.trim(),'Learning Resources');
  const study=doc.getElementById('muscle-cards');
- assert.ok(study.textContent.includes('379 text-only flashcards'));
+ assert.ok(study.textContent.includes('379 flashcards on muscle anatomy and basic kinesiology'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
  assert.ok(study.textContent.includes('Recommended contribution: $8'));
  assert.ok(study.textContent.includes('Free at $0'));
