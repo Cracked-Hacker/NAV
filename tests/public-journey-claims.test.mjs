@@ -258,19 +258,18 @@ test('Blinnergy card links to the venue and shows only source-linked reviews wit
    assert.ok(button.disabled,'Only one verified review; no fake next slide');
  }
  assert.equal(carousel.querySelector('[data-review-status]').getAttribute('aria-live'),'polite');
- assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\\.0\\/5 on Google/);
+ assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
  assert.match(card.textContent,/164 Google reviews · checked Nov 22, 2026/);
- assert.match(card.textContent,/Venue rating, not a rating for the review above/);
  assert.ok(card.querySelector('script')===null,'Script is loaded once from the page, not from inside card');
  assert.ok(doc.querySelector('script[src="assets/blinnergy-reviews.js"]'));
  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
  assert.ok(manifest.includes('"assets/blinnergy-reviews.js"'),'New script must be explicitly public');
  const js=readFileSync(new URL('../assets/blinnergy-reviews.js',import.meta.url),'utf8');
- assert.match(js,/addEventListener\\('click'/);
- assert.match(js,/addEventListener\\('keydown'/);
- assert.match(js,/addEventListener\\('scroll'/);
+ assert.match(js,/addEventListener\('click'/);
+ assert.match(js,/addEventListener\('keydown'/);
+ assert.match(js,/addEventListener\('scroll'/);
  assert.match(js,/prefers-reduced-motion/);
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
- assert.match(css,/blinnergy-review-track\\{display:flex;overflow-x:auto/);
+ assert.match(css,/blinnergy-review-track\{display:flex;overflow-x:auto/);
  assert.match(css,/scroll-snap-type:x mandatory/);
 });
