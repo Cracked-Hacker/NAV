@@ -139,3 +139,7 @@ h1,h2,h3{overflow-wrap:anywhere}
 .blinnergy-rating a{color:inherit;text-underline-offset:.15em}
 @media(max-width:420px){.blinnergy-review-heading{flex-wrap:wrap}.blinnergy-review-heading h4{font-size:.88rem}}
 @media(prefers-reduced-motion:reduce){.blinnergy-review-track{scroll-behavior:auto}}
+
+/* Exos @ Google: factual workplace identification, not unapproved corporate logos. */
+.exos-gfit-label{margin:1rem 0 0;padding-top:.75rem;border-top:1px solid var(--line);font-size:.78rem;font-weight:800;line-height:1.5;color:var(--muted)}
+.exos-gfit-label span{padding-inline:.18rem;font-weight:600}
