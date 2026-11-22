@@ -21,7 +21,9 @@ test('products describe unreleased materials truthfully, without enabling checko
  const study=doc.getElementById('study-tools');
  assert.match(study.textContent,/Ultimate Muscle Card Set/i);
  assert.match(study.textContent,/available now/i);
- assert.match(study.textContent,/More NAV study tools are planned/i);
+ assert.match(study.textContent,/379 flashcards/i);
+ assert.match(study.textContent,/Purchase and NAV Classroom access are pending/i);
+ assert.equal(study.querySelectorAll('a').length,1);
  const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
  assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
  assert.equal(quizlet.getAttribute('target'),'_blank');
