@@ -83,3 +83,7 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-option-panel>.tiny{margin:.9rem 0 0}
 .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 @media(max-width:800px){.study-option-row{align-items:stretch;flex-direction:column}.study-option-row>.button{align-self:stretch}}
+
+/* Keep optional Venmo directly below the downloadable flashcard bundle. */
+.study-download-actions{display:grid;gap:.65rem;max-width:18rem;padding:1rem 0;border-top:1px solid var(--line)}
+.study-download-actions>.button{width:100%}
