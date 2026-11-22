@@ -87,7 +87,7 @@ try{
   assert.equal((await reviewSlides.first().locator('blockquote').textContent()).trim(),'“Great place. Nate is a great instructor and he was amazing. First time here and I highly recommend this place :)”');
   assert.equal(await page.locator('.blinnergy-review-more a').count(),2,'Additional public review listings are linked');
   await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
+  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 4');
   await reviewNext.click();
   await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 4');
   await reviewNext.click();
