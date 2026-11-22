@@ -20,6 +20,6 @@ test('Research credit and licensing remain legible',()=>{
  assert.match(p,/Evans Love \(2016\)/);
  assert.match(p,/CC BY-SA 4\.0/);
  assert.match(r,/Crosland, Nate Holochwost, Warren de Bruyn, and Catherine Clark/);
- assert.match(a,/href="disclaimer.html"/);
+ assert.match(a,/Fitness coaching and education; not medical care/i);
  assert.match(text('disclaimer.html'),/not medical advice/i);
 });
