@@ -138,8 +138,14 @@ test('coaching clearly separates NAV online coaching from employer-owned booking
  assert.match(options[1].textContent,/In-person · Blinnergy/);
  assert.match(options[1].textContent,/separate from NAV and online coaching/);
  assert.ok(options[1].querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
- assert.match(options[2].textContent,/Google Employees · EXOS/);
- assert.match(options[2].textContent,/find Nate Holochwost on Boost/);
+ assert.match(options[2].textContent,/Google Employees · EXOS@Google/);
+ assert.match(options[2].textContent,/On-Campus Training/);
+ assert.match(options[2].textContent,/I train Google employees on campus in Seattle through EXOS/);
+ assert.match(options[2].textContent,/Find me on Boost under Nate Holochwost to book a session/);
+ assert.match(options[2].textContent,/Scheduling and availability are handled through EXOS, separately from NAV/);
+ assert.match(options[2].textContent,/Exos @ Google · gFit/);
+ assert.equal(options[2].querySelectorAll('img, svg').length,0,'Do not imply corporate logo approval');
+ assert.ok(options[2].querySelector('.exos-gfit-label'),'Keep the affiliation identifier accessible');
  assert.doesNotMatch(main.textContent,/Rain City Fit|\$100 base price per session/);
 });
 test('NASM CPT dates remain visible and the public site does not disclose private identifiers',()=>{
