@@ -41,7 +41,8 @@ test('Study Tools provide a working direct download, compact Venmo, and the Quiz
  assert.deepEqual([...zip.subarray(0,4)],[80,75,3,4]);
  assert.ok(study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]'));
  for(const format of ['.apkg','.pdf','.csv','.html'])assert.ok([...study.querySelectorAll('.study-download-links a')].some(a=>a.getAttribute('href').endsWith(format)),format);
- assert.equal(study.querySelectorAll('a').length,7);
+ assert.ok(study.querySelector('a[href="muscle-card-notes.html"]'));
+ assert.equal(study.querySelectorAll('a').length,8);
  assert.equal(study.querySelector('a[href^="mailto:"]'),null);
  assert.match(doc.getElementById('classroom').textContent,/in development/i);
  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
