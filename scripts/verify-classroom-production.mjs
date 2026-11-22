@@ -62,7 +62,7 @@ for(let attempt=1;attempt<=15;attempt++){
       "downloads/NAV_Ultimate_Muscle_Card_Set.apkg",
       "downloads/NAV_Muscle_Cards_Print.pdf",
       "downloads/NAV_Muscle_Cards.csv",
-      "downloads/NAV_Muscle_Cards_Offline.html",
+      "downloads/NAV_Muscle_Cards_Offline.bin",
       "downloads/Human_Sciences_Atlas_2026.pdf",
       "downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf"
     ];
