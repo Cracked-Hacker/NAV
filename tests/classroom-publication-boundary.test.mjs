@@ -17,7 +17,7 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
   assert.match(landing, /href="\.\.\/contact\.html"/);
   assert.doesNotMatch(landing, /Enter your tester code|nav-coach-app-eight\.vercel\.app\/beta/i);
   const home = readFileSync(root + "/index.html", "utf8");
-  assert.match(home, /no promises about unfinished products/i);
+  assert.match(home, /href="products\.html"/i);
   assert.doesNotMatch(home, /Redeem a private tester code|Invited testers can access approved beta areas with a code/i);
   assert.match(landing, /noindex,nofollow/);
   assert.doesNotMatch(landing, /Hard to Kill|Start Week 1|10 quizzes|Starter Kit|quiz-1/i);
@@ -38,3 +38,4 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
     assert.equal(existsSync(root + "/" + path), false, path + " must not be publicly deployable");
   }
 });
+
