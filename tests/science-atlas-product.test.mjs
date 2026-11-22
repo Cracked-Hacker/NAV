@@ -69,3 +69,28 @@ test('Published education products omit employer-branded teaching frameworks and
  assert.ok(csv.includes('Displacement is final minus initial position'));
  assert.ok(html.includes('Evans Love (2016)'), 'Metabolic map attribution must remain visible');
 });
+
+test('All three Learning Resources cards use the same View Options interaction',()=>{
+ const start=html.indexOf('<article id="study-tools">');
+ const stop=html.indexOf('</article>',start);
+ const catalog=html.slice(start,stop);
+ const cards=[
+  ['muscle-cards','muscle-card-options','downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip'],
+  ['science-atlases','atlas-options','downloads/Human_Sciences_Atlas_2026.pdf'],
+  ['nutrition-guide','nutrition-options','downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf']
+ ];
+ assert.equal((catalog.match(/<summary class="button secondary">View Options<\/summary>/g)||[]).length,3);
+ for(let i=0;i<cards.length;i++){
+  const [id,optionId,path]=cards[i];
+  const p=catalog.indexOf('<section id="'+id+'"');
+  const next=i+1<cards.length?catalog.indexOf('<section id="'+cards[i+1][0]+'"',p):catalog.length;
+  assert.ok(p>=0&&next>p,id+' missing');
+  const card=catalog.slice(p,next);
+  assert.ok(card.includes('id="'+optionId+'" name="learning-resource-options"'),id+' options missing');
+  assert.equal((card.match(/View Options/g)||[]).length,1,id+' requires exactly one View Options');
+  assert.ok(card.indexOf('View Options')<card.indexOf('href="'+path+'"'),id+' download must appear inside options');
+  assert.ok(card.includes('venmo.com/u/Nate-Holochwost'),id+' contribution link must remain');
+  assert.ok(card.includes('study-contribution'),id+' optional amount control missing');
+  assert.equal((card.match(/<details\b/g)||[]).length,(card.match(/<\/details>/g)||[]).length,id+' details unbalanced');
+ }
+});
