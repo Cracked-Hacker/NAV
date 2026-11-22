@@ -21,7 +21,7 @@ test("public product copy identifies actual downloads and unfinished offerings",
   assert.match(products, /Human_Sciences_Atlas_2026\.pdf/);
   assert.match(products, /NAV_Performance_Nutrition_The_Simple_Guide_v1-1\.pdf/);
   assert.match(products, /Free at \$0/);
-  assert.match(products, /Classroom|Courses and assessments/);
+  assert.doesNotMatch(products, /<article id="classroom"/);
   assert.doesNotMatch(products, /guaranteed results|scientifically proven|owner-provided certificate/i);
 });
 

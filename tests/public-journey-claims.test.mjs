@@ -9,19 +9,20 @@ function documentFor(path){const window=new Window();window.document.write(readF
 test('homepage offers exactly three distinct, usable destinations',()=>{
  const doc=documentFor('index.html');
  const cards=[...doc.querySelectorAll('.nav-home-action')];
- assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching','Use NAV Coach','Explore products']);
- assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html','products.html']);
+ assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching','I’m a coach','I want to test software']);
+ assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html#coach-flow','contact.html#testing']);
  assert.equal(new Set(cards.map(p=>p.getAttribute('href'))).size,3);
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
 test('Learning Resources preserves the flashcard download, Venmo, and Quizlet password',()=>{
  const doc=documentFor('products.html');
- for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
+ for(const id of ['nav-coach','study-tools','merch'])assert.ok(doc.getElementById(id),id);
+ assert.equal(doc.getElementById('classroom'),null,'Unreleased Classroom must not be presented as a public product');
  const learning=doc.getElementById('study-tools');
  assert.equal(learning.querySelector('h2').textContent.trim(),'Learning Resources');
  const study=doc.getElementById('muscle-cards');
- assert.ok(study.textContent.includes('379 flashcards on muscle anatomy and basic kinesiology'));
+ assert.ok(study.textContent.includes('379 flashcards covering muscle anatomy and basic kinesiology'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
  assert.ok(study.textContent.includes('Recommended contribution: $8'));
  assert.ok(study.textContent.includes('Free at $0'));
@@ -45,7 +46,9 @@ test('Learning Resources preserves the flashcard download, Venmo, and Quizlet pa
  assert.equal(offlineLink?.getAttribute('download'),'NAV_Muscle_Cards_Offline.html');
  assert.equal(study.querySelectorAll('a').length,7);
  assert.equal(study.querySelector('a[href^="mailto:"]'),null);
- assert.match(doc.getElementById('classroom').textContent,/in development/i);
+ assert.ok(doc.querySelector('#muscle-card-options'));
+ assert.ok(doc.querySelector('#atlas-options'));
+ assert.ok(doc.querySelector('#nutrition-options'));
  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
 });
 
