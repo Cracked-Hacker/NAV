@@ -1,4 +1,4 @@
-// Reviews are manually curated in coaching.html. Only use individual five-star ratings documented in the original owner-supplied Google review screenshots.
+// Review excerpts are manually curated in coaching.html from owner-provided screenshots of distinct five-star Google Maps reviews. Do not label venue links as individual permalinks. Full third-party review republication requires permission.
 const carousel = document.querySelector('[data-blinnergy-reviews]');
 if (carousel) {
   const track = carousel.querySelector('[data-review-track]');
@@ -26,7 +26,7 @@ if (carousel) {
   function fitActiveReview() {
     const slide = slides[active];
     if (!slide) return;
-    // Never clip full review text. The scroll track follows this slide's own content height.
+    // Keep complete visible excerpt and attribution in view without clipping.
     track.style.height = `${Math.ceil(slide.offsetHeight) + 14}px`;
   }
 
