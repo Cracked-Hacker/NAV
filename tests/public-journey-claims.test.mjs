@@ -232,7 +232,7 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
 });
 
-test('Blinnnergy service card links to the mapped location and distinguishes venue rating from a Nate-specific review',()=>{
+test('Blinnergy service card links to the mapped location and distinguishes venue rating from a Nate-specific review',()=>{
  const doc=documentFor('coaching.html');
  const card=[...doc.querySelectorAll('#booking article')][1];
  const map=card.querySelector('.blinnergy-location a');
