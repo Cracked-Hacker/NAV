@@ -102,15 +102,22 @@ test('Coach Nate displays only selected, contextual, privacy-safe uploaded photo
  assert.ok(doc.querySelector('img[src="assets/coach-nate-lab-portrait.webp"]'),'Existing research hero must remain');
 });
 
-test('NAV offering is one affordability-based online service with no unverified employer bookings',()=>{
- const doc=documentFor('coaching.html');
- const main=doc.querySelector('main');
- assert.match(main.textContent,/\$80[–-]\$300 per week/i);
- assert.match(main.textContent,/same online coaching service/i);
- assert.match(main.textContent,/weekly amount is selected within the sliding scale based on what a person can afford/i);
- assert.match(main.textContent,/Venmo or Zelle/i);
- assert.doesNotMatch(main.textContent,/\$100 base price|Rain City Fit|Get the Blinnergy app|Boost for openings/i);
- assert.equal([...main.querySelectorAll('a')].filter(a=>a.href.includes('docs.google.com/forms/')).length,1);
+test('coaching offers three booking paths and describes Rain City Fit as pending',()=>{
+ const main=documentFor('coaching.html').querySelector('main');
+ const options=[...main.querySelectorAll('#booking article')];
+ assert.equal(options.length,3);
+ assert.match(options[0].textContent,/\$80[–-]\$300 per week/);
+ assert.match(options[0].textContent,/same coaching service/);
+ assert.match(options[0].textContent,/sliding scale depends on what you can afford/);
+ const applications=[...main.querySelectorAll('a[href^="https://docs.google.com/forms/"]')];
+ assert.equal(applications.length,1);
+ assert.equal(applications[0].textContent,'Apply for coaching');
+ assert.match(options[1].textContent,/Woodinville, Bothell, and nearby communities · Blinnergy/);
+ assert.match(options[1].textContent,/\$100 base price per session/);
+ assert.ok(options[1].querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
+ assert.match(options[2].textContent,/Google Employees · EXOS/);
+ assert.match(options[2].textContent,/find Nate Holochwost on Boost/);
+ assert.match(main.textContent,/Rain City Fit.+Booking is pending/s);
 });
 test('owner-provided NASM CPT dates are correct and the public site does not disclose private identifiers',()=>{
  for(const path of ['about.html','resume.html','coach-nate.html']){
