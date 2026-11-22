@@ -289,7 +289,9 @@ test('Blinnergy card links to the venue and shows only source-linked reviews wit
  assert.match(js,/addEventListener\('keydown'/);
  assert.match(js,/addEventListener\('scroll'/);
  assert.match(js,/prefers-reduced-motion/);
+ assert.match(js,/controls\.hidden = slides\.length <= 1/,'One source review must not show dead carousel arrows');
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
  assert.match(css,/blinnergy-review-track\{display:flex;overflow-x:auto/);
  assert.match(css,/scroll-snap-type:x mandatory/);
+ assert.match(css,/\.blinnergy-review-controls\[hidden\]\{display:none\}/);
 });
