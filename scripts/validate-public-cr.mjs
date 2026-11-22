@@ -27,7 +27,7 @@ for (const page of keyPages) {
   requireMatch(page, html, /<meta\s+property=["']og:url["']/i, "missing Open Graph URL");
   requireMatch(page, html, /class=["'][^"']*desktop-nav/i, "missing desktop primary navigation");
   requireMatch(page, html, /class=["'][^"']*mobile-nav/i, "missing mobile navigation");
-  requireMatch(page, html, /href=["']nav-coach\.html(?:#coach-flow)?["']/i, "missing NAV Coach navigation route");
+  requireMatch(page, html, /href=["']nav-coach\.html["']/i, "missing NAV Coach navigation route");
   requireMatch(page, html, /href=["']science\.html["']/i, "missing Science navigation or footer route");
   requireMatch(page, html, /href=["']coach-nate\.html["']/i, "missing Coach Nate navigation or footer route");
   requireMatch(page, html, /href=["']account\//i, "missing My NAV account navigation or footer route");
@@ -37,17 +37,17 @@ for (const page of keyPages) {
 
 const home = text("index.html");
 requireMatch("index.html", home, /human coaching|personal coaching|I want coaching/i, "homepage must offer human coaching");
-requireMatch("index.html", home, /I’m a coach/i, "homepage must offer a coaching-app path");
-requireMatch("index.html", home, /href="products.html#study-tools"/i, "homepage must offer a learning-resources path");
+requireMatch("index.html", home, /I’m a coach/i, "homepage must offer a coach path");
+requireMatch("index.html", home, /href="products.html#study-tools"/i, "homepage must retain public learning resources");
 if ((home.match(/class="nav-home-action"/g) || []).length !== 3) failures.push("index.html: exactly three primary action cards are required");
 for (const route of ["coaching.html","nav-coach.html#coach-flow","contact.html#testing"]) {
   if (!home.includes('href="'+route+'"')) failures.push("index.html: missing primary journey "+route);
 }
-requireMatch("contact.html", text("contact.html"), /id="testing"/, "tester journey must reach a real contact section");
 if (!/Prescription ≠ performance/i.test(home) && !/Prescription ≠ performance/i.test(text("nav-coach.html")) && !/Prescription ≠ performance/i.test(text("science.html")) && !/Prescription ≠ performance/i.test(text("resources.html"))) {
   failures.push("NAV public copy: prescribed and performed records must remain distinguished");
 }
 
+requireMatch("contact.html", text("contact.html"), /id="testing"/i, "software tester path needs a genuine contact destination");
 const product = text("nav-coach.html");
 requireMatch("nav-coach.html", product, /human coach in control/i, "missing human-coach-control positioning");
 requireMatch("nav-coach.html", product, /Open NAV Coach/i, "working app access must remain visible");
