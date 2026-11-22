@@ -37,7 +37,7 @@ for (const page of keyPages) {
 
 const home = text("index.html");
 requireMatch("index.html", home, /human coaching|personal coaching|I want coaching/i, "homepage must offer human coaching");
-requireMatch("index.html", home, /I'm a coach/i, "homepage must offer a coaching-app path");
+requireMatch("index.html", home, /Use NAV Coach/i, "homepage must offer a coaching-app path");
 requireMatch("index.html", home, /Explore products/i, "homepage must offer a products path");
 if ((home.match(/class="nav-home-action"/g) || []).length !== 3) failures.push("index.html: exactly three primary action cards are required");
 for (const route of ["coaching.html","nav-coach.html","products.html"]) {
