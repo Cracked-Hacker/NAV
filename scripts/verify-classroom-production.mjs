@@ -2,6 +2,7 @@
 // Stale GitHub commits, published question banks, and unpublished course files fail.
 import assert from "node:assert/strict";
 import {createHash} from "node:crypto";
+import {readFileSync} from "node:fs";
 import {hasVerifiedBetaContactLink} from "./site-link-check.mjs";
 const root="https://coach-nate.netlify.app/";
 const expected=process.env.GITHUB_SHA;
@@ -55,14 +56,19 @@ for(let attempt=1;attempt<=15;attempt++){
     assert.ok(productHtml.includes("<code>nate</code>"),"Quizlet password missing from production");
     assert.ok(productHtml.includes('href="https://venmo.com/u/Nate-Holochwost"'),"Venmo link missing");
     assert.ok(!productHtml.includes("Request files by email"),"Superseded email fulfillment is still live");
+    // Ground every production digest in the exact checked-out commit, not stale fixed hashes.
     const downloads=[
-      ["downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip","a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc",335260],
-      ["downloads/NAV_Ultimate_Muscle_Card_Set.apkg","227c98775fc3381f69ee84d833e14423753d0e9e5d113bc4a7cc59c927521549",69883],
-      ["downloads/NAV_Muscle_Cards_Print.pdf","3da61d0b3e5f9f90d69369763cf383ac100308a179d8414c5ea1bba9a52d1ef8",255256],
-      ["downloads/NAV_Muscle_Cards.csv","afff4922d83f76aafd97a49f441d5728c44015f648d7c47d4f1c568c8219e74c",92145],
-      ["downloads/NAV_Muscle_Cards_Offline.html","56c325c4ee040b2799503d86d7a83e66cbfe368545d173e91f3ee0a74bde4c58",134582]
+      "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
+      "downloads/NAV_Ultimate_Muscle_Card_Set.apkg",
+      "downloads/NAV_Muscle_Cards_Print.pdf",
+      "downloads/NAV_Muscle_Cards.csv",
+      "downloads/NAV_Muscle_Cards_Offline.html",
+      "downloads/Human_Sciences_Atlas_2026.pdf",
+      "downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf"
     ];
-    for(const [path,sha,size] of downloads){
+    assert.match(productHtml,/<h2>Learning Resources<\/h2>/);
+    assert.doesNotMatch(productHtml,/position[\\s–-]+pattern[\\s–-]+power|\\bEXOS\\b|Pillar Prep/i);
+    for(const path of downloads){
       const acceptableLinks=path.endsWith(".html") ? [path,path.slice(0,-5),path.slice(0,-5)+"/"] : [path];
       const foundLink=acceptableLinks.some(link=>
         productHtml.includes('href="'+link+'"') ||
@@ -74,8 +80,11 @@ for(let attempt=1;attempt<=15;attempt++){
       assert.equal(response.status,200,"Public download unavailable: "+path);
       assert.match(response.headers.get("content-disposition")||"",/attachment/i,"Download not served as attachment: "+path);
       const bytes=Buffer.from(await response.arrayBuffer());
-      assert.equal(bytes.length,size,"Public download byte count changed: "+path);
-      assert.equal(createHash("sha256").update(bytes).digest("hex"),sha,"Public download file differs from verified original: "+path);
+      const original=readFileSync(new URL("../"+path,import.meta.url));
+      assert.equal(bytes.length,original.length,"Public download size differs from this GitHub commit: "+path);
+      assert.equal(createHash("sha256").update(bytes).digest("hex"),
+                   createHash("sha256").update(original).digest("hex"),
+                   "Public download differs from the verified GitHub release: "+path);
     }
 
     console.log(JSON.stringify({site:root,releaseCommit:release.commit,attempt,
