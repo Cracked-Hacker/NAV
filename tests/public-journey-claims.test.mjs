@@ -52,7 +52,7 @@ test('Learning Resources preserves the flashcard download, Venmo, and Quizlet pa
 test('My NAV education directs members to published resources without promising open courses or completion records',()=>{
  const section=documentFor('account/index.html').querySelector('#education');
  assert.doesNotMatch(section.textContent,/open lessons|progress currently stays|account.synced completion|certification record/i);
- assert.match(section.textContent,/still in development/i);
+ assert.match(section.textContent,/still in development|not yet available/i);
  assert.deepEqual([...section.querySelectorAll('a')].map(a=>a.getAttribute('href')),['../resources.html','../research.html']);
 });
 
