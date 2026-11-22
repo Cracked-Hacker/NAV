@@ -281,4 +281,7 @@ test('Blinnergy panel displays only an exact, complete, sourced review and hides
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
  assert.match(css,/\.blinnergy-review-controls\[hidden\]\{display:none\}/);
  assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
+ const officialReviewLink=card.querySelector('.blinnergy-rating a');
+ assert.ok(officialReviewLink?.getAttribute('href')?.startsWith('https://www.google.com/maps/reviews/data=!4m8!14m7!'),'The linked Google rating opens the exact review URL provided by the owner');
+ assert.match(officialReviewLink.getAttribute('href'),/0x1f73ce46e1cb9651/);
 });
