@@ -115,6 +115,13 @@ try{
   for (const id of ['muscle-cards','science-atlases','nutrition-guide']) {
     assert.ok(await page.locator('#'+id+' a[download]').count()>0,id+' must allow free download');
   }
+  // All product cards now use the same compact disclosure; open each before interacting.
+  await page.locator('#atlas-options > summary').click();
+  assert.equal(await page.locator('#muscle-card-options').evaluate(el=>el.open),false,'Opening atlas should close flashcard options');
+  assert.equal(await page.locator('#atlas-options').evaluate(el=>el.open),true,'Atlas options must open');
+  await page.locator('#nutrition-options > summary').click();
+  assert.equal(await page.locator('#atlas-options').evaluate(el=>el.open),false,'Opening nutrition should close atlas options');
+  assert.equal(await page.locator('#nutrition-options').evaluate(el=>el.open),true,'Nutrition options must open');
   await page.locator('#nutrition-contribution-custom').fill('275');
   const nutritionPayment=new URL(await page.locator('#nutrition-venmo').getAttribute('href'));
   assert.equal(nutritionPayment.searchParams.get('txn'),'pay');
