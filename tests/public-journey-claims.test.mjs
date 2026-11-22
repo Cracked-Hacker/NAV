@@ -21,7 +21,7 @@ test('Learning Resources preserves the flashcard download, Venmo, and Quizlet pa
  const learning=doc.getElementById('study-tools');
  assert.equal(learning.querySelector('h2').textContent.trim(),'Learning Resources');
  const study=doc.getElementById('muscle-cards');
- assert.ok(study.textContent.includes('379 text-only flashcards'));
+ assert.ok(study.textContent.includes('379 flashcards on muscle anatomy and basic kinesiology'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
  assert.ok(study.textContent.includes('Recommended contribution: $8'));
  assert.ok(study.textContent.includes('Free at $0'));
@@ -67,9 +67,9 @@ test('public copy never claims unreleased Classroom or private testing is availa
  const about=documentFor('about.html');
  const science=documentFor('science.html');
  assert.doesNotMatch(about.body.textContent,/available only to invited beta testers|Start learning/i);
- assert.match(about.body.textContent,/not currently available as public offerings/i);
+ assert.match(about.body.textContent,/Courses and certifications are still in development/i);
  assert.doesNotMatch(science.body.textContent,/Request private education access|is being tested privately/i);
- assert.match(science.body.textContent,/still in development and review/i);
+ assert.match(science.body.textContent,/still in development/i);
 });
 
 test('Products page has canonical, Open Graph and sitemap coverage',()=>{
@@ -133,7 +133,7 @@ test('coaching offers three booking paths and describes Rain City Fit as pending
  assert.match(options[2].textContent,/find Nate Holochwost on Boost/);
  assert.match(main.textContent,/Rain City Fit.+Booking is pending/s);
 });
-test('owner-provided NASM CPT dates are correct and the public site does not disclose private identifiers',()=>{
+test('NASM CPT dates remain visible and the public site does not disclose private identifiers',()=>{
  for(const path of ['about.html','resume.html','coach-nate.html']){
    const body=documentFor(path).body.textContent;
    assert.match(body,/NASM Certified Personal Trainer \(CPT\)/i);

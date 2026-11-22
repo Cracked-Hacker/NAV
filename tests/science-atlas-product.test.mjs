@@ -21,7 +21,7 @@ test('Science Atlas is inside Learning Resources with a direct downloadable PDF'
  assert.ok(pdf.byteLength > 100000,'atlas PDF must be substantive');
 });
 test('Atlas offer and licensing are truthfully bounded',()=>{
- assert.ok(html.includes('Not independently peer reviewed.'));
+ assert.ok(html.includes('Self-published reference; not peer-reviewed.'));
  assert.ok(html.includes('chart is <strong>not reproduced</strong>'));
  assert.ok(html.includes('Evans Love (2016)'));
  assert.ok(html.includes('creativecommons.org/licenses/by-sa/4.0/'));
@@ -67,5 +67,5 @@ test('Published education products omit employer-branded teaching frameworks and
  const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
  assert.ok(csv.includes('Average velocity equals'));
  assert.ok(csv.includes('Displacement is final minus initial position'));
- assert.ok(html.includes('Research citations do not imply endorsement.'));
+ assert.ok(html.includes('Citations credit the original researchers, not endorsements.'));
 });
