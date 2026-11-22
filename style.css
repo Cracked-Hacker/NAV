@@ -91,3 +91,12 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-option .button{max-width:100%;white-space:normal;text-align:center}
 .study-download-links{margin:.5rem 0;padding-left:1.3rem}
 .study-download-links li{margin:.35rem 0;overflow-wrap:anywhere}
+
+/* Compact Study Tools actions: download first, optional Venmo immediately below. */
+.study-download-actions{display:grid;gap:.6rem;max-width:18rem;margin:.8rem 0}
+.study-download-actions>.button{width:100%}
+.study-contribution{margin-top:.9rem}
+.study-contribution>label{font-weight:750;font-size:.92rem}
+.study-contribution .study-price-controls{margin:.35rem 0}
+.study-contribution .study-price-controls output{font-size:1.1rem}
+.study-contribution p{margin:.2rem 0 0}

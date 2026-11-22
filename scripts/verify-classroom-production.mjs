@@ -51,7 +51,9 @@ for(let attempt=1;attempt<=15;attempt++){
     assert.equal(productResponse.status,200,"Public Products page missing");
     const productHtml=await productResponse.text();
     assert.ok(productHtml.includes('id="muscle-card-options"'),"View Options menu not deployed");
-    assert.ok(productHtml.includes("Download all formats (ZIP)"),"Full bundle direct download not advertised");
+    assert.ok(productHtml.includes(">Download</a>"),"Full bundle direct download not advertised");
+    assert.ok(productHtml.includes("<code>nate</code>"),"Quizlet password missing from production");
+    assert.ok(productHtml.includes('href="https://venmo.com/u/Nate-Holochwost"'),"Venmo link missing");
     assert.ok(!productHtml.includes("Request files by email"),"Superseded email fulfillment is still live");
     const downloads=[
       ["downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip","a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc",335260],

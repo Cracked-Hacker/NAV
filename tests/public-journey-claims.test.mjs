@@ -15,29 +15,34 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('products distinguish downloadable study materials from unreleased services without checkout',()=>{
+test('Study Tools provide a working direct download, compact Venmo, and the Quizlet password',()=>{
  const doc=documentFor('products.html');
  for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
- assert.match(doc.getElementById('classroom').textContent,/in development/i);
  const study=doc.getElementById('study-tools');
- assert.match(study.textContent,/Ultimate Muscle Card Set/i);
- assert.match(study.textContent,/available now/i);
- assert.match(study.textContent,/379 flashcards/i);
- assert.match(study.textContent,/Download instantly/i);
- const options=study.querySelector('#muscle-card-options');
- assert.ok(options, 'Study Tools must have a native expandable options menu');
- assert.equal(options.querySelector('summary').textContent.trim(),'View Options');
- for(const heading of ['Study on Quizlet','Download the complete bundle','Anki deck'])assert.match(options.textContent,new RegExp(heading));
- assert.match(options.textContent,/Pay what you can: \$0[–-]\$100/);
- assert.match(options.textContent,/One complete bundle at every price/i);
+ assert.ok(study.textContent.includes('379 text-only flashcards'));
+ assert.ok(study.textContent.includes('Quizlet password: nate'));
+ assert.ok(study.textContent.includes('Optional contribution · $0–$100'));
+ assert.ok(study.textContent.includes('Free at $0'));
+ const menu=study.querySelector('details#muscle-card-options');
+ assert.ok(menu,'native accessible View Options menu required');
+ assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
+ const actions=menu.querySelector('.study-download-actions');
+ assert.ok(actions);
+ const buttons=[...actions.querySelectorAll('a')];
+ assert.equal(buttons.length,2);
+ assert.equal(buttons[0].textContent.trim(),'Download');
+ assert.ok(buttons[1].textContent.includes('Venmo'));
+ assert.equal(buttons[1].getAttribute('href'),'https://venmo.com/u/Nate-Holochwost');
+ assert.equal(buttons[0].getAttribute('href'),'downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip');
+ const zip=readFileSync(new URL('../downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip',import.meta.url));
+ assert.ok(zip.length>100000);
+ assert.deepEqual([...zip.subarray(0,4)],[80,75,3,4]);
+ assert.ok(study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]'));
+ for(const format of ['.apkg','.pdf','.csv','.html'])assert.ok([...study.querySelectorAll('.study-download-links a')].some(a=>a.getAttribute('href').endsWith(format)),format);
  assert.equal(study.querySelectorAll('a').length,7);
- const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
- assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
- assert.equal(quizlet.getAttribute('target'),'_blank');
- assert.match(quizlet.getAttribute('rel'),/noopener/);
- assert.match(quizlet.getAttribute('rel'),/noreferrer/);
+ assert.equal(study.querySelector('a[href^="mailto:"]'),null);
+ assert.match(doc.getElementById('classroom').textContent,/in development/i);
  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
- assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now/i);
 });
 
 test('My NAV education directs members to published resources without promising open courses or completion records',()=>{
