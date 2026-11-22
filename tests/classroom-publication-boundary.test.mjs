@@ -1,17 +1,19 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 // Source may contain unpublished authoring work. Only the exact packaged
 // artifact is a public release. This test runs the same packager as Netlify.
 test("Netlify public artifact never includes an unapproved Classroom product", () => {
   execFileSync(process.execPath, ["scripts/package-site.mjs"], { cwd: process.cwd(), stdio: "pipe" });
-  // A deploy manifest is not a secrecy boundary when repository source is public.
-  // This only protects future HEAD contents; historical Git objects require
-  // a separate repository visibility/history remediation.
-  assert.equal(existsSync("classroom/weekly-question-bank.js"), false,
-    "unpublished answer banks must not exist at the public repository tip");
+  // A finished-only Netlify bundle does not protect data committed to the public source tree.
+  const allFiles = dir => readdirSync(dir,{withFileTypes:true}).flatMap(item => {
+    const path = dir + "/" + item.name;
+    return item.isDirectory() ? allFiles(path) : item.isFile() ? [path] : [];
+  });
+  assert.deepEqual(allFiles("classroom").sort(), ["classroom/index.html"],
+    "only the public Classroom information page may remain in public GitHub source");
   const root = ".site-build";
   assert.ok(existsSync(root + "/index.html"), "public marketing remains available");
   assert.ok(existsSync(root + "/account/auth.html"), "NAV sign-in remains available");
@@ -22,7 +24,7 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
   assert.match(landing, /href="\.\.\/contact\.html"/);
   assert.doesNotMatch(landing, /Enter your tester code|nav-coach-app-eight\.vercel\.app\/beta/i);
   const home = readFileSync(root + "/index.html", "utf8");
-  assert.match(home, /Account-bound tester access is in development/i);
+  assert.match(home, /href="products\.html"/i);
   assert.doesNotMatch(home, /Redeem a private tester code|Invited testers can access approved beta areas with a code/i);
   assert.match(landing, /noindex,nofollow/);
   assert.doesNotMatch(landing, /Hard to Kill|Start Week 1|10 quizzes|Starter Kit|quiz-1/i);
@@ -43,3 +45,4 @@ test("Netlify public artifact never includes an unapproved Classroom product", (
     assert.equal(existsSync(root + "/" + path), false, path + " must not be publicly deployable");
   }
 });
+

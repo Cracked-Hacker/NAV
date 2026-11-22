@@ -1,54 +1,61 @@
 import {ACCOUNT_CONFIG} from './config.js';
 import {accountClient} from './client.js';
-
 const root = new URL('../', import.meta.url);
 let generation = 0;
-
-function ensureCoachNateLinks() {
-  const coachUrl = new URL('coach-nate.html', root);
-  const normalizedPath = value => value.replace(/\.html$/, '').replace(/\/+$/, '');
-  const currentPath = normalizedPath(window.location.pathname);
-  const coachPath = normalizedPath(coachUrl.pathname);
-
-  document.querySelectorAll('.desktop-nav, .mobile-nav nav[aria-label="Mobile primary"]').forEach(nav => {
-    if ([...nav.querySelectorAll('a')].some(link => normalizedPath(new URL(link.href).pathname) === coachPath)) return;
-    const link = document.createElement('a');
-    link.dataset.coachNateLink = '';
-    link.href = coachUrl.href;
-    link.textContent = 'Coach Nate';
-    if (currentPath === coachPath) link.setAttribute('aria-current', 'page');
-    const accountEntry = nav.querySelector('[data-nav-login]');
-    if (accountEntry) nav.insertBefore(link, accountEntry);
-    else nav.append(link);
+const href = path => new URL(path,root).href;
+const a = (label,path) => {
+  const target = new URL(path,root);
+  const here = window.location.pathname;
+  const isHome = target.pathname === new URL('index.html',root).pathname && here === root.pathname;
+  const active = !path.includes('#') && (here === target.pathname || isHome);
+  return '<a href="'+target.href+'"'+(active?' aria-current="page"':'')+'>'+label+'</a>';
+};
+const menu = (label,items) => '<details class="nav-dropdown"><summary>'+label+'</summary><div class="nav-dropdown-panel">'+items.join('')+'</div></details>';
+function render(signedIn) {
+  const entries = [
+    a('Home','index.html'),
+    a('Services','coaching.html'),
+    menu('Products',[
+      a('All Products','products.html'),
+      a('NAV Coach app','nav-coach.html'),
+      a('NAV Classroom','classroom/index.html'),
+      a('Study tools','products.html#study-tools'),
+      a('Merch','products.html#merch')
+    ]),
+    menu('About',[
+      a('About NAV','about.html'),
+      a('Coach Nate','coach-nate.html'),
+      a('Research','research.html'),
+      a('Contact','contact.html')
+    ]),
+    signedIn === true ? a('My NAV','account/') : signedIn === null ? a('Account','account/') : menu('Account',[
+      a('Sign In','account/auth.html?mode=login'),
+      a('Create Account','account/auth.html?mode=signup')
+    ])
+  ].join('');
+  document.querySelectorAll('.desktop-nav, .mobile-nav nav[aria-label="Mobile primary"], header .topbar > nav').forEach(nav => {
+    const state = signedIn === true ? 'signed-in' : signedIn === null ? 'checking' : 'guest';
+    if(nav.dataset.navState === state) return;
+    nav.innerHTML = entries;
+    nav.dataset.navState = state;
   });
 }
-
-function apply(signedIn) {
-  ensureCoachNateLinks();
-  document.querySelectorAll('[data-nav-login]').forEach(link => {
-    link.textContent = signedIn ? 'My NAV' : 'Sign In';
-    link.href = new URL(signedIn ? 'account/' : 'account/auth.html?mode=login', root).href;
-  });
-  document.querySelectorAll('[data-nav-signup]').forEach(link => { link.hidden = signedIn; });
-}
-
 async function refresh() {
-  const current = ++generation;
+  const seq=++generation;
   try {
-    ensureCoachNateLinks();
-    if (!localStorage.getItem(ACCOUNT_CONFIG.storageKey)) { apply(false); return; }
-    const client = await accountClient();
-    const {data, error} = await client.auth.getUser();
-    if (current !== generation) return;
-    if (!error) apply(Boolean(data.user));
-    // A temporary network failure is not proof that the user signed out.
-  } catch {
-    // Public browsing stays available if account recovery is needed.
-    ensureCoachNateLinks();
-  }
+    if (!hasSession()) {render(false);return;}
+    if (!document.querySelector('.desktop-nav[data-nav-state="signed-in"]')) render(null);
+    const client=await accountClient();
+    const {data,error}=await client.auth.getUser();
+    if(seq!==generation)return;
+    if(!error)render(Boolean(data.user));
+  } catch { /* Do not mistake temporary failure for logout. */ }
 }
-
-ensureCoachNateLinks();
+function hasSession() {
+  try { return Boolean(localStorage.getItem(ACCOUNT_CONFIG.storageKey)); }
+  catch { return false; }
+}
+render(hasSession() ? null : false);
 refresh();
-window.addEventListener('storage', event => { if (event.key === ACCOUNT_CONFIG.storageKey) refresh(); });
-window.addEventListener('pageshow', refresh);
+window.addEventListener('storage',event=>{if(event.key===ACCOUNT_CONFIG.storageKey)refresh();});
+window.addEventListener('pageshow',refresh);
