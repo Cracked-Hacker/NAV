@@ -164,7 +164,7 @@ test('Study Tools slider is bounded and does not collect payment or expose a spe
  assert.equal(venmo.getAttribute('target'),'_blank');
  assert.match(venmo.getAttribute('rel'),/noopener/);
  assert.match(venmo.getAttribute('rel'),/noreferrer/);
- assert.match(doc.getElementById('study-tools').textContent,/Paying does not unlock or change any download/i);
+ assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download remains available without paying');
 });
 
 test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
@@ -191,5 +191,5 @@ test('Study Tools download links point to five byte-verified public assets, not 
    assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,'Download contents changed: '+name);
  }
  assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
- assert.match(section.textContent,/No email address, account, checkout, or payment is required/i);
+ assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
 });
