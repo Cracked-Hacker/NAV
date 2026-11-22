@@ -118,7 +118,7 @@ test('Coach Nate displays only selected, contextual, privacy-safe uploaded photo
  assert.ok(doc.querySelector('img[src="assets/coach-nate-lab-portrait.webp"]'),'Existing research hero must remain');
 });
 
-test('coaching offers three booking paths and describes Rain City Fit as pending',()=>{
+test('coaching clearly separates NAV online coaching from employer-owned booking',()=>{
  const main=documentFor('coaching.html').querySelector('main');
  const options=[...main.querySelectorAll('#booking article')];
  assert.equal(options.length,3);
@@ -128,12 +128,12 @@ test('coaching offers three booking paths and describes Rain City Fit as pending
  const applications=[...main.querySelectorAll('a[href^="https://docs.google.com/forms/"]')];
  assert.equal(applications.length,1);
  assert.equal(applications[0].textContent,'Apply for coaching');
- assert.match(options[1].textContent,/Woodinville, Bothell, and nearby communities · Blinnergy/);
- assert.match(options[1].textContent,/\$100 base price per session/);
+ assert.match(options[1].textContent,/In-person · Blinnergy/);
+ assert.match(options[1].textContent,/separate from NAV online coaching/);
  assert.ok(options[1].querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
  assert.match(options[2].textContent,/Google Employees · EXOS/);
  assert.match(options[2].textContent,/find Nate Holochwost on Boost/);
- assert.match(main.textContent,/Rain City Fit.+Booking is pending/s);
+ assert.doesNotMatch(main.textContent,/Rain City Fit|\$100 base price per session/);
 });
 test('NASM CPT dates remain visible and the public site does not disclose private identifiers',()=>{
  for(const path of ['about.html','resume.html','coach-nate.html']){
