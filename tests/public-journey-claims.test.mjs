@@ -127,7 +127,7 @@ test('Coach Nate displays only selected, contextual, privacy-safe uploaded photo
 
 test('coaching clearly separates NAV online coaching from employer-owned booking',()=>{
  const main=documentFor('coaching.html').querySelector('main');
- const options=[...main.querySelectorAll('#booking article')];
+ const options=[...main.querySelectorAll('#booking > .grid-3 > article.card')];
  assert.equal(options.length,3);
  assert.match(options[0].textContent,/\$80[–-]\$300 per week/);
  assert.match(options[0].textContent,/Sliding-scale pricing based on what you can afford/);
