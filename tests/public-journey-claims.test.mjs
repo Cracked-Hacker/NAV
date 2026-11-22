@@ -299,6 +299,7 @@ test('Blinnergy carousel displays all ten individually five-star Google reviews 
  assert.match(js,/fitActiveReview/,'Entire review height should fit without clipping');
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
  assert.match(css,/\.blinnergy-review-track\{display:flex;align-items:flex-start/);
+ assert.ok(!css.includes('max-height:min(64vh,38rem)'), 'No later CSS may reintroduce clipped, nested-scroll reviews');
  assert.match(css,/\.blinnergy-review-controls\[hidden\]\{display:none\}/);
  assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
  assert.match(card.querySelector('.blinnergy-rating a').getAttribute('href'),/google\.com\/maps\/place\/Blinnergy/);
