@@ -21,9 +21,9 @@ test('products offer a real downloadable bundle, Quizlet password, and compact o
   const study=doc.getElementById('study-tools');
   assert.match(study.textContent,/Ultimate Muscle Card Set/i);
   assert.match(study.textContent,/379.card/i);
-  assert.match(study.textContent,/Quizlet password:\\s*nate/i);
-  assert.match(study.textContent,/\\$0[–-]\\$100/);
-  assert.match(study.textContent,/free at \\$0/i);
+  assert.ok(study.textContent.includes('Quizlet password: nate'));
+  assert.ok(study.textContent.includes('$0–$100'));
+  assert.ok(study.textContent.includes('free at $0'));
   const menu=study.querySelector('details#muscle-card-options');
   assert.ok(menu,'study options must be an accessible native disclosure');
   assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
@@ -42,7 +42,7 @@ test('products offer a real downloadable bundle, Quizlet password, and compact o
   assert.equal(actions.querySelector('p'),null,'avoid lengthy payment copy');
   const bytes=readFileSync(new URL('../'+archive,import.meta.url));
   assert.ok(bytes.length>100000,'download should contain a real complete archive');
-  assert.equal(bytes.subarray(0,4).toString('binary'),'PK\\x03\\x04','expected ZIP archive bytes');
+  assert.deepEqual([...bytes.subarray(0,4)],[80,75,3,4],'expected ZIP archive bytes');
   const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
   assert.ok(manifest.includes('"'+archive+'"'),'archive must be published by Netlify');
   for(const link of [quizlet,venmo]){
