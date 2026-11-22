@@ -75,30 +75,34 @@ try{
   const reviewStatus=page.locator('[data-review-status]');
   const reviewPrev=page.locator('[data-review-prev]');
   const reviewNext=page.locator('[data-review-next]');
-  assert.equal(await reviewSlides.count(),3);
-  assert.equal(await reviewSlides.locator('blockquote').count(),3,'No summary-only cards');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),3,'Direct links to original reviews');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars').count(),3,'Gym-wide rating labels');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars small').filter({hasText:'gym rating'}).count(),3);
+  const reviewCount=await reviewSlides.count();
+  assert.ok(reviewCount>=3,'At least three published source-backed reviews');
+  assert.equal(await reviewSlides.locator('blockquote').count(),reviewCount,'Every card contains the actual review text');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),reviewCount,'Every card links to its source');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars').count(),reviewCount,'Stars accurately identified');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-venue-stars small').filter({hasText:'gym rating'}).count(),reviewCount);
   assert.equal(await page.locator('.blinnergy-review-access,.blinnergy-review-subject,.blinnergy-review-note').count(),0,'No filler');
-  assert.equal((await reviewStatus.textContent()).trim(),'1 of 3');
+  assert.equal((await reviewStatus.textContent()).trim(),`1 of ${reviewCount}`);
   assert.ok(await reviewPrev.isDisabled());
   assert.ok(await reviewNext.isEnabled());
-  await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
-  await reviewNext.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 3');
+
+  for(let index=2;index<=reviewCount;index++){
+    await reviewNext.click();
+    await page.waitForFunction(n=>document.querySelector('[data-review-status]')?.textContent===n+' of '+document.querySelectorAll('[data-review-slide]').length,index);
+  }
   assert.ok(await reviewNext.isDisabled());
   await reviewPrev.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
+  await page.waitForFunction(n=>document.querySelector('[data-review-status]')?.textContent===n+' of '+document.querySelectorAll('[data-review-slide]').length,reviewCount-1);
   await reviewTrack.focus();
   await reviewTrack.press('ArrowLeft');
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='1 of 3');
+  await page.waitForFunction(n=>document.querySelector('[data-review-status]')?.textContent===n+' of '+document.querySelectorAll('[data-review-slide]').length,reviewCount-2);
   await reviewTrack.evaluate(el=>{el.scrollLeft=el.scrollWidth;el.dispatchEvent(new Event('scroll'));});
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='3 of 3');
+  await page.waitForFunction(n=>document.querySelector('[data-review-status]')?.textContent===n+' of '+document.querySelectorAll('[data-review-slide]').length,reviewCount);
   assert.ok(await reviewNext.isDisabled());
+  assert.ok(await page.locator('.blinnergy-review-slide blockquote').first().evaluate(el=>getComputedStyle(el).maxHeight!=='none'));
+  assert.ok(await page.locator('.blinnergy-review-slide blockquote').first().evaluate(el=>getComputedStyle(el).overflowY==='auto'));
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  console.log('PASS Blinnergy three-review carousel: sources, qualified stars, arrow/keyboard/scroll, booking');
+  console.log('PASS Blinnergy review carousel: all cards, source links, scrollable full text, arrow/keyboard/scroll, booking');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');

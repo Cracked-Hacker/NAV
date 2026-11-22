@@ -157,3 +157,20 @@ h1,h2,h3{overflow-wrap:anywhere}
 .blinnergy-review-track{min-width:0;max-width:100%}
 .blinnergy-review-heading h4{min-width:0;overflow-wrap:anywhere}
 @media(max-width:980px){#booking .grid-3{grid-template-columns:minmax(0,1fr)}}
+
+/* In-person review carousel: restrained reading layout, complete quotations, touch and keyboard. */
+.blinnergy-reviews{margin-top:1.15rem;padding-top:1rem}
+.blinnergy-review-heading{margin-bottom:.75rem}
+.blinnergy-review-controls{gap:.65rem}
+.blinnergy-review-controls button{width:42px;height:42px;font-size:1.35rem;transition:border-color .15s ease,background-color .15s ease}
+.blinnergy-review-controls button:not(:disabled):hover{background:var(--paper)}
+.blinnergy-review-controls [data-review-status]{min-width:3.75rem;font-size:.83rem;font-weight:750}
+.blinnergy-review-track{gap:.75rem;padding-bottom:.85rem}
+.blinnergy-review-slide{padding:clamp(1rem,1.8vw,1.45rem);border-radius:14px;min-height:190px}
+.blinnergy-review-meta{margin-bottom:.9rem;font-size:.81rem;line-height:1.45}
+.blinnergy-review-source-name{font-weight:800}
+.blinnergy-review-slide blockquote{max-height:min(64vh,38rem);overflow-y:auto;overscroll-behavior-y:contain;scrollbar-width:thin;scrollbar-gutter:stable;margin:0 0 1rem;padding:0 .2rem 0 0}
+.blinnergy-review-slide blockquote p{font-size:clamp(.95rem,1.2vw,1.06rem);font-weight:500;line-height:1.66;letter-spacing:0}
+.blinnergy-review-slide blockquote p+p{margin-top:1rem}
+.blinnergy-review-source{font-size:.81rem}
+@media(prefers-reduced-motion:reduce){.blinnergy-review-controls button{transition:none}}
