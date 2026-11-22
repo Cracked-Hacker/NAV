@@ -9,9 +9,13 @@ function documentFor(path){const window=new Window();window.document.write(readF
 test('homepage offers exactly three distinct, usable destinations',()=>{
  const doc=documentFor('index.html');
  const cards=[...doc.querySelectorAll('.nav-home-action')];
- assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching','I’m a coach','I want to test software']);
- assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html#coach-flow','contact.html#testing']);
+ assert.deepEqual(cards.map(p=>p.querySelector('strong').textContent.trim()),['I want coaching','I’m a coach','I want study materials']);
+ assert.deepEqual(cards.map(p=>p.getAttribute('href')),['coaching.html','nav-coach.html#coach-flow','products.html']);
  assert.equal(new Set(cards.map(p=>p.getAttribute('href'))).size,3);
+ assert.equal(cards[2].querySelector('span')?.textContent.trim(),'Browse educational products');
+ const testing=doc.querySelector('main p.tiny.muted a[href="contact.html#testing"]');
+ assert.ok(testing,'Software-testing contact link remains available below the action cards');
+ assert.match(testing.textContent,/Interested in using NAV Coach for free\?/);
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
