@@ -54,3 +54,14 @@ h1,h2,h3{overflow-wrap:anywhere}
 .nav-product-grid article{border:1px solid var(--line);border-radius:18px;padding:28px;background:var(--card)}
 @media(max-width:960px){.nav-home-actions,.nav-product-grid{grid-template-columns:1fr}.nav-home-hero{padding:65px 0 90px}.nav-home-action{min-height:0}}
 @media(max-width:700px){.mobile-nav .nav-dropdown-panel{position:static;min-width:0;box-shadow:none}.mobile-nav .nav-dropdown summary{padding:10px 0}}
+/* Coaching choices and profile navigation */
+.booking-options .card,.coaching-example .card{min-width:0}
+.booking-note{margin:1rem 0 0}
+.coaching-lesson{display:flex;align-items:center;gap:1rem;min-height:7rem;padding:1rem;border-radius:14px;background:var(--ink-deep);color:#fff;text-decoration:none}
+.coaching-lesson:hover{text-decoration:underline}
+.coaching-lesson:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.coaching-lesson-play{display:grid;place-items:center;flex:0 0 2.5rem;height:2.5rem;border-radius:50%;background:var(--lime);color:var(--lime-ink)}
+.coaching-lesson strong,.coaching-lesson strong+span{display:block}
+.coaching-lesson strong+span{margin-top:.25rem;font-size:.9rem}
+.profile-jumps{margin:1.5rem 0 0}
+.profile-jumps .card-link{padding:1rem 1.25rem;min-height:0}
