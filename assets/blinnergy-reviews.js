@@ -6,6 +6,8 @@ if (carousel) {
   const prev = carousel.querySelector('[data-review-prev]');
   const next = carousel.querySelector('[data-review-next]');
   const status = carousel.querySelector('[data-review-status]');
+  const controls = carousel.querySelector('.blinnergy-review-controls');
+  if (controls) controls.hidden = slides.length <= 1;
   const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
   let active = 0;
   let pendingFrame = false;
