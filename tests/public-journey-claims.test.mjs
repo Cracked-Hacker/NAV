@@ -15,10 +15,12 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('Study Tools provide a working direct download, compact Venmo, and the Quizlet password',()=>{
+test('Learning Resources preserves the flashcard download, Venmo, and Quizlet password',()=>{
  const doc=documentFor('products.html');
  for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
- const study=doc.getElementById('study-tools');
+ const learning=doc.getElementById('study-tools');
+ assert.equal(learning.querySelector('h2').textContent.trim(),'Learning Resources');
+ const study=doc.getElementById('muscle-cards');
  assert.ok(study.textContent.includes('379 text-only flashcards'));
  assert.ok(study.textContent.includes('Quizlet password: nate'));
  assert.ok(study.textContent.includes('Recommended contribution: $8'));
@@ -150,7 +152,7 @@ test('My NAV presents one global app launch instead of redundant app links',()=>
  assert.equal(links.length,1);
 });
 
-test('Study Tools supports instant copy, optional prefilled Venmo, and unlimited custom amounts',()=>{
+test('Learning Resources supports instant copy, optional prefilled Venmo, and unlimited custom amounts',()=>{
  const doc=documentFor('products.html');
  const slider=doc.querySelector('#muscle-contribution');
  assert.ok(slider);
@@ -178,9 +180,9 @@ test('Study Tools supports instant copy, optional prefilled Venmo, and unlimited
  assert.ok(doc.getElementById('study-tools').querySelector('a[download]'),'Free download must never require payment');
 });
 
-test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
+test('Muscle Card Set links point to five byte-verified assets, not payment gates',()=>{
  const doc=documentFor('products.html');
- const section=doc.getElementById('study-tools');
+ const section=doc.getElementById('muscle-cards');
  const expected={
    'NAV_Ultimate_Muscle_All_Formats_2026-11.zip': ['a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc',335260],
    'NAV_Ultimate_Muscle_Card_Set.apkg':['227c98775fc3381f69ee84d833e14423753d0e9e5d113bc4a7cc59c927521549',69883],
