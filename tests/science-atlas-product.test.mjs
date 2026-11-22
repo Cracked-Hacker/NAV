@@ -56,3 +56,16 @@ test('Learning Resources includes all three direct-download products without req
  assert.equal(nutritionPdf.subarray(0,5).toString('latin1'),'%PDF-');
  assert.ok(nutritionPdf.byteLength > 250000,'nutrition PDF must be substantive');
 });
+
+test('Published education products omit employer-branded teaching frameworks and preserve correct velocity definition',()=>{
+ const prohibited=/position[\s–-]+pattern[\s–-]+power|\bEXOS\b|Pillar Prep/i;
+ for(const path of ['products.html','downloads/NAV_Muscle_Cards.csv','downloads/NAV_Muscle_Cards_Offline.html']){
+   const body=readFileSync(new URL('../'+path,import.meta.url),'utf8');
+   assert.doesNotMatch(body,prohibited,path+' must not contain proprietary branding');
+   assert.doesNotMatch(body,/Motion \(velocity\) = position over time/i,path+' includes incorrect biomechanics');
+ }
+ const csv=readFileSync(new URL('../downloads/NAV_Muscle_Cards.csv',import.meta.url),'utf8');
+ assert.ok(csv.includes('Average velocity equals'));
+ assert.ok(csv.includes('Displacement is final minus initial position'));
+ assert.ok(html.includes('Research citations do not imply endorsement.'));
+});
