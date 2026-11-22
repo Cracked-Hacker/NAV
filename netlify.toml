@@ -34,3 +34,12 @@
     X-Robots-Tag = "noindex, nofollow"
     Cache-Control = "no-store"
     X-Content-Type-Options = "nosniff"
+
+# Product downloads should save directly, never open an email or checkout flow.
+[[headers]]
+  for = "/downloads/*"
+  [headers.values]
+    Content-Disposition = "attachment"
+    X-Content-Type-Options = "nosniff"
+    X-Robots-Tag = "noindex"
+    Cache-Control = "public, max-age=3600"
