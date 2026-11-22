@@ -7,8 +7,14 @@ if (slider && amount && explanation) {
     const dollars = Math.min(100, Math.max(0, Number.parseInt(slider.value, 10) || 0));
     amount.value = '$' + dollars;
     explanation.textContent = dollars === 0
-      ? 'Selected: $0. No payment required. Public downloads are not yet enabled.'
-      : 'Selected: $' + dollars + ' as optional support. No payment is collected here; verify the recipient in Venmo before sending money.';
+      ? 'Selected: $0. Download all formats now — no payment or email required.'
+      : 'Selected: ;
+  };
+  slider.addEventListener('input', refresh);
+  slider.addEventListener('change', refresh);
+  refresh();
+}
+ + dollars + ' as voluntary support. All download links work without payment. No payment is collected on this page.';
   };
   slider.addEventListener('input', refresh);
   slider.addEventListener('change', refresh);
