@@ -69,3 +69,28 @@ test('Published education products omit employer-branded teaching frameworks and
  assert.ok(csv.includes('Displacement is final minus initial position'));
  assert.ok(html.includes('Citations credit the original researchers, not endorsements.'));
 });
+
+test('Learning Resources has one View Options control per downloadable product',()=>{
+ const starts=['muscle-cards','science-atlases','nutrition-guide'];
+ const detailsIds=['muscle-card-options','atlas-options','nutrition-options'];
+ const downloadPaths=[
+  'downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip',
+  'downloads/Human_Sciences_Atlas_2026.pdf',
+  'downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf'
+ ];
+ const study=html.slice(html.indexOf('<article id="study-tools">'),html.indexOf('</article>',html.indexOf('<article id="study-tools">')));
+ assert.equal((study.match(/<summary class="button secondary">View Options<\/summary>/g)||[]).length,3);
+ for(let i=0;i<starts.length;i++){
+  const from=study.indexOf('<section id="'+starts[i]+'"');
+  const to=i<starts.length-1?study.indexOf('<section id="'+starts[i+1]+'"',from):study.length;
+  const card=study.slice(from,to);
+  assert.ok(from>=0,'missing product '+starts[i]);
+  assert.ok(card.includes('id="'+detailsIds[i]+'" name="learning-resource-options"'),'inconsistent View Options detail on '+starts[i]);
+  assert.ok(card.indexOf('View Options')<card.indexOf('href="'+downloadPaths[i]+'"'),'download should follow options disclosure');
+  assert.ok(card.includes('download'),'download missing: '+starts[i]);
+ }
+ // One disclosure per resource, with free access and optional Venmo inside it.
+ assert.equal((study.match(/name="learning-resource-options"/g)||[]).length,3);
+ for(const id of ['atlas-venmo','nutrition-venmo','muscle-contribution'])
+   assert.ok(study.includes('id="'+id+'"'),id+' must stay available');
+});
