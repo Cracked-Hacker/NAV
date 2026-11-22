@@ -14,7 +14,6 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "index.html",
   "nav-coach.html",
   "products.html",
-  "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
   "privacy.html",
   "research.html",
   "resources.html",
@@ -54,5 +53,11 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-squat-8279-poster.webp",
   "assets/coach-nate-training-gallery.js",
   "assets/coach-nate-instagram-gallery.js",
+  "assets/study-tools-options.js",
+  "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
+  "downloads/NAV_Ultimate_Muscle_Card_Set.apkg",
+  "downloads/NAV_Muscle_Cards_Print.pdf",
+  "downloads/NAV_Muscle_Cards.csv",
+  "downloads/NAV_Muscle_Cards_Offline.html",
   "classroom/index.html"
 ]);

@@ -67,23 +67,27 @@ h1,h2,h3{overflow-wrap:anywhere}
 .profile-jumps .card-link{padding:1rem 1.25rem;min-height:0}
 
 
-/* Ultimate Muscle Card Set: accessible, no-script options chooser. */
-.study-option-menu{margin-top:1.15rem}
-.study-option-menu>summary{cursor:pointer;list-style:none;user-select:none;max-width:max-content}
-.study-option-menu>summary::-webkit-details-marker{display:none}
-.study-option-menu>summary::after{content:"⌄";margin-left:.55rem}
-.study-option-menu[open]>summary::after{transform:rotate(180deg)}
-.study-option-menu>summary:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
-.study-option-panel{margin-top:1rem;padding:1rem;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
-.study-option-panel>h3{margin:.25rem 0 .75rem;font-size:1.25rem}
-.study-option-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--line)}
-.study-option-row>div{flex:1;min-width:0}
-.study-option-row p{margin:.4rem 0 0;color:var(--muted);font-size:.94rem}
-.study-option-row>.button{flex:0 0 auto;max-width:100%;text-align:center}
-.study-option-panel>.tiny{margin:.9rem 0 0}
-.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-@media(max-width:800px){.study-option-row{align-items:stretch;flex-direction:column}.study-option-row>.button{align-self:stretch}}
+/* Study Tools: expanded options retain NAV's existing visual system. */
+.study-options{margin-top:1.25rem}
+.study-options>summary{display:inline-flex;cursor:pointer;list-style:none}
+.study-options>summary::-webkit-details-marker{display:none}
+.study-options>summary::after{content:"⌄";margin-left:.65rem}
+.study-options[open]>summary::after{content:"⌃"}
+.study-options-panel{margin-top:1.1rem;padding:1.2rem;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.study-options-panel>h3,.study-price h3{margin:.1rem 0 .75rem}
+.study-option-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:.8rem}
+.study-option{min-width:0;padding:1rem;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.study-option h4{margin:0 0 .5rem;font-size:1.05rem}
+.study-option p{margin:.45rem 0 .75rem}
+.study-option-status{font-size:.9rem;color:var(--muted)}
+.study-price{border-top:1px solid var(--line);margin-top:1.2rem;padding-top:1.2rem}
+.study-price-controls{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:.5rem 0}
+.study-price-controls input{width:min(100%,360px);accent-color:var(--ink)}
+.study-price-controls output{font-size:1.5rem;font-weight:850;font-variant-numeric:tabular-nums;color:var(--ink)}
+.study-price label{font-weight:750}
+.study-options a:focus-visible,.study-options summary:focus-visible,.study-price input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+@media(max-width:960px){.study-option-grid{grid-template-columns:1fr}}
 
-/* Keep optional Venmo directly below the downloadable flashcard bundle. */
-.study-download-actions{display:grid;gap:.65rem;max-width:18rem;padding:1rem 0;border-top:1px solid var(--line)}
-.study-download-actions>.button{width:100%}
+.study-option .button{max-width:100%;white-space:normal;text-align:center}
+.study-download-links{margin:.5rem 0;padding-left:1.3rem}
+.study-download-links li{margin:.35rem 0;overflow-wrap:anywhere}

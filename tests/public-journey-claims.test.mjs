@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import test from 'node:test';
+import {createHash} from 'node:crypto';
 import {Window} from 'happy-dom';
 
 function documentFor(path){const window=new Window();window.document.write(readFileSync(new URL('../'+path,import.meta.url),'utf8'));return window.document;}
@@ -14,45 +15,29 @@ test('homepage offers exactly three distinct, usable destinations',()=>{
  assert.doesNotMatch(doc.body.textContent,/enter your tester code|redeem a code|approved beta areas/i);
 });
 
-test('products offer a real downloadable bundle, Quizlet password, and compact optional Venmo',()=>{
-  const doc=documentFor('products.html');
-  for(const id of ['nav-coach','classroom','study-tools','merch']) assert.ok(doc.getElementById(id),id);
-  assert.match(doc.getElementById('classroom').textContent,/in development/i);
-  const study=doc.getElementById('study-tools');
-  assert.match(study.textContent,/Ultimate Muscle Card Set/i);
-  assert.match(study.textContent,/379.card/i);
-  assert.ok(study.textContent.includes('Quizlet password: nate'));
-  assert.ok(study.textContent.includes('$0–$100'));
-  assert.ok(study.textContent.includes('free at $0'));
-  const menu=study.querySelector('details#muscle-card-options');
-  assert.ok(menu,'study options must be an accessible native disclosure');
-  assert.equal(menu.querySelector('summary').textContent.trim(),'View Options');
-  const quizlet=menu.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
-  const venmo=menu.querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
-  const archive='downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip';
-  const download=menu.querySelector('a[href="'+archive+'"]');
-  assert.ok(quizlet,'original Quizlet URL required');
-  assert.ok(venmo,'owner-provided Venmo URL required');
-  assert.ok(download,'working direct download required');
-  assert.equal(download.textContent.trim(),'Download');
-  assert.equal(download.getAttribute('download'),'NAV_Ultimate_Muscle_All_Formats_2026-11.zip');
-  const actions=menu.querySelector('.study-download-actions');
-  assert.ok(actions,'group download and optional Venmo together');
-  assert.deepEqual([...actions.querySelectorAll('a')],[download,venmo],'Venmo should sit directly below Download');
-  assert.equal(actions.querySelector('p'),null,'avoid lengthy payment copy');
-  const bytes=readFileSync(new URL('../'+archive,import.meta.url));
-  assert.ok(bytes.length>100000,'download should contain a real complete archive');
-  assert.deepEqual([...bytes.subarray(0,4)],[80,75,3,4],'expected ZIP archive bytes');
-  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
-  assert.ok(manifest.includes('"'+archive+'"'),'archive must be published by Netlify');
-  for(const link of [quizlet,venmo]){
-    assert.equal(link.getAttribute('target'),'_blank');
-    assert.match(link.getAttribute('rel'),/noopener/);
-    assert.match(link.getAttribute('rel'),/noreferrer/);
-  }
-  assert.equal(menu.querySelector('a[href^="mailto:"]'),null,'no email fulfillment');
-  assert.match(doc.getElementById('merch').textContent,/not for sale/i);
-  assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now|Instant download after payment/i);
+test('products distinguish downloadable study materials from unreleased services without checkout',()=>{
+ const doc=documentFor('products.html');
+ for(const id of ['nav-coach','classroom','study-tools','merch'])assert.ok(doc.getElementById(id),id);
+ assert.match(doc.getElementById('classroom').textContent,/in development/i);
+ const study=doc.getElementById('study-tools');
+ assert.match(study.textContent,/Ultimate Muscle Card Set/i);
+ assert.match(study.textContent,/available now/i);
+ assert.match(study.textContent,/379 flashcards/i);
+ assert.match(study.textContent,/Download instantly/i);
+ const options=study.querySelector('#muscle-card-options');
+ assert.ok(options, 'Study Tools must have a native expandable options menu');
+ assert.equal(options.querySelector('summary').textContent.trim(),'View Options');
+ for(const heading of ['Study on Quizlet','Download the complete bundle','Anki deck'])assert.match(options.textContent,new RegExp(heading));
+ assert.match(options.textContent,/Pay what you can: \$0[–-]\$100/);
+ assert.match(options.textContent,/One complete bundle at every price/i);
+ assert.equal(study.querySelectorAll('a').length,7);
+ const quizlet=study.querySelector('a[href="https://quizlet.com/1128248509/ultimate-muscle-card-set-flash-cards/"]');
+ assert.ok(quizlet,'Quizlet set must be linked from Study Tools');
+ assert.equal(quizlet.getAttribute('target'),'_blank');
+ assert.match(quizlet.getAttribute('rel'),/noopener/);
+ assert.match(quizlet.getAttribute('rel'),/noreferrer/);
+ assert.match(doc.getElementById('merch').textContent,/not for sale/i);
+ assert.doesNotMatch(doc.body.textContent,/Buy now|checkout now/i);
 });
 
 test('My NAV education directs members to published resources without promising open courses or completion records',()=>{
@@ -158,4 +143,48 @@ test('My NAV presents one global app launch instead of redundant app links',()=>
  const doc=documentFor('account/index.html');
  const links=[...doc.querySelectorAll('a[href="https://nav-coach-app-eight.vercel.app/"]')];
  assert.equal(links.length,1);
+});
+
+test('Study Tools slider is bounded and does not collect payment or expose a speculative Venmo address',()=>{
+ const doc=documentFor('products.html');
+ const control=doc.querySelector('#muscle-contribution');
+ assert.ok(control);
+ assert.equal(control.getAttribute('type'),'range');
+ assert.deepEqual([control.min,control.max,control.step,control.value],['0','100','1','0']);
+ assert.equal(doc.querySelector('#muscle-contribution-value').textContent.trim(),'$0');
+ assert.ok(doc.querySelector('script[src="assets/study-tools-options.js"]'));
+ assert.doesNotMatch(doc.getElementById('study-tools').innerHTML,/Create checkout|Buy now|stripe\.com/i);
+ const venmo=doc.getElementById('study-tools').querySelector('a[href="https://venmo.com/u/Nate-Holochwost"]');
+ assert.ok(venmo,'Owner-supplied Venmo link should remain optional');
+ assert.equal(venmo.getAttribute('target'),'_blank');
+ assert.match(venmo.getAttribute('rel'),/noopener/);
+ assert.match(venmo.getAttribute('rel'),/noreferrer/);
+ assert.match(doc.getElementById('study-tools').textContent,/Paying does not unlock or change any download/i);
+});
+
+test('Study Tools download links point to five byte-verified public assets, not email or payment gates',()=>{
+ const doc=documentFor('products.html');
+ const section=doc.getElementById('study-tools');
+ const expected={
+   'NAV_Ultimate_Muscle_All_Formats_2026-11.zip': ['a617bad0df90209670072aa409e493eec62ce78687f896d63c21cdaccfb1d0bc',335260],
+   'NAV_Ultimate_Muscle_Card_Set.apkg':['227c98775fc3381f69ee84d833e14423753d0e9e5d113bc4a7cc59c927521549',69883],
+   'NAV_Muscle_Cards_Print.pdf':['3da61d0b3e5f9f90d69369763cf383ac100308a179d8414c5ea1bba9a52d1ef8',255256],
+   'NAV_Muscle_Cards.csv':['afff4922d83f76aafd97a49f441d5728c44015f648d7c47d4f1c568c8219e74c',92145],
+   'NAV_Muscle_Cards_Offline.html':['56c325c4ee040b2799503d86d7a83e66cbfe368545d173e91f3ee0a74bde4c58',134582]
+ };
+ const links=[...section.querySelectorAll('a[download]')];
+ assert.equal(links.length,5);
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ for(const [name,[sha,size]] of Object.entries(expected)){
+   const path='downloads/'+name;
+   const link=links.find(a=>a.getAttribute('href')===path);
+   assert.ok(link,'Missing direct download: '+name);
+   assert.ok(link.hasAttribute('download'));
+   assert.ok(manifest.includes('"'+path+'"'),'Download not in explicit public manifest: '+path);
+   const bytes=readFileSync(new URL('../'+path,import.meta.url));
+   assert.equal(bytes.length,size,'Download filesize changed: '+name);
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),sha,'Download contents changed: '+name);
+ }
+ assert.doesNotMatch(section.innerHTML,/<form|mailto:|Buy now|checkout now|Payment required/i);
+ assert.match(section.textContent,/No email address, account, checkout, or payment is required/i);
 });
