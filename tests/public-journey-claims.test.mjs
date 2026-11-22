@@ -133,12 +133,15 @@ test('coaching clearly separates NAV online coaching from employer-owned booking
  assert.match(options[0].textContent,/Sliding-scale pricing based on what you can afford/);
  assert.match(options[0].textContent,/agree on pricing, what’s included, and when to start/);
  const applications=[...main.querySelectorAll('a[href^="https://docs.google.com/forms/"]')];
- assert.equal(applications.length,1);
- assert.equal(applications[0].textContent,'Apply for Coaching');
+ assert.equal(applications.length,2,'One primary application button plus one Availability text link');
+ const primaryApply=options[0].querySelector('a.button.lime[href^="https://docs.google.com/forms/"]');
+ assert.ok(primaryApply,'Preserve exactly one visible primary application button');
+ assert.equal(primaryApply.textContent,'Apply for Coaching');
+ assert.equal(main.querySelectorAll('a.button.lime[href^="https://docs.google.com/forms/"]').length,1);
  const availability=main.querySelector('[aria-labelledby="availability-heading"]');
  const availableApply=availability?.querySelector('a[href^="https://docs.google.com/forms/"]');
  assert.ok(availableApply,'Availability application instruction must be a functional link');
- assert.equal(availableApply.getAttribute('href'),applications[0].getAttribute('href'),'Availability link should use same application');
+ assert.equal(availableApply.getAttribute('href'),primaryApply.getAttribute('href'),'Availability link should use same application');
  assert.equal(availableApply.textContent,'Apply for Coaching');
  assert.equal(availability.querySelectorAll('.button').length,0,'Do not add a duplicate primary button');
  const disclaimer=main.querySelector('.coaching-example')?.parentElement?.querySelector('p.muted');
