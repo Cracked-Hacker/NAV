@@ -1,6 +1,5 @@
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { resolve, dirname, normalize, join, sep, extname } from "node:path";
-import "./validate-classroom-assessments.mjs";
 import {PUBLIC_RELEASE_FILES} from "./public-release-manifest.mjs";
 
 // This validates the FINISHED-ONLY public artifact, not that every file in
@@ -19,6 +18,18 @@ const root = process.cwd();
 const publishable = new Set(PUBLIC_RELEASE_FILES);
 if(publishable.size!==PUBLIC_RELEASE_FILES.length)failures.push("public-release-manifest: duplicate entries");
 if(!publishable.has("classroom/index.html"))failures.push("public-release-manifest: missing beta information entry");
+// The public repository itself is readable. A Netlify manifest cannot hide unpublished source.
+// Preserve these files in the private NAV Coach archive before deleting from the public PR.
+const publicClassroomSource = new Set(["classroom/index.html"]);
+function inspectPublicClassroomSource(dir) {
+  for (const item of readdirSync(dir,{withFileTypes:true})) {
+    const path = dir + "/" + item.name;
+    if(item.isDirectory()) inspectPublicClassroomSource(path);
+    else if(item.isFile() && !publicClassroomSource.has(path))
+      failures.push("public repository contains unreleased Classroom source: "+path);
+  }
+}
+if(existsSync("classroom")) inspectPublicClassroomSource("classroom");
 if([...publishable].some(p=>p.startsWith("classroom/")&&p!=="classroom/index.html"))
  failures.push("public-release-manifest: unpublished Classroom lessons must never ship");
 for(const file of publishable)mustExist(file);

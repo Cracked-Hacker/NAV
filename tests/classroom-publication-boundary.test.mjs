@@ -1,12 +1,19 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 // Source may contain unpublished authoring work. Only the exact packaged
 // artifact is a public release. This test runs the same packager as Netlify.
 test("Netlify public artifact never includes an unapproved Classroom product", () => {
   execFileSync(process.execPath, ["scripts/package-site.mjs"], { cwd: process.cwd(), stdio: "pipe" });
+  // A finished-only Netlify bundle does not protect data committed to the public source tree.
+  const allFiles = dir => readdirSync(dir,{withFileTypes:true}).flatMap(item => {
+    const path = dir + "/" + item.name;
+    return item.isDirectory() ? allFiles(path) : item.isFile() ? [path] : [];
+  });
+  assert.deepEqual(allFiles("classroom").sort(), ["classroom/index.html"],
+    "only the public Classroom information page may remain in public GitHub source");
   const root = ".site-build";
   assert.ok(existsSync(root + "/index.html"), "public marketing remains available");
   assert.ok(existsSync(root + "/account/auth.html"), "NAV sign-in remains available");

@@ -1,6 +1,8 @@
 // Production-only, read-only verification of a finished-only Netlify release.
 // Stale GitHub commits, published question banks, and unpublished course files fail.
 import assert from "node:assert/strict";
+import {execFileSync} from "node:child_process";
+import {PUBLIC_RELEASE_FILES} from "./public-release-manifest.mjs";
 import {hasVerifiedBetaContactLink} from "./site-link-check.mjs";
 const root="https://coach-nate.netlify.app/";
 const expected=process.env.GITHUB_SHA;
@@ -27,15 +29,39 @@ for(let attempt=1;attempt<=15;attempt++){
     assert.doesNotMatch(html,/href=["\x27]https:\/\/nav-coach-app-eight\.vercel\.app\/beta/i);
     assert.ok(hasVerifiedBetaContactLink(html), "Private Beta must include a safe working Contact action");
     assert.match(html,/noindex,nofollow/);
-    const withheld=[
-      "classroom/quizzes.html","classroom/assignments.html","classroom/labs.html",
-      "classroom/course/week-1/index.html","classroom/how-training-works/index.html",
-      "classroom/classroom.js","classroom/lms-data.js","classroom/weekly-question-bank.js"
-    ];
+    // Fail closed if CI silently supplies shallow history: deleted Classroom paths
+    // would otherwise disappear from the historical denylist without an error.
+    const shallow=execFileSync("git",["rev-parse","--is-shallow-repository"],{encoding:"utf8"}).trim();
+    assert.equal(shallow,"false","Confidentiality inventory requires a non-shallow Git checkout");
+    // Discover all tracked, unpublished Classroom paths in this exact release source.
+    const approved=new Set(PUBLIC_RELEASE_FILES);
+    const tracked=execFileSync("git",["ls-files","-z","--","classroom/"],{encoding:"utf8"})
+      .split("\0").filter(Boolean);
+    // Current HEAD alone cannot find deleted files that may still be served
+    // by a stale deployment. Include every Classroom path visible in local
+    // Git history, and keep the known sensitive answer bank as an explicit
+    // invariant even in a shallow checkout with incomplete history.
+    const historical=execFileSync("git",[
+      "log","--all","--format=","--name-only","--","classroom/"
+    ],{encoding:"utf8",maxBuffer:16*1024*1024})
+      .split("\n").map(path=>path.trim()).filter(path=>path.startsWith("classroom/"));
+    const withheld=[...new Set([
+      ...tracked,
+      ...historical,
+      "classroom/weekly-question-bank.js"
+    ])].filter(path=>!approved.has(path)).sort();
+    assert.ok(withheld.length>0,"Unexpected empty withheld Classroom inventory");
     for(const path of withheld){
-      const result=await request(path);
-      assert.equal(result.status,404,`${path}: unreleased coursework must not be publicly accessible`);
+      assert.ok(!approved.has(path),`Confidentiality denylist conflicts with public manifest: ${path}`);
     }
+    const failures=[];
+    for(const path of withheld){
+      try{
+        const result=await request(path);
+        if(result.status!==404) failures.push({path,status:result.status});
+      }catch(error){failures.push({path,error:error.message});}
+    }
+    assert.deepEqual(failures,[],`Anonymous Classroom exposure: ${JSON.stringify(failures)}`);
     // Prove the six approved reels and click-to-load script reached production.
     const coachResponse=await request("coach-nate.html");
     assert.equal(coachResponse.status,200,"Coach Nate profile missing in production");
@@ -43,10 +69,13 @@ for(let attempt=1;attempt<=15;attempt++){
     for(const code of ["DU67U4xAbgg","DVH2BmojR-X","DVKLlgxkm7e","DVO9SxBEkVh","DVRlBK5EpBz","DVZrxHgAWpp"]){
       assert.ok(coachHtml.includes('data-reel-code="'+code+'"') || coachHtml.includes("data-reel-code='"+code+"'"),"Missing published reel "+code);
     }
+    for(const id of ["l6mn8OVIhiM","qKc7Pgy0_I4","WyrwYLIxhvc","50DcRryZoTM","Lt7uXl7eL4o","LFA-6Gnm7wA"]){
+      assert.ok(coachHtml.includes('data-youtube-id="'+id+'"'),"Missing published educational video "+id);
+    }
     const galleryScript=await request("assets/coach-nate-instagram-gallery.js");
     assert.equal(galleryScript.status,200,"Instagram gallery script missing in production");
     console.log(JSON.stringify({site:root,releaseCommit:release.commit,attempt,
-      result:"PASS finished-only public release",withheld,publicTeaser:true},null,2));
+      result:"PASS finished-only public release",withheldCount:withheld.length,withheld,publicTeaser:true},null,2));
     process.exit(0);
   }catch(error){
     last=error;
