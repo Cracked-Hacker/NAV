@@ -100,3 +100,9 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-contribution .study-price-controls{margin:.35rem 0}
 .study-contribution .study-price-controls output{font-size:1.1rem}
 .study-contribution p{margin:.2rem 0 0}
+
+/* Uncapped voluntary contributions: compact, accessible manual dollar input. */
+.study-contribution .study-price-controls{gap:.4rem}
+.study-contribution .study-currency{font-size:1.1rem;font-weight:750;color:var(--ink)}
+.study-contribution .study-price-controls input[type="number"]{width:8rem;max-width:calc(100% - 1.4rem);padding:.5rem .65rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);font:inherit;font-weight:700}
+.study-contribution .study-price-controls input:focus-visible{outline:3px solid var(--blue);outline-offset:3px}

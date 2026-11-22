@@ -1,16 +1,21 @@
-// Optional contribution preview only. No payment is collected on this website.
-const slider=document.querySelector('#muscle-contribution');
-const amount=document.querySelector('#muscle-contribution-value');
-const explanation=document.querySelector('#muscle-amount-explanation');
-if(slider&&amount&&explanation){
-  const refresh=()=>{
-    const dollars=Math.min(100,Math.max(0,Number.parseInt(slider.value,10)||0));
-    amount.value='$'+dollars;
-    explanation.textContent=dollars===0
-      ? 'Free at $0. Download does not require payment.'
-      : 'Optional support: $'+dollars+'. Enter the amount in Venmo. Download remains free.';
+// Contribution preview only; payments are handled in Venmo, never on this website.
+const input = document.querySelector('#muscle-contribution');
+const explanation = document.querySelector('#muscle-amount-explanation');
+if (input && explanation) {
+  const refresh = () => {
+    const raw = input.value.trim();
+    const dollars = Number(raw);
+    if (!raw) {
+      explanation.textContent = 'Choose any amount in Venmo. NAV sets no upper limit; downloading is free.';
+    } else if (!Number.isFinite(dollars) || dollars < 0 || !input.validity.valid) {
+      explanation.textContent = 'Enter a valid contribution of $0 or more.';
+    } else if (dollars === 0) {
+      explanation.textContent = 'Free at $0. No payment is required to download.';
+    } else {
+      const formatted = dollars.toLocaleString('en-US', {maximumFractionDigits: 2});
+      explanation.textContent = 'Enter $' + formatted + ' in Venmo. NAV sets no upper limit; download remains free.';
+    }
   };
-  slider.addEventListener('input',refresh);
-  slider.addEventListener('change',refresh);
+  input.addEventListener('input', refresh);
   refresh();
 }
