@@ -109,10 +109,10 @@ h1,h2,h3{overflow-wrap:anywhere}
 .study-copy-amount{border:0;background:transparent;color:var(--blue);font:inherit;font-weight:700;text-decoration:underline;text-underline-offset:.16rem;cursor:pointer;padding:.45rem .25rem}
 .study-contribution .study-price-controls :is(input,button):focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 
-/* Study Tools: one category with multiple compact downloadable resources. */
+/* Learning Resources: one compact category for flashcards, atlas, and guide. */
 .nav-product-grid #study-tools{grid-column:1 / -1}
-.study-tool-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(1rem,3vw,2.5rem)}
+.study-tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1rem,2.2vw,2rem)}
 .study-tool-item{min-width:0}
 .study-tool-item+.study-tool-item{border-left:1px solid var(--line);padding-left:clamp(1rem,3vw,2.5rem)}
 .study-tool-item h3{margin:.15rem 0 .75rem;font-size:1.35rem;line-height:1.25}
-@media(max-width:760px){.study-tool-grid{grid-template-columns:1fr}.study-tool-item+.study-tool-item{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:1.5rem}}
+@media(max-width:1100px){.study-tool-grid{grid-template-columns:1fr}.study-tool-item+.study-tool-item{border-left:0;border-top:1px solid var(--line);padding-left:0;padding-top:1.5rem}}

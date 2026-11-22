@@ -55,6 +55,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-instagram-gallery.js",
   "assets/study-tools-options.js",
   "downloads/Human_Sciences_Atlas_2026.pdf",
+  "downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf",
   "assets/science-atlas-payment.js",
   "downloads/NAV_Ultimate_Muscle_All_Formats_2026-11.zip",
   "downloads/NAV_Ultimate_Muscle_Card_Set.apkg",
