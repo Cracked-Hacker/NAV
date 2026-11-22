@@ -145,7 +145,7 @@ try{
         for(const el of document.querySelectorAll('details'))el.open=true;
         const interactive=[...document.querySelectorAll('button,summary,a')];
         const unnamed=interactive.filter(el=>el.getClientRects().length&&
-          !(el.getAttribute('aria-label')||el.textContent||'').trim())
+          !(el.getAttribute('aria-label')||el.textContent||el.querySelector('img[alt]')?.getAttribute('alt')||'').trim())
           .map(el=>el.outerHTML.slice(0,160));
         return {textLength:document.body.innerText.length,interactiveCount:interactive.length,
           unnamed,scrollWidth:document.documentElement.scrollWidth,
