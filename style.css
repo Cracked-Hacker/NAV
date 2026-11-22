@@ -65,3 +65,21 @@ h1,h2,h3{overflow-wrap:anywhere}
 .coaching-lesson strong+span{margin-top:.25rem;font-size:.9rem}
 .profile-jumps{margin:1.5rem 0 0}
 .profile-jumps .card-link{padding:1rem 1.25rem;min-height:0}
+
+
+/* Ultimate Muscle Card Set: accessible, no-script options chooser. */
+.study-option-menu{margin-top:1.15rem}
+.study-option-menu>summary{cursor:pointer;list-style:none;user-select:none;max-width:max-content}
+.study-option-menu>summary::-webkit-details-marker{display:none}
+.study-option-menu>summary::after{content:"⌄";margin-left:.55rem}
+.study-option-menu[open]>summary::after{transform:rotate(180deg)}
+.study-option-menu>summary:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+.study-option-panel{margin-top:1rem;padding:1rem;border:1px solid var(--line);border-radius:16px;background:var(--paper)}
+.study-option-panel>h3{margin:.25rem 0 .75rem;font-size:1.25rem}
+.study-option-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--line)}
+.study-option-row>div{flex:1;min-width:0}
+.study-option-row p{margin:.4rem 0 0;color:var(--muted);font-size:.94rem}
+.study-option-row>.button{flex:0 0 auto;max-width:100%;text-align:center}
+.study-option-panel>.tiny{margin:.9rem 0 0}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(max-width:800px){.study-option-row{align-items:stretch;flex-direction:column}.study-option-row>.button{align-self:stretch}}
