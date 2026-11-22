@@ -175,3 +175,21 @@ test('private beta landing does not imply unverified NAV Coach workflows are rel
   assert.match(body,/Learn about NAV Coach/i);
   assert.doesNotMatch(body,/See released app workflows/i);
 });
+
+test('Coach Nate origin story is accurate, restrained, and linked to real research interests',()=>{
+  const page=documentFor('coach-nate.html');
+  const story=page.querySelector('#my-story');
+  assert.ok(story,'one explicit biography section');
+  assert.match(story.textContent,/marine biologist/i);
+  assert.match(story.textContent,/65 pounds/i);
+  assert.doesNotMatch(story.textContent,/\b6 pounds\b/i);
+  assert.match(story.textContent,/B\.S\. in Kinesiology/);
+  assert.match(story.textContent,/B\.A\. in Biology/);
+  assert.equal(page.querySelectorAll('.hero .actions a').length,3,'only three distinct hero actions');
+  assert.equal(story.querySelector('a[href="research.html#research-interests"]')!==null,true);
+  const research=documentFor('research.html');
+  assert.ok(research.querySelector('#research-interests'),'research-interest fragment exists');
+  assert.match(research.querySelector('#research-interests').textContent,/Research interests/i);
+  const about=documentFor('about.html');
+  assert.match(about.body.textContent,/65 pounds/i);
+});
