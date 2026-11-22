@@ -89,7 +89,7 @@ try{
   await page.goto(new URL('products.html',base).href,{waitUntil:'networkidle'});
   await page.locator('#muscle-card-options > summary').click();
   const customAmount=page.locator('#muscle-contribution-custom');
-  const paymentLink=page.locator('.study-download-actions a[href^="https://venmo.com/"]');
+  const paymentLink=page.locator('#muscle-cards .study-download-actions a[href^="https://venmo.com/"]');
   await customAmount.fill('275');
   const suggestedPayment=new URL(await paymentLink.getAttribute('href'));
   assert.equal(suggestedPayment.searchParams.get('txn'),'pay');
@@ -112,7 +112,15 @@ try{
   assert.match(await page.locator('#muscle-amount-explanation').textContent(),/Copied \$42\.00/);
   await customAmount.fill('0');
   assert.equal(await paymentLink.getAttribute('href'),'https://venmo.com/u/Nate-Holochwost');
-  console.log('PASS Study Tools dynamic amounts, Venmo prefill URL and copy feedback');
+  for (const id of ['muscle-cards','science-atlases','nutrition-guide']) {
+    assert.ok(await page.locator('#'+id+' a[download]').count()>0,id+' must allow free download');
+  }
+  await page.locator('#nutrition-contribution-custom').fill('275');
+  const nutritionPayment=new URL(await page.locator('#nutrition-venmo').getAttribute('href'));
+  assert.equal(nutritionPayment.searchParams.get('txn'),'pay');
+  assert.equal(nutritionPayment.searchParams.get('amount'),'275.00');
+  assert.equal(nutritionPayment.searchParams.get('note'),'NAV Performance Nutrition Guide');
+  console.log('PASS Learning Resources downloads and separate optional contributions');
 
   const poster=await context.request.get(new URL('assets/coach-nate-research-poster.pdf',base).href);
   assert.equal(poster.status(),200);assert.ok((await poster.body()).subarray(0,5).toString().startsWith('%PDF-'));
