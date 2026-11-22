@@ -270,15 +270,25 @@ test('Blinnergy card links to the venue and shows only source-linked reviews wit
  assert.ok(carousel,'Carousel must be present');
  assert.equal(carousel.querySelector('[data-review-track]').getAttribute('tabindex'),'0','Allow keyboard focus');
  const slides=[...carousel.querySelectorAll('[data-review-slide]')];
- assert.equal(slides.length,1,'Only dated reviews meeting the owner window may be published');
+ assert.equal(slides.length,3,'Three distinct reviews mentioning Nate must display');
  assert.match(slides[0].textContent,/Nate is a great instructor and he was amazing/);
  assert.match(slides[0].textContent,/April 2026/);
  assert.ok(slides[0].querySelector('a[href="https://www.loc8nearme.com/washington/everett/blinn-fitness/2805575/"]'));
- assert.ok(!slides[0].textContent.includes('★★★★★'),'Individual rating was not verified');
+ assert.ok(slides.every(slide=>!slide.textContent.includes('★★★★★')),'No unverified individual five-star claims');
+ assert.match(slides[1].textContent,/Nate’s the best/);
+ assert.match(slides[1].textContent,/hypermobility/);
+ assert.match(slides[1].textContent,/Review date not shown/);
+ assert.ok(slides[1].querySelector('a[href^="https://classpass.com/"]'));
+ assert.match(slides[2].textContent,/Adaeze, Sam, and Nate/);
+ assert.match(slides[2].textContent,/Diane K/);
+ assert.match(slides[2].textContent,/year not shown/);
+ assert.ok(slides[2].querySelector('a[href="https://hotfitness.net/fitness-near-me/blinnergy/"]'));
+ assert.match(carousel.querySelector('.blinnergy-review-note').textContent,/Individual star ratings are not shown/);
+ assert.equal(carousel.querySelector('[data-review-status]').textContent,'1 of 3');
  for(const direction of ['prev','next']) {
    const button=carousel.querySelector('[data-review-'+direction+']');
    assert.ok(button,'Arrow button required: '+direction);
-   assert.ok(button.disabled,'Only one verified review; no fake next slide');
+   assert.equal(button.disabled,direction==='prev','Initial first-slide state: previous disabled, next enabled');
  }
  assert.equal(carousel.querySelector('[data-review-status]').getAttribute('aria-live'),'polite');
  assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
