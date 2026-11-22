@@ -143,6 +143,11 @@ test('coaching clearly separates NAV online coaching from employer-owned booking
  assert.match(options[2].textContent,/I train Google employees on campus in Seattle through EXOS/);
  assert.match(options[2].textContent,/Find me on Boost under Nate Holochwost to book a session/);
  assert.match(options[2].textContent,/Scheduling and availability are handled through EXOS, separately from NAV/);
+ const preparation=main.querySelector('.coaching-example');
+ assert.ok(preparation?.classList.contains('grid-2'),'Two remaining preparation cards use two-column layout');
+ assert.equal(preparation.querySelectorAll(':scope > article.card').length,2,'Removed video panel must not leave an empty card');
+ assert.equal(preparation.querySelector('.coaching-lesson'),null,'Remove Watch Nate Coach video and link');
+ assert.doesNotMatch(preparation.textContent,/Watch Nate coach|Quick Deadlift Lesson/);
  assert.match(options[2].textContent,/Exos @ Google · gFit/);
  assert.equal(options[2].querySelectorAll('img, svg').length,0,'Do not imply corporate logo approval');
  assert.ok(options[2].querySelector('.exos-gfit-label'),'Keep the affiliation identifier accessible');
