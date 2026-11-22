@@ -149,12 +149,13 @@ try{
           .map(el=>el.outerHTML.slice(0,160));
         return {textLength:document.body.innerText.length,interactiveCount:interactive.length,
           unnamed,scrollWidth:document.documentElement.scrollWidth,
+          overflowing:[...document.querySelectorAll('body *')].filter(el=>el.getClientRects().length && el.getBoundingClientRect().right>innerWidth+1).slice(0,6).map(el=>el.tagName.toLowerCase()+(el.className&&typeof el.className==='string'?'.'+el.className.trim().replace(/\s+/g,'.'):'')),
           h1:document.querySelectorAll('h1').length};
       });
       assert.equal(visible.h1,1,route+' heading');
       assert.ok(visible.textLength>30,route+' should contain readable copy');
       assert.deepEqual(visible.unnamed,[],route+' has an unnamed control');
-      assert.ok(visible.scrollWidth<=width+1,route+'/'+width+' horizontal overflow');
+      assert.ok(visible.scrollWidth<=width+1,route+'/'+width+' horizontal overflow: '+visible.overflowing.join(', '));
       copyCrawl.push({route,width,...visible});
     }
   }
