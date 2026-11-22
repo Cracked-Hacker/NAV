@@ -79,7 +79,10 @@ try{
   assert.equal((await reviewStatus.textContent()).trim(),'1 of 3');
   assert.ok(await reviewPrev.isDisabled());
   assert.ok(await reviewNext.isEnabled());
-  assert.equal(await page.locator('.blinnergy-reviews a[href^="https://"]').count(),3,'Three source links');
+  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),3,'Three full-source review links');
+  assert.equal(await reviewSlides.locator('blockquote').count(),1,'Only the complete short review is directly quoted');
+  assert.equal((await reviewSlides.first().locator('blockquote').textContent()).trim(),'“Great place. Nate is a great instructor and he was amazing. First time here and I highly recommend this place :)”');
+  assert.equal(await page.locator('.blinnergy-review-more a').count(),2,'Additional public review listings are linked');
   await reviewNext.click();
   await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='2 of 3');
   await reviewNext.click();
