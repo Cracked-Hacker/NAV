@@ -11,7 +11,8 @@ test('Editorial changes retain genuine experience, credentials, and story',()=>{
  for(const page of [a,c])for(const term of ['NASM Certified Personal Trainer (CPT)','May 29, 2025','May 29, 2027'])assert.ok(page.includes(term),term);
  for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry'])assert.ok(a.includes(term),term);
  for(const term of ['Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','Professors Gregory Freedman and Jaci Scheer'])assert.ok(c.includes(term),term);
- for(const term of ['1,300+','700+','300+','50+'])assert.ok(c.includes(term),term);
+ assert.ok(c.includes('2,000+'),'Keep the concise coaching-hours figure beside the résumé button');
+ for(const detailedHour of ['1,300+','700+','300+','50+'])assert.ok(!c.includes(detailedHour),'Retired employment timeline hours should not reappear on Coach Nate: '+detailedHour);
  const pdf=readFileSync('assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
  assert.equal(pdf.subarray(0,5).toString(),'%PDF-','Public résumé must be a real PDF file');
  assert.ok(readFileSync('about.html','utf8').includes('href="coach-nate.html#my-story"'));
@@ -49,7 +50,8 @@ test('Coach Nate hero retains the approved introduction and original media links
  assert.equal(hero.querySelector('img')?.getAttribute('alt'),'Nate in a white lab coat and blue gloves holding a sample tube in a laboratory');
  assert.equal(w.document.querySelector('nav.profile-jumps'),null,'Retired shortcut buttons should not remain');
  assert.ok(w.document.querySelector('#my-story'),'The essay collection remains accessible');
- assert.ok(w.document.querySelector('#cv'),'Experience details remain accessible');
+ assert.equal(w.document.querySelector('#cv'),null,'Retired experience timeline must not return');
+ assert.ok(w.document.querySelector('#teaching'),'Education and patient care remain accessible');
  assert.ok(w.document.querySelector('#youtube-lessons'),'Educational videos remain accessible');
  w.happyDOM.abort();
 });
@@ -78,11 +80,13 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
  assert.equal(w.document.querySelectorAll('#my-story .story-essay').length,4,'Preserve all four original essays');
  assert.ok(w.document.getElementById('training'),'Preserve strength videos');
  assert.ok(w.document.getElementById('youtube-lessons'),'Preserve educational videos');
- for(const id of ['athletics','cv','teaching'])assert.ok(w.document.getElementById(id),'Keep non-research career section '+id);
- for(const [textPart,href] of [['Peer-reviewed publication','research.html#social-work-research'],['UW shadowing','research.html#uw-shadowing'],['SoundBio volunteering','research.html#soundbio']]){
-  const link=[...w.document.querySelectorAll('#links a')].find(a=>a.textContent.includes(textPart));
-  assert.equal(link?.getAttribute('href'),href,'Professional link '+textPart);
+ assert.ok(w.document.getElementById('teaching'),'Keep approved education and patient-care section');
+ for(const retiredId of ['athletics','links','cv']){
+  assert.equal(w.document.getElementById(retiredId),null,'Remove redundant Coach Nate section '+retiredId);
  }
+ const sections=[...w.document.querySelectorAll('main section[id]')].map(el=>el.id);
+ assert.deepEqual(sections,['my-story','training','youtube-lessons','teaching'],'Keep only approved story, video, and education panels');
+ assert.match(w.document.querySelector('section.hero a.btn')?.getAttribute('href')||'',/Nathan_Holochwost_Resume_2026-11\.pdf/,'Public résumé PDF remains accessible');
  for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
   assert.equal(w.document.querySelector('img[src="'+src+'"]'),null,'No duplicate research image on Coach Nate: '+src);
   assert.equal(r.document.querySelectorAll('img[src="'+src+'"]').length,1,'Original research image must be preserved on Research: '+src);

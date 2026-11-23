@@ -151,11 +151,11 @@ try{
   // Research-only work now lives on the canonical Research page.
   await page.goto(new URL('coach-nate.html',base).href,{waitUntil:'domcontentloaded'});
   assert.equal(await page.locator('section#research,section#publication,section#uw-shadowing,section#soundbio,section#gallery').count(),0,'Coach Nate research panels must be removed');
-  for(const id of ['athletics','cv','teaching'])assert.equal(await page.locator('section#'+id).count(),1,'Coach Nate career sections must remain');
-  const migratedLink=page.locator('#links a[href="research.html#uw-shadowing"]');
-  assert.equal(await migratedLink.count(),1,'Professional shadowing link must point to Research');
-  await migratedLink.click();
-  await page.waitForURL(url=>url.pathname.endsWith('/research.html')&&url.hash==='#uw-shadowing');
+  for(const id of ['athletics','links','cv'])assert.equal(await page.locator('section#'+id).count(),0,'Retired Coach Nate block '+id+' must be removed');
+  assert.equal(await page.locator('section#teaching').count(),1,'Keep education and patient care');
+  const sections=await page.locator('main section[id]').evaluateAll(items=>items.map(item=>item.id));
+  assert.deepEqual(sections,['my-story','training','youtube-lessons','teaching'],'Remove redundant sections without creating empty placeholders');
+  await page.goto(new URL('research.html#uw-shadowing',base).href,{waitUntil:'domcontentloaded'});
   assert.equal(await page.locator('#uw-shadowing h2').textContent(),'Research shadowing at UW');
   for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
     assert.equal(await page.locator('img[src="'+src+'"]').count(),1,'Research image should be present exactly once: '+src);
@@ -163,7 +163,7 @@ try{
     assert.equal(response.status(),200,'Moved research image must load: '+src);
   }
   for(const id of ['chem-research','social-work-research','soundbio','research-interests'])assert.equal(await page.locator('#'+id).count(),1,'Research anchor '+id);
-  console.log('PASS research consolidated on Research page and Coach Nate retained videos/career history');
+  console.log('PASS Research retains research and Coach Nate has no redundant athletics, links, or experience timeline');
 
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});

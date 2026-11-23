@@ -60,9 +60,11 @@ for(let attempt=1;attempt<=15;attempt++){
       assert.ok(researchHtml.includes('assets/'+asset),"Research page missing transferred original photograph "+asset);
       assert.ok(!coachHtml.includes('assets/'+asset),"Duplicate research photograph left on Coach Nate "+asset);
     }
-    for(const target of ["research.html#social-work-research","research.html#uw-shadowing","research.html#soundbio"]){
-      assert.ok(coachHtml.includes('href="'+target+'"'),"Retargeted research link missing: "+target);
+    for(const retiredId of ["athletics","links","cv"]){
+      assert.ok(!coachHtml.includes('<section id="'+retiredId+'"'),"Retired Coach Nate section still on production: "+retiredId);
     }
+    assert.ok(coachHtml.includes('<section id="teaching"'),"Education and patient-care section missing");
+    assert.ok(!coachHtml.includes('On the field')&&!coachHtml.includes('Find my work.')&&!coachHtml.includes('Experience &amp; appointments'),"Retired redundant copy still visible");
     const companyResponse=await request("about.html");
     assert.equal(companyResponse.status,200,"About NAV page missing in production");
     const companyHtml=await companyResponse.text();
