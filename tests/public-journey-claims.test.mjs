@@ -260,8 +260,14 @@ test('Blinnergy reviews use a direct Google reviews-list link without unlicensed
  const card=[...doc.querySelectorAll('#booking > .grid-3 > article.card')][1];
  const reviews=card.querySelector('.blinnergy-reviews');
  assert.ok(reviews);
- assert.match(reviews.textContent,/Some of Blinnergy’s Google reviews mention my coaching/);
- assert.match(reviews.textContent,/original reviews and ratings on Google/);
+ const summary=reviews.querySelector('.blinnergy-review-summary');
+ assert.ok(summary);
+ assert.equal(summary.querySelector('strong').textContent,'Coach Nate');
+ assert.equal(summary.querySelector('.blinnergy-review-stars').textContent,'★★★★★');
+ assert.match(summary.querySelector('.blinnergy-review-stars').getAttribute('aria-label'),/ten documented Blinnergy reviews/);
+ assert.equal(summary.querySelector('.blinnergy-review-count').textContent,'(10+ reviews)');
+ assert.match(reviews.querySelector('.blinnergy-review-qualifier').textContent,/5-star Blinnergy Google reviews mentioning Nate/);
+ assert.match(reviews.querySelector('.blinnergy-review-qualifier').textContent,/Not a separate rating for Nate or NAV/);
  assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Blinnery app booking remains intact');
  assert.match(card.querySelector('.blinnergy-location').textContent,/5817 238th St SE, Suite 1/);
  const expected="https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,";
@@ -270,7 +276,7 @@ test('Blinnergy reviews use a direct Google reviews-list link without unlicensed
  assert.match(link.textContent,/Read Blinnergy Reviews on Google/);
  assert.equal(link.getAttribute('target'),'_blank');
  assert.match(link.getAttribute('rel'),/noopener/);
- assert.equal(reviews.querySelectorAll('blockquote,.blinnergy-review-slide,.blinnergy-review-stars').length,0,'No third-party reviews copied or used as unauthorised endorsements');
+ assert.equal(reviews.querySelectorAll('blockquote,.blinnergy-review-slide').length,0,'No third-party reviews copied or used as unauthorised endorsements');
  for(const name of ['Vignesh Gunasekaran','Mary Ventura','Bob Freer','Sara Job','shruti nair','Diane K','Kathy Williams','Darrin Buenger','Shannon J.','Steph Young'])assert.ok(!reviews.textContent.includes(name),'Do not use reviewer names in marketing without established authorization');
  assert.equal(card.querySelectorAll('.blinnergy-rating').length,0,'No duplicate Google review link or stale aggregate rating');
 });
