@@ -89,11 +89,13 @@ try{
   // The EXOS joke is off until clicked, drops the real card words under gravity,
   // and restores the original copy exactly 11 seconds later.
   const exosCard=page.locator('[data-exos-card]');
-  const joke=exosCard.getByRole('button',{name:'this button does nothing'});
+  const joke=exosCard.locator('[data-exos-trigger]');
   assert.equal(await joke.count(),1);
+  assert.ok(await joke.evaluate(el=>Boolean(el.compareDocumentPosition(document.querySelector('.exos-gfit-label')) & Node.DOCUMENT_POSITION_FOLLOWING)),'Button comes before affiliation label');
   assert.equal(await page.locator('.exos-falling-word').count(),0);
   const originalExosText=await exosCard.locator('[data-exos-fall]').allTextContents();
   await joke.click();
+  assert.equal(await joke.textContent(),'Reset in 11s');
   await page.locator('.exos-falling-word').first().waitFor({state:'visible'});
   assert.ok(await page.locator('.exos-falling-word').count()>=20,'Visible text must split into falling words');
   assert.ok(await joke.isDisabled(),'Prevent retriggering while chaos is active');
@@ -103,11 +105,64 @@ try{
   assert.equal(await page.locator('.exos-blast-layer').count(),0,'Explosion overlay ends promptly');
   assert.equal(await page.locator('body.exos-screen-shaking').count(),0,'Screen shake ends in about a second');
   assert.ok(await page.locator('.exos-falling-word').first().evaluate(el=>getComputedStyle(el).transform!=='none'),'Words really move');
+  assert.match(await joke.textContent(),/Reset in (9|10)s/);
+  const word=page.locator('.exos-falling-word').last();
+  const wordBox=await word.boundingBox();
+  await page.mouse.move(wordBox.x-20,wordBox.y);
+  await page.mouse.move(wordBox.x+20,wordBox.y+5,{steps:5});
+  assert.equal(await exosCard.evaluate(el=>getComputedStyle(el).overflow),'hidden');
   await page.waitForTimeout(9700);
   assert.equal(await page.locator('.exos-falling-word').count(),0,'Words restore after eleven seconds');
   assert.ok(await joke.isEnabled(),'Button is usable after reset');
   assert.deepEqual(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
-  console.log('PASS EXOS Easter egg: explosion, shake, original-word physics, 11-second reset');
+  assert.equal(await joke.textContent(),'this button does nothing');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await page.clock.install({time:new Date('2026-01-01T00:00:00Z')});
+  await page.clock.pauseAt(new Date('2026-01-01T00:00:01Z'));
+  await joke.click();
+  assert.equal(await joke.textContent(),'Reset in 11s');
+  assert.equal(await page.locator('.exos-falling-word,.exos-blast-layer').count(),0);
+  await page.clock.runFor(10000);
+  assert.equal(await joke.textContent(),'Reset in 1s');
+  assert.ok(await joke.isDisabled());
+  await page.clock.runFor(999);
+  assert.ok(await joke.isDisabled());
+  await page.clock.runFor(1);
+  assert.ok(await joke.isEnabled());
+  assert.equal(await joke.textContent(),'this button does nothing');
+  assert.equal(await exosCard.locator('[data-exos-status]').textContent(),'');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  const trajectories=[];
+  const startingTrajectories=[];
+  for (const interact of [false,true]) {
+    await page.clock.runFor(16 - await page.evaluate(()=>performance.now()%16));
+    await page.evaluate(() => {
+      window.originalRandom = Math.random;
+      let seed=42;
+      Math.random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296);
+    });
+    await joke.click();
+    await page.evaluate(()=>{Math.random=window.originalRandom;});
+    await page.clock.runFor(3000);
+    startingTrajectories.push(await exosCard.locator('.exos-falling-word').evaluateAll(words=>words.map(w=>w.style.transform)));
+    if(interact){
+      const rect=await page.locator('.exos-falling-word').last().boundingBox();
+      await exosCard.dispatchEvent('pointermove',{clientX:rect.x+rect.width/2-15,clientY:rect.y+rect.height/2});
+      await exosCard.dispatchEvent('pointermove',{clientX:rect.x+rect.width/2,clientY:rect.y+rect.height/2});
+    }
+    await page.clock.runFor(160);
+    trajectories.push(await exosCard.locator('.exos-falling-word').evaluateAll(words=>words.map(w=>w.style.transform)));
+    await page.clock.runFor(7839);
+    assert.ok(await joke.isDisabled(),'Animated mode remains active at 10,999ms');
+    await page.clock.runFor(1);
+    assert.ok(await joke.isEnabled(),'Animated mode resets at 11,000ms');
+    assert.equal(await page.locator('.exos-falling-word,.exos-blast-layer').count(),0);
+    assert.deepEqual(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
+  }
+  assert.deepEqual(startingTrajectories[0],startingTrajectories[1],'Seeded runs match before pointer interaction');
+  assert.notDeepEqual(trajectories[0],trajectories[1],'Pointer impulses change seeded word trajectories');
+  await page.clock.resume();
+  console.log('PASS EXOS explosion, pointer input, countdown, exact deadline, reduced motion and restoration');
 
   // Reduced motion disables the blast, shake and falling words; the button remains usable.
   await page.emulateMedia({reducedMotion:'reduce'});
@@ -199,7 +254,9 @@ try{
       const response=await page.goto(new URL(route,base).href,{waitUntil:'domcontentloaded'});
       assert.ok(response.ok(),route+' must render');
       const visible=await page.evaluate(()=>{
-        for(const el of document.querySelectorAll('details'))el.open=true;
+        // Expand page disclosures; navigation is exercised separately above.
+        // Forcing every navigation menu open together creates an artificial layout.
+        for(const el of document.querySelectorAll('main details'))el.open=true;
         const interactive=[...document.querySelectorAll('button,summary,a')];
         const unnamed=interactive.filter(el=>el.getClientRects().length&&
           !(el.getAttribute('aria-label')||el.textContent||el.querySelector('img[alt]')?.getAttribute('alt')||'').trim())

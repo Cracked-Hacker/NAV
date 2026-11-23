@@ -7,7 +7,40 @@ if (card) {
   const sources = [...card.querySelectorAll('[data-exos-fall]')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const RESET_MS = 11000;
+  const idleLabel = trigger.textContent;
+  const pointer = { active: false, x: 0, y: 0, dx: 0, dy: 0 };
+  let deadline = 0;
+  let countdownTimer = 0;
   let running = false;
+
+  // Event handlers only collect input; at most one bounded impulse per frame.
+  card.addEventListener('pointermove', event => {
+    if (!running || reducedMotion.matches) return;
+    pointer.dx += pointer.active ? event.clientX - pointer.x : 0;
+    pointer.dy += pointer.active ? event.clientY - pointer.y : 0;
+    pointer.x = event.clientX;
+    pointer.y = event.clientY;
+    pointer.active = true;
+  });
+  const clearPointer = () => {
+    pointer.active = false;
+    pointer.dx = pointer.dy = 0;
+  };
+  card.addEventListener('pointerleave', clearPointer);
+  card.addEventListener('pointercancel', clearPointer);
+  card.addEventListener('pointerup', event => {
+    if (event.pointerType === 'touch') clearPointer();
+  });
+
+  function updateCountdown() {
+    if (!running) return;
+    window.clearTimeout(countdownTimer);
+    const remaining = Math.max(0, deadline - performance.now());
+    trigger.textContent = 'Reset in ' + Math.ceil(remaining / 1000) + 's';
+    if (!remaining) { reset(); return; }
+    countdownTimer = window.setTimeout(updateCountdown, remaining % 1000 || 1000);
+  }
+
   let resetTimer = 0;
   let effectTimer = 0;
   let frame = 0;
@@ -149,6 +182,7 @@ if (card) {
 
   function moveWords(bodies, time) {
     if (!running) return;
+    if (time >= deadline) { reset(); return; }
     const dt = Math.min(0.032, Math.max(0.001, (time - lastTime) / 1000 || 0.016));
     lastTime = time;
     const box = card.getBoundingClientRect();
@@ -157,7 +191,22 @@ if (card) {
     const left = 10;
     const right = card.clientWidth - 10;
     const gravity = 1550;
+    const movement = Math.min(80, Math.hypot(pointer.dx, pointer.dy));
     for (const body of bodies) {
+      if (pointer.active && movement > 0) {
+        const dx = body.x + body.w / 2 - (pointer.x - box.left);
+        const dy = body.y + body.h / 2 - (pointer.y - box.top);
+        const distance = Math.hypot(dx, dy);
+        const radius = 85;
+        if (distance < radius) {
+          const impulse = Math.min(420, movement * 18) * (1 - distance / radius);
+          body.vx += (distance > 0.1 ? dx / distance : 0) * impulse;
+          body.vy += (distance > 0.1 ? dy / distance : -1) * impulse - impulse * 0.6;
+          body.spin = Math.max(-3, Math.min(3, body.spin + pointer.dx * 0.01));
+        }
+      }
+      body.vx = Math.max(-600, Math.min(600, body.vx));
+      body.vy = Math.max(-650, Math.min(900, body.vy));
       body.vy += gravity * dt;
       body.x += body.vx * dt;
       body.y += body.vy * dt;
@@ -175,6 +224,7 @@ if (card) {
         body.spin *= 0.93;
       }
     }
+    pointer.dx = pointer.dy = 0;
     // Rectangle collisions make the words pile up instead of overlapping on one baseline.
     for (let pass = 0; pass < 2; pass++) {
       for (let i = 0; i < bodies.length; i++) {
@@ -217,6 +267,8 @@ if (card) {
     running = false;
     window.cancelAnimationFrame(frame);
     window.clearTimeout(resetTimer);
+    window.clearTimeout(countdownTimer);
+    clearPointer();
     window.clearTimeout(effectTimer);
     wordLayer?.remove();
     blastLayer?.remove();
@@ -224,12 +276,16 @@ if (card) {
     card.classList.remove('exos-in-chaos');
     document.body.classList.remove('exos-screen-shaking');
     trigger.disabled = false;
-    live.textContent = 'The EXOS card has reset.';
+    trigger.textContent = idleLabel;
+    live.textContent = '';
   }
 
   trigger.addEventListener('click', () => {
     if (running) return;
     running = true;
+    deadline = performance.now() + RESET_MS;
+    resetTimer = window.setTimeout(reset, RESET_MS);
+    updateCountdown();
     trigger.disabled = true;
     live.textContent = 'Boom! The card will reset in 11 seconds.';
     boomSound();
@@ -240,8 +296,11 @@ if (card) {
       frame = window.requestAnimationFrame(next => moveWords(bodies, next));
       makeExplosion();
     }
-    resetTimer = window.setTimeout(reset, RESET_MS);
   });
 
+  reducedMotion.addEventListener('change', reset);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && running) updateCountdown();
+  });
   window.addEventListener('pagehide', reset);
 }

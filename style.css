@@ -147,7 +147,7 @@ h1,h2,h3{overflow-wrap:anywhere}
 .exos-boom-button:hover:not(:disabled){background:#8f1420}
 .exos-boom-button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #7b1421}
 .exos-boom-button:focus-visible{outline:3px solid #007ac8;outline-offset:4px}
-.exos-boom-button:disabled{opacity:.78;cursor:default}
+.exos-boom-button:disabled{opacity:1;cursor:default;font-variant-numeric:tabular-nums;min-width:180px}
 .exos-card.exos-in-chaos [data-exos-fall]{opacity:0}
 .exos-word-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3;border-radius:inherit}
 .exos-falling-word{display:block;position:absolute;white-space:nowrap;pointer-events:none;user-select:none;will-change:transform;transform-origin:center}
