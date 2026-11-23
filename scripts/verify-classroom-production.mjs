@@ -42,6 +42,16 @@ for(let attempt=1;attempt<=15;attempt++){
     const coachResponse=await request("coach-nate.html");
     assert.equal(coachResponse.status,200,"Coach Nate profile missing in production");
     const coachHtml=await coachResponse.text();
+    assert.ok(coachHtml.includes('<section id="my-story"') && coachHtml.includes('<h2 id="story-heading">My story</h2>'),"Coach Nate story section missing from production");
+    assert.equal((coachHtml.match(/class="essay-disclosure"/g)||[]).length,4,"All four long-form essays must be on Coach Nate production");
+    for(const phrase of ["Coaching and athletics","Patient Care and Rehabilitation Settings","Scientific Research and Publication","Teaching and Community Science","I'm not a drill sergeant. I'm a teacher."]){
+      assert.ok(coachHtml.includes(phrase),"Approved essay text missing on live Coach Nate: "+phrase);
+    }
+    const companyResponse=await request("about.html");
+    assert.equal(companyResponse.status,200,"About NAV page missing in production");
+    const companyHtml=await companyResponse.text();
+    assert.ok(companyHtml.includes('href="coach-nate.html#my-story"'),"About NAV Read my story link missing");
+    assert.ok(!companyHtml.includes('class="essay-disclosure"'),"Personal essays must not be duplicated on About NAV");
     const resumePdf="assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf";
     assert.ok(coachHtml.includes('href="'+resumePdf+'" target="_blank" rel="noopener noreferrer" type="application/pdf">View Resume</a>'),"Approved Coach Nate résumé button did not reach production");
     const pdfResponse=await request(resumePdf);

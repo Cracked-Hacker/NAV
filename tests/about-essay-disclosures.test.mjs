@@ -4,19 +4,25 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { Window } from 'happy-dom';
 
-test('All About-page essays open, hide the summary, and close by card click or keyboard', () => {
-  const html = readFileSync('about.html', 'utf8');
+test('Four Coach Nate essays open, hide the summary, and close by card click or keyboard', () => {
+  const html = readFileSync('coach-nate.html', 'utf8');
+  const about = readFileSync('about.html','utf8');
+  assert.equal(about.includes('class="essay-disclosure"'), false);
+  assert.match(about,/href="coach-nate\.html#my-story"/);
   const script = readFileSync('assets/about-essay-disclosures.js', 'utf8');
   assert.match(html, /\.essay-js-enabled \.essay-disclosure\[open\]>summary\{display:none\}/);
   assert.match(html, /\.essay-js-enabled \.essay-disclosure\[open\] \.essay-rest>p:first-child\{margin-top:0\}/);
   assert.match(html, /src="assets\/about-essay-disclosures\.js"/);
 
-  const window = new Window({ url: 'https://coach-nate.netlify.app/about.html' });
+  const window = new Window({ url: 'https://coach-nate.netlify.app/coach-nate.html#my-story' });
   window.document.write(html);
   runInNewContext(script, { document: window.document, window, Element: window.Element });
 
   const essays = [...window.document.querySelectorAll('article.card > details.essay-disclosure')];
   assert.equal(essays.length, 4);
+  assert.deepEqual([...window.document.querySelectorAll('#my-story article.story-essay h3')].map(h=>h.textContent.trim()),[
+    'Coaching and athletics','Patient Care and Rehabilitation Settings','Scientific Research and Publication','Teaching and Community Science'
+  ]);
   for (const disclosure of essays) {
     const card = disclosure.closest('article.card');
     const summary = disclosure.querySelector('summary');

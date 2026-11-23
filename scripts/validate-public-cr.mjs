@@ -35,19 +35,23 @@ for (const page of keyPages) {
   requireMatch(page, html, new RegExp(appUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "missing canonical NAV Coach sign-in route");
 }
 
-// Long-form About essays must remain intact and collapsed until requested.
-const aboutEssays = text("about.html");
-const essayDetails = [...aboutEssays.matchAll(/<details class="essay-disclosure"(?:\s[^>]*)?>([\s\S]*?)<\/details>/g)];
-if (essayDetails.length !== 4) failures.push("about.html: expected four collapsed long-form essays");
+// The four approved essays belong on Coach Nate; About NAV retains a link to them.
+const aboutCompany = text("about.html");
+const coachStories = text("coach-nate.html");
+const essayDetails = [...coachStories.matchAll(/<details class="essay-disclosure"(?:\s[^>]*)?>([\s\S]*?)<\/details>/g)];
+if (essayDetails.length !== 4) failures.push("coach-nate.html: expected four collapsed personal essays");
+if (!aboutCompany.includes('href="coach-nate.html#my-story"')) failures.push("about.html: missing link to Coach Nate personal essays");
+if (aboutCompany.includes('class="essay-disclosure"') || aboutCompany.includes('id="experience-heading"')) failures.push("about.html: personal essays must not be duplicated on company page");
+if (!coachStories.includes('<section id="my-story"') || !coachStories.includes('<h2 id="story-heading">My story</h2>')) failures.push("coach-nate.html: story anchor or heading missing");
 for (const [index, match] of essayDetails.entries()) {
   if (!/<summary>.*Read more.*Read less.*<\/summary>/s.test(match[1]))
-    failures.push(`about.html: essay ${index + 1} lacks a functional Read more/Read less summary`);
+    failures.push(`coach-nate.html: essay ${index + 1} lacks a functional Read more/Read less summary`);
   if ((match[1].match(/<p>/g) || []).length < 10)
-    failures.push(`about.html: essay ${index + 1} appears truncated`);
+    failures.push(`coach-nate.html: essay ${index + 1} appears truncated`);
 }
 for (const phrase of ["There is one day I will never forget", "my father and sister", "… but it’s still really cool to lift a lot of weight", "I derived a pixel-based conversion factor", "American Chemical Society National Meeting", "Child and Adolescent Social Work Journal", "I will never forget the tears of joy I shed", "I\u0027m not a drill sergeant. I\u0027m a teacher."]) {
-  if (!aboutEssays.includes(phrase))
-    failures.push("about.html: approved patient-care story text missing: " + phrase);
+  if (!coachStories.includes(phrase))
+    failures.push("coach-nate.html: approved personal story text missing: " + phrase);
 }
 
 const home = text("index.html");

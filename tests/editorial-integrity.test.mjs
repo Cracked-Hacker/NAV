@@ -7,13 +7,15 @@ function text(p){const w=new Window();w.document.write(readFileSync(p,'utf8'));r
 test('Site has no internal report wording in public copy',()=>{for(const p of pages)assert.doesNotMatch(text(p),/owner-provided certificate|approved (?:r[eé]sum[eé]|CV)|production-verified|as documented in (?:his|my) r[eé]sum[eé]|not independently audited timesheets|not a verified public capability/i,p);});
 test('Editorial changes retain genuine experience, credentials, and story',()=>{
  const c=text('coach-nate.html'),a=text('about.html');
- for(const term of ['started college thinking I might become a marine biologist','During the COVID-19 pandemic, I worked as a nursing assistant'])assert.ok(c.includes(term),term);
+ for(const term of ['entered college thinking I might become a marine biologist','During the COVID-19 pandemic, I worked as a nursing assistant'])assert.ok(c.includes(term),term);
  for(const page of [a,c])for(const term of ['NASM Certified Personal Trainer (CPT)','May 29, 2025','May 29, 2027'])assert.ok(page.includes(term),term);
- for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry','Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','Professors Gregory Freedman and Jaci Scheer'])assert.ok(a.includes(term),term);
+ for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry'])assert.ok(a.includes(term),term);
+ for(const term of ['Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','Professors Gregory Freedman and Jaci Scheer'])assert.ok(c.includes(term),term);
  for(const term of ['1,300+','700+','300+','50+'])assert.ok(c.includes(term),term);
  const pdf=readFileSync('assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
  assert.equal(pdf.subarray(0,5).toString(),'%PDF-','Public résumé must be a real PDF file');
- assert.ok(a.includes('Read Nate’s story and how NAV got its start.'));
+ assert.ok(a.includes('href="coach-nate.html#my-story"'));
+ assert.ok(c.includes('<h2 id="story-heading">My story</h2>'));
  assert.ok(c.includes('EXOS at Google'));
  assert.doesNotMatch(a,/Google employee|employed by Google/i);
 });

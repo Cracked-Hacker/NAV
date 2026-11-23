@@ -7,12 +7,12 @@ const read = path => readFileSync(new URL("../" + path, import.meta.url), "utf8"
 test("Coach Nate's publicly approved background stays correct", () => {
   const coach = read("coach-nate.html");
   const about = read("about.html");
-  assert.match(coach, /After losing 65 pounds/);
+  assert.match(coach, /Before college, I lost 65 pounds/);
   assert.match(coach, /B\.S\. in Kinesiology, a B\.A\. in Biology, and a minor in Chemistry/);
   assert.match(about, /B\.S\. in Kinesiology/);
   assert.match(about, /B\.A\. in Biology/);
-  assert.match(about, /co-presented our research poster at the <strong>American Chemical Society National Meeting/);
-  assert.match(about, /I derived a pixel-based conversion factor/);
+  assert.match(coach, /co-presented our research poster at the <strong>American Chemical Society National Meeting/);
+  assert.match(coach, /I derived a pixel-based conversion factor/);
   assert.match(coach, /2023/);
 });
 

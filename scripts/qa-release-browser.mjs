@@ -80,6 +80,23 @@ try{
   assert.ok((await resumePDFResponse.body()).subarray(0,5).toString().startsWith('%PDF-'),'Résumé must have real PDF bytes');
   console.log('PASS direct View Resume PDF with no intermediate HTML page');
 
+  // Story link from About NAV now leads to four complete Coach Nate essays.
+  await page.goto(new URL('about.html',base).href,{waitUntil:'domcontentloaded'});
+  const storyLink=page.locator('a[href="coach-nate.html#my-story"]');
+  assert.equal(await storyLink.count(),1,'About must link directly to the personal essays');
+  await storyLink.click();
+  await page.waitForURL(url=>url.pathname.endsWith('/coach-nate.html')&&url.hash==='#my-story');
+  const storyCards=page.locator('#my-story article.story-essay');
+  assert.equal(await storyCards.count(),4,'All four personal essays must be on Coach Nate');
+  assert.equal(await page.locator('#my-story h2').textContent(),'My story');
+  const storyDisclosure=storyCards.first().locator('details.essay-disclosure');
+  await storyDisclosure.locator('summary').click();
+  assert.equal(await storyDisclosure.evaluate(el=>el.open),true,'Read more expands original essay');
+  assert.equal(await storyDisclosure.locator('summary').evaluate(el=>getComputedStyle(el).display),'none','Expanded button disappears');
+  await storyDisclosure.locator('.essay-rest p').first().click();
+  assert.equal(await storyDisclosure.evaluate(el=>el.open),false,'Clicking expanded card collapses it');
+  console.log('PASS About → Coach Nate story link and four expandable personal essays');
+
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
