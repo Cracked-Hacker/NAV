@@ -186,8 +186,7 @@ if (card) {
     const dt = Math.min(0.032, Math.max(0.001, (time - lastTime) / 1000 || 0.016));
     lastTime = time;
     const box = card.getBoundingClientRect();
-    const buttonRect = trigger.getBoundingClientRect();
-    const floor = Math.max(95, buttonRect.top - box.top - 12);
+    const floor = card.clientHeight - 10;
     const left = 10;
     const right = card.clientWidth - 10;
     const gravity = 1550;

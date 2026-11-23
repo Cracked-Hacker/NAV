@@ -144,6 +144,17 @@ try{
     await joke.click();
     await page.evaluate(()=>{Math.random=window.originalRandom;});
     await page.clock.runFor(3000);
+    const pile=await exosCard.evaluate(card=>{
+      const box=card.getBoundingClientRect();
+      const words=[...card.querySelectorAll('.exos-falling-word')];
+      const labelWords=words.slice(-5);
+      return {bottom:box.bottom,lowest:Math.max(...words.map(w=>w.getBoundingClientRect().bottom)),
+        label:labelWords.map(w=>w.textContent),
+        labelLowest:Math.max(...labelWords.map(w=>w.getBoundingClientRect().bottom))};
+    });
+    assert.deepEqual(pile.label,['Exos','@','Google','\u00b7','gFit'],'Affiliation label joins the falling words');
+    assert.ok(pile.lowest>pile.bottom-35,'Words reach the bottom of the white card');
+    assert.ok(pile.labelLowest>pile.bottom-100,'Affiliation label joins the pile at the bottom');
     startingTrajectories.push(await exosCard.locator('.exos-falling-word').evaluateAll(words=>words.map(w=>w.style.transform)));
     if(interact){
       const rect=await page.locator('.exos-falling-word').last().boundingBox();
