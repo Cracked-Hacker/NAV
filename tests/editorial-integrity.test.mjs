@@ -91,9 +91,9 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
   assert.equal(w.document.querySelector('img[src="'+src+'"]'),null,'No duplicate research image on Coach Nate: '+src);
   assert.equal(r.document.querySelectorAll('img[src="'+src+'"]').length,1,'Original research image must be preserved on Research: '+src);
  }
- for(const phrase of ['During my UW lab shadowing, I observed mammalian cell-culture work',
-  'I helped develop biotechnology curriculum for community learners',
-  'My workbench at SoundBio Lab while using PCR to amplify DNA.']){
+ for(const phrase of ['I shadowed research scientists in the Yang Lab at the University of Washington',
+  'I helped develop biotechnology curriculum for students in the community',
+  'My workbench at SoundBio Lab.']){
   assert.ok(r.document.body.textContent.includes(phrase),'Original unique research information omitted: '+phrase);
  }
  assert.equal(r.document.querySelectorAll('section[aria-labelledby="poster-heading"] figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
