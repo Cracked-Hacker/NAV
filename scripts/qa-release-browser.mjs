@@ -83,6 +83,28 @@ try{
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
   console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
+
+  // EXOS Easter egg: click-only sound + animated blast, shake and automatic cleanup.
+  const exosButton=page.locator('#booking .exos-card button[data-exos-easter-egg]');
+  assert.equal(await exosButton.count(),1);
+  assert.equal((await exosButton.textContent()).trim(),'this button does nothing');
+  assert.equal((await page.locator('.blinnergy-location a').textContent()).trim(),'5817 238th St SE, Suite 1 · Woodinville, WA 98072');
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await exosButton.click();
+  assert.equal(await page.locator('.exos-explosion-overlay').count(),1,'Explosion is created on click');
+  assert.equal(await page.locator('.exos-explosion-spark').count(),18,'Original animated explosion with sparks');
+  assert.ok(await page.locator('body').evaluate(el=>el.classList.contains('exos-easter-egg-shake')),'One-second shake');
+  await page.waitForTimeout(1200);
+  assert.equal(await page.locator('.exos-explosion-overlay').count(),0,'Explosion cleans up automatically');
+  assert.equal(await page.locator('body.exos-easter-egg-shake').count(),0,'Shake cleans up automatically');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await exosButton.click();
+  assert.equal(await page.locator('.exos-explosion-overlay').count(),1,'Reduced-motion users still get a brief static visual');
+  assert.equal(await page.locator('body.exos-easter-egg-shake').count(),0,'No shaking for reduced-motion users');
+  await page.waitForTimeout(500);
+  assert.equal(await page.locator('.exos-explosion-overlay').count(),0,'Reduced-motion visual cleans up');
+  console.log('PASS EXOS explosion button, original Web Audio boom, 1s shake, sparks, cleanup, reduced-motion preference');
+
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');

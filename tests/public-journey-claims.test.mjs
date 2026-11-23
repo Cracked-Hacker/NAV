@@ -299,3 +299,32 @@ test('do not republish third-party review transcripts anywhere in the finished p
      assert.ok(!html.includes(phrase),'Publication permission is not evidenced; remove third-party review text from '+path);
  }
 });
+
+
+test('EXOS card has an accessible red click-only explosion Easter egg and Blinnergy address has no filler',()=>{
+ const doc=documentFor('coaching.html');
+ const cards=[...doc.querySelectorAll('#booking > .grid-3 > article.card')];
+ assert.equal(cards.length,3);
+ assert.ok(cards[2].classList.contains('exos-card'));
+ const button=cards[2].querySelector('button[data-exos-easter-egg]');
+ assert.ok(button,'The EXOS card must contain its own button');
+ assert.equal(button.getAttribute('type'),'button');
+ assert.equal(button.textContent.trim(),'this button does nothing');
+ assert.equal(cards[2].querySelectorAll('[data-exos-easter-egg]').length,1);
+ assert.equal(cards[1].querySelector('.blinnergy-location a').textContent.trim(),'5817 238th St SE, Suite 1 · Woodinville, WA 98072','No redundant Google Maps new-tab filler');
+ assert.equal(cards[1].querySelector('.blinnergy-review-source-link').textContent.trim(),'Blinnergy reviews on Google');
+ assert.ok(doc.querySelector('script[type="module"][src="assets/exos-easter-egg.js"]'),'Load a local module, not an external media/script dependency');
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ assert.ok(manifest.includes('"assets/exos-easter-egg.js"'),'Ship the JS module in the finished public release');
+ const script=readFileSync(new URL('../assets/exos-easter-egg.js',import.meta.url),'utf8');
+ assert.match(script,/addEventListener\('click', launchExplosion\)/);
+ assert.match(script,/new AudioContextType\(\)/);
+ assert.match(script,/createBuffer\(/,'Sound is locally synthesized, without third-party music/media');
+ assert.match(script,/prefers-reduced-motion: reduce/);
+ assert.match(script,/1100/,'Animations clean up after approximately one second');
+ assert.doesNotMatch(script,/https?:\/\//,'The Easter egg performs no network requests');
+ const stylesheet=readFileSync(new URL('../style.css',import.meta.url),'utf8');
+ assert.match(stylesheet,/\.exos-easter-egg-button\{[^}]*background:#b8212a/);
+ assert.match(stylesheet,/@media\(prefers-reduced-motion:reduce\)/);
+ assert.match(stylesheet,/@keyframes exos-one-second-shake/);
+});
