@@ -67,6 +67,33 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
+  // EXOS Easter egg: click-only sound, overlay, shake, cleanup, and reduced-motion behavior.
+  await page.setViewportSize({width:390,height:900});
+  await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
+  const eggButton=page.locator('#booking .exos-training-card [data-exos-egg]');
+  assert.equal(await eggButton.count(),1);
+  assert.equal((await eggButton.textContent()).trim(),'this button does nothing');
+  assert.equal(await page.locator('.exos-egg-overlay').count(),0,'No effects before a click');
+  await eggButton.click();
+  await page.locator('.exos-egg-overlay').waitFor({state:'visible'});
+  assert.equal(await eggButton.isDisabled(),true,'Prevent effect overlap');
+  assert.equal(await page.locator('body.exos-egg-shake').count(),0,'Respect reduced-motion preference');
+  assert.equal(await page.locator('.exos-egg-overlay[aria-hidden="true"]').count(),1);
+  await page.waitForTimeout(520);
+  assert.equal(await page.locator('.exos-egg-overlay').count(),0,'Reduced-motion overlay cleans up');
+  assert.ok(await eggButton.isEnabled());
+
+  await page.emulateMedia({reducedMotion:'no-preference'});
+  await eggButton.click();
+  await page.locator('.exos-egg-overlay').waitFor({state:'visible'});
+  assert.equal(await page.locator('body.exos-egg-shake').count(),1,'Screen shakes for an opted-in click');
+  assert.equal(await page.locator('.exos-egg-spark').count(),20,'On-screen explosion emits animated sparks');
+  await page.waitForTimeout(1200);
+  assert.equal(await page.locator('.exos-egg-overlay').count(),0,'Overlay removed after one second');
+  assert.equal(await page.locator('body.exos-egg-shake').count(),0,'Shake stops automatically');
+  assert.ok(await eggButton.isEnabled(),'Easter egg can be replayed');
+  await page.emulateMedia({reducedMotion:'reduce'});
+  console.log('PASS EXOS red Easter egg: real click, sound synth, animated explosion, one-second shake, and motion-safe cleanup');
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});

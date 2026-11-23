@@ -299,3 +299,29 @@ test('do not republish third-party review transcripts anywhere in the finished p
      assert.ok(!html.includes(phrase),'Publication permission is not evidenced; remove third-party review text from '+path);
  }
 });
+
+test('EXOS Easter egg is contained in its card, accessible, self-contained, and opt-in',()=>{
+ const doc=documentFor('coaching.html');
+ const cards=[...doc.querySelectorAll('#booking > .grid-3 > article.card')];
+ assert.equal(cards.length,3);
+ const egg=cards[2].querySelector('[data-exos-egg]');
+ assert.ok(egg,'Button must be inside the EXOS card');
+ assert.equal(egg.tagName,'BUTTON');
+ assert.equal(egg.getAttribute('type'),'button');
+ assert.equal(egg.textContent,'this button does nothing');
+ assert.equal(cards[0].querySelector('[data-exos-egg]'),null);
+ assert.equal(cards[1].querySelector('[data-exos-egg]'),null);
+ assert.ok(doc.querySelector('script[type="module"][src="assets/exos-easter-egg.js"]'));
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ assert.ok(manifest.includes('"assets/exos-easter-egg.js"'));
+ const source=readFileSync(new URL('../assets/exos-easter-egg.js',import.meta.url),'utf8');
+ assert.match(source,/addEventListener\\('click'/);
+ assert.match(source,/createBufferSource\\(/,'Sound must be synthesized, not borrowed');
+ assert.match(source,/createOscillator\\(/);
+ assert.match(source,/exos-egg-shake/);
+ assert.match(source,/prefers-reduced-motion/);
+ assert.doesNotMatch(source,/fetch\\(|https?:\\/\\//,'No external assets or network calls');
+ const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
+ assert.match(css,/#booking \\.exos-egg-button/);
+ assert.match(css,/@media\\(prefers-reduced-motion:reduce\\)/);
+});
