@@ -9,7 +9,7 @@ test('Editorial changes retain genuine experience, credentials, and story',()=>{
  const c=text('coach-nate.html'),a=text('about.html'),r=text('resume.html');
  for(const term of ['started college thinking I might become a marine biologist','During the COVID-19 pandemic, I worked as a nursing assistant'])assert.ok(c.includes(term),term);
  for(const page of [a,r,c])for(const term of ['NASM Certified Personal Trainer (CPT)','May 29, 2025','May 29, 2027'])assert.ok(page.includes(term),term);
- for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry','Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','University of Washington Yang Lab'])assert.ok(a.includes(term),term);
+ for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry','Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','Professors Gregory Freedman and Jaci Scheer'])assert.ok(a.includes(term),term);
  for(const term of ['1,300+','700+','1,600+','800+','300+','50+'])assert.ok(r.includes(term),term);
  assert.ok(a.includes('Read Nate’s story and how NAV got its start.'));
  assert.ok(r.includes('I work for EXOS at Google'));

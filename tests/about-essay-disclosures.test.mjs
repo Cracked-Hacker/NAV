@@ -16,7 +16,7 @@ test('All About-page essays open, hide the summary, and close by card click or k
   runInNewContext(script, { document: window.document, window, Element: window.Element });
 
   const essays = [...window.document.querySelectorAll('article.card > details.essay-disclosure')];
-  assert.equal(essays.length, 3);
+  assert.equal(essays.length, 4);
   for (const disclosure of essays) {
     const card = disclosure.closest('article.card');
     const summary = disclosure.querySelector('summary');
