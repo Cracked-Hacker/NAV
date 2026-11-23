@@ -71,13 +71,13 @@ try{
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
   const reviewSection=page.locator('.blinnergy-reviews');
-  const reviewLink=reviewSection.locator('a.button');
-  assert.equal(await reviewLink.count(),1,'One clear reviews-list CTA, not ten links to the same source');
+  const reviewLink=reviewSection.locator('a.blinnergy-review-source-link');
+  assert.equal(await reviewLink.count(),1,'One discreet review-source link, not a bulky CTA');
   assert.equal(await reviewLink.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
   assert.equal((await reviewSection.locator('.blinnergy-review-summary strong').textContent()).trim(),'Coach Nate');
   assert.equal((await reviewSection.locator('.blinnergy-review-summary .blinnergy-review-stars').textContent()).trim(),'★★★★★');
   assert.equal((await reviewSection.locator('.blinnergy-review-count').textContent()).trim(),'(10+ reviews)');
-  assert.match(await reviewSection.locator('.blinnergy-review-qualifier').textContent(),/Not a separate rating for Nate or NAV/);
+  assert.equal(await reviewSection.locator('p,.button').count(),0,'No filler or duplicate CTA');
   assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0,'No unauthorized review transcriptions or reviewer names in public site');
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
