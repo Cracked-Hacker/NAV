@@ -272,7 +272,5 @@ test('Blinnergy reviews use a direct Google reviews-list link without unlicensed
  assert.match(link.getAttribute('rel'),/noopener/);
  assert.equal(reviews.querySelectorAll('blockquote,.blinnergy-review-slide,.blinnergy-review-stars').length,0,'No third-party reviews copied or used as unauthorised endorsements');
  for(const name of ['Vignesh Gunasekaran','Mary Ventura','Bob Freer','Sara Job','shruti nair','Diane K','Kathy Williams','Darrin Buenger','Shannon J.','Steph Young'])assert.ok(!reviews.textContent.includes(name),'Do not use reviewer names in marketing without established authorization');
- const rating=card.querySelector('.blinnergy-rating a');
- assert.equal(rating.getAttribute('href'),expected);
- assert.doesNotMatch(card.querySelector('.blinnergy-rating').textContent,/5\.0\/5/,'No stale aggregate rating claim');
+ assert.equal(card.querySelectorAll('.blinnergy-rating').length,0,'No duplicate Google review link or stale aggregate rating');
 });

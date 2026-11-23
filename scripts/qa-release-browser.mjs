@@ -77,7 +77,7 @@ try{
   assert.match(await reviewSection.textContent(),/Some of Blinnergy’s Google reviews mention my coaching/);
   assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0,'No unauthorized review transcriptions or reviewer names in public site');
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  assert.match(await page.locator('.blinnergy-rating a').getAttribute('href'),/google\.com\/search\?/);
+  assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
   console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
