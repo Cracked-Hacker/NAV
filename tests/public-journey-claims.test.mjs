@@ -255,40 +255,45 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
 });
 
-test('Blinnergy review carousel shows ten genuine short excerpts without implying individual Google permalinks',()=>{
+test('Blinnergy carousel preserves all ten full owner-supplied review transcripts without cutting or rewriting',()=>{
  const doc=documentFor('coaching.html');
  const card=[...doc.querySelectorAll('#booking > .grid-3 > article.card')][1];
  const carousel=card.querySelector('[data-blinnergy-reviews]');
  assert.ok(carousel);
- assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Keep original Blinnergy app');
+ const disclosure=carousel.querySelector('.blinnergy-review-disclosure').textContent;
+ assert.match(disclosure,/reproduced in full from owner-supplied copies/);
+ assert.match(disclosure,/not individual reviews/,'Must not falsely claim each Google Maps venue link is a direct permalink');
+ assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
  assert.match(card.querySelector('.blinnergy-location').textContent,/5817 238th St SE, Suite 1/);
- assert.match(carousel.querySelector('.blinnergy-review-disclosure').textContent,/Selected five-star reviews of Blinnergy mentioning Nate/);
- assert.match(carousel.querySelector('.blinnergy-review-disclosure').textContent,/not individual reviews/);
  const slides=[...carousel.querySelectorAll('[data-review-slide]')];
+ const expected=[{"name":"Vignesh Gunasekaran","paragraphs":1,"characters":112,"fnv":"257faa22"},{"name":"Mary Ventura","paragraphs":1,"characters":66,"fnv":"d69d1cae"},{"name":"Bob Freer","paragraphs":1,"characters":190,"fnv":"ca24b719"},{"name":"Sara Job","paragraphs":1,"characters":1097,"fnv":"7e0713cb"},{"name":"shruti nair","paragraphs":1,"characters":389,"fnv":"dded9564"},{"name":"Diane K","paragraphs":6,"characters":1396,"fnv":"03a3e05f"},{"name":"Kathy Williams","paragraphs":1,"characters":373,"fnv":"171251ad"},{"name":"Darrin Buenger","paragraphs":2,"characters":341,"fnv":"3ad776ef"},{"name":"Shannon J.","paragraphs":4,"characters":1412,"fnv":"d66175db"},{"name":"Steph Young","paragraphs":1,"characters":104,"fnv":"293f6f8e"}];
  assert.equal(slides.length,10);
- const expected=[["Vignesh Gunasekaran","Nate is a great instructor and he was amazing."],["Mary Ventura","Love Nate’s 6 am class!!"],["Bob Freer","Nate is a fantastic trainer. He has really addressed issues at my level."],["Sara Job","I love training with Adaeze, Sam, and Nate. They make me feel safe, confident, and strong."],["shruti nair","Coach Nate is the kind of trainer everyone hopes to find!"],["Diane K","I give credit to the amazing personal trainers Adaeze, Sam, and Nate and the group classes they ran."],["Kathy Williams","Chloe, Nate, and Adaeze are all amazing, and the vibe is so chill and welcoming!"],["Darrin Buenger","Thank you to coaches Nate and Brandon for making the past month a great experience for me as I joined up!!"],["Shannon J.","Coach Nate brings amazing energy to every session (even at 6AM!)."],["Steph Young","I especially love the classes that trainers Nate and Chloe provide!"]];
- slides.forEach((slide,i)=>{
-   assert.equal(slide.querySelector('.blinnergy-review-source-name').textContent,expected[i][0]);
+ function checksum(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0).toString(16).padStart(8,'0');}
+ slides.forEach((slide,index)=>{
+   const ref=expected[index];
+   assert.equal(slide.querySelector('.blinnergy-review-source-name').textContent,ref.name);
    assert.equal(slide.querySelector('.blinnergy-review-platform').textContent,'Google Maps review');
-   const stars=slide.querySelector('.blinnergy-review-stars');
-   assert.equal(stars?.textContent,'★★★★★');
-   assert.equal(stars?.getAttribute('aria-label'),'5 out of 5 stars');
-   const quote=slide.querySelector('blockquote');
-   assert.equal(quote?.textContent.trim(),expected[i][1],'Exact user-provided excerpt only');
-   assert.ok(quote.textContent.trim().split(/\s+/).length<=25,'Avoid full copyrighted review republication');
-   assert.ok(!quote.textContent.includes('ADHD'),'Do not reproduce a review\'s personal health information');
+   assert.equal(slide.querySelector('.blinnergy-review-stars').textContent,'★★★★★');
+   assert.equal(slide.querySelector('.blinnergy-review-stars').getAttribute('aria-label'),'5 out of 5 stars');
+   const block=slide.querySelector('blockquote');
+   assert.match(block.getAttribute('aria-label'),/Full text/);
+   const paragraphs=[...block.querySelectorAll('p')].map(p=>p.textContent);
+   const fullText=paragraphs.join('\n');
+   assert.equal(paragraphs.length,ref.paragraphs,'All original paragraphs are intact: '+ref.name);
+   assert.equal(fullText.length,ref.characters,'No truncation or extra text: '+ref.name);
+   assert.equal(checksum(fullText),ref.fnv,'Exact original punctuation and text snapshot: '+ref.name);
    const link=slide.querySelector('a.blinnergy-review-source');
-   assert.match(link.getAttribute('href')||'',/google\.com\/maps\/place\/Blinnergy/);
-   assert.match(link.textContent,/Blinnergy reviews on Google Maps/);
-   assert.match(link.textContent,/not this individual review/,'Do not falsely claim individual permalink');
+   assert.match(link.getAttribute('href'),/google\.com\/maps\/place\/Blinnergy/);
+   assert.match(link.textContent,/opens the venue listing, not this individual review/);
    assert.equal(link.getAttribute('target'),'_blank');
    assert.match(link.getAttribute('rel'),/noopener/);
  });
- assert.equal(new Set(expected.map(x=>x[0])).size,10);
+ assert.equal(slides[3].querySelectorAll('blockquote p').length,1);
+ assert.equal(slides[5].querySelectorAll('blockquote p').length,6);
+ assert.equal(slides[8].querySelectorAll('blockquote p').length,4);
  assert.equal(carousel.querySelector('[data-review-status]').textContent,'1 of 10');
  assert.ok(carousel.querySelector('[data-review-prev]').disabled);
  assert.ok(!carousel.querySelector('[data-review-next]').disabled);
- assert.match(card.querySelector('.blinnergy-rating').textContent,/Blinnergy: 5\.0\/5 on Google/);
  const js=readFileSync(new URL('../assets/blinnergy-reviews.js',import.meta.url),'utf8');
  assert.match(js,/fitActiveReview/);
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');

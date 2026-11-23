@@ -1,4 +1,4 @@
-// Review excerpts are manually curated in coaching.html from owner-provided screenshots of distinct five-star Google Maps reviews. Do not label venue links as individual permalinks. Full third-party review republication requires permission.
+// Reviews in coaching.html were restored without editing from the previously recorded owner-supplied copy (main commit 2018981). Do not label venue links as individual permalinks. Full third-party review republication still needs rights review; source screenshots or historical text alone do not prove permission.
 const carousel = document.querySelector('[data-blinnergy-reviews]');
 if (carousel) {
   const track = carousel.querySelector('[data-review-track]');
@@ -26,7 +26,7 @@ if (carousel) {
   function fitActiveReview() {
     const slide = slides[active];
     if (!slide) return;
-    // Keep complete visible excerpt and attribution in view without clipping.
+    // Keep complete review text and attribution visible without clipping.
     track.style.height = `${Math.ceil(slide.offsetHeight) + 14}px`;
   }
 
