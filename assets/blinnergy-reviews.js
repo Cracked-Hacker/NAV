@@ -1,4 +1,4 @@
-// Reviews in coaching.html were restored without editing from the previously recorded owner-supplied copy (main commit 2018981). Do not label venue links as individual permalinks. Full third-party review republication still needs rights review; source screenshots or historical text alone do not prove permission.
+// Reviews in coaching.html were restored without editing from the previously recorded owner-supplied copy (main commit 2018981). Link to Google's Blinnergy review list, not an individual review permalink. Full third-party review republication still needs rights review; source screenshots or historical text alone do not prove permission.
 const carousel = document.querySelector('[data-blinnergy-reviews]');
 if (carousel) {
   const track = carousel.querySelector('[data-review-track]');

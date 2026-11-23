@@ -67,57 +67,18 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
-  // Blinnergy: ten complete owner-supplied five-star review transcripts, attribution, and truthful Google Maps listing links.
+  // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
-  const reviewTrack=page.locator('[data-review-track]');
-  const reviewSlides=reviewTrack.locator('[data-review-slide]');
-  const reviewStatus=page.locator('[data-review-status]');
-  const reviewPrev=page.locator('[data-review-prev]');
-  const reviewNext=page.locator('[data-review-next]');
-  assert.equal(await reviewSlides.count(),10,'Ten screenshot-verified individual five-star reviews');
-  assert.equal(await reviewSlides.locator('blockquote').count(),10,'Every card shows the complete original owner-supplied review transcript');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-source').count(),10,'Every card opens the Blinnergy Google Maps listing');
-  assert.equal(await reviewSlides.locator('.blinnergy-review-disclosure').count(),0,'Selection disclosure stays once above the slides');
-  assert.match(await page.locator('.blinnergy-review-disclosure').textContent(),/not individual reviews/);
-  assert.match(await page.locator('.blinnergy-review-disclosure').textContent(),/reproduced in full/);
-  assert.equal(await reviewSlides.locator('.blinnergy-review-stars[aria-label="5 out of 5 stars"]').count(),10);
-  assert.equal(await page.locator('.blinnergy-review-access,.blinnergy-review-subject,.blinnergy-review-note,.blinnergy-review-venue-stars').count(),0,'No summaries or gym-wide ratings masquerading as individual stars');
-  assert.equal((await reviewStatus.textContent()).trim(),'1 of 10');
-  assert.ok(await reviewPrev.isDisabled());
-  assert.ok(await reviewNext.isEnabled());
-  async function assertFullReviewVisible(index){
-    const dim=await reviewTrack.evaluate((track,i)=>{
-      const slide=track.querySelectorAll('[data-review-slide]')[i];
-      const quote=slide.querySelector('blockquote');
-      return {
-        outer:track.getBoundingClientRect().height,
-        slide:slide.getBoundingClientRect().height,
-        quoteOverflow:quote.scrollHeight-quote.clientHeight,
-        quoteStyle:getComputedStyle(quote).overflowY
-      };
-    },index);
-    assert.ok(dim.outer >= dim.slide-1,'Review '+index+' must fit without vertical clipping');
-    assert.ok(dim.quoteOverflow <= 2,'Review '+index+' quotation must be fully visible');
-    assert.notEqual(dim.quoteStyle,'auto','No nested scroll panels inside a review');
-  }
-  await assertFullReviewVisible(0);
-  for(let index=2;index<=10;index++){
-    await reviewNext.click();
-    await page.waitForFunction(n=>document.querySelector('[data-review-status]')?.textContent===n+' of 10',index);
-    if([4,6,9].includes(index)) await assertFullReviewVisible(index-1);
-  }
-  assert.ok(await reviewNext.isDisabled());
-  await reviewPrev.click();
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='9 of 10');
-  await reviewTrack.focus();
-  await reviewTrack.press('ArrowLeft');
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='8 of 10');
-  await reviewTrack.evaluate(el=>{el.scrollLeft=0;el.dispatchEvent(new Event('scroll'));});
-  await page.waitForFunction(()=>document.querySelector('[data-review-status]')?.textContent==='1 of 10');
-  assert.ok(await reviewPrev.isDisabled());
+  const reviewSection=page.locator('.blinnergy-reviews');
+  const reviewLink=reviewSection.locator('a.button');
+  assert.equal(await reviewLink.count(),1,'One clear reviews-list CTA, not ten links to the same source');
+  assert.equal(await reviewLink.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
+  assert.match(await reviewSection.textContent(),/Some of Blinnergy’s Google reviews mention my coaching/);
+  assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0,'No unauthorized review transcriptions or reviewer names in public site');
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  console.log('PASS ten complete full-length five-star reviews, honest source-link labels, adaptive height, arrows/keyboard/swipe, booking');
+  assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
+  console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');
