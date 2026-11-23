@@ -104,7 +104,7 @@ try{
   await page.waitForTimeout(9700);
   assert.equal(await page.locator('.exos-falling-word').count(),0,'Words restore after eleven seconds');
   assert.ok(await joke.isEnabled(),'Button is usable after reset');
-  assert.equal(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
+  assert.deepEqual(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
   console.log('PASS EXOS Easter egg: explosion, shake, original-word physics, 11-second reset');
 
   await page.setViewportSize({width:1440,height:1000});
