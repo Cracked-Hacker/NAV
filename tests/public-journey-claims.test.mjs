@@ -299,3 +299,34 @@ test('do not republish third-party review transcripts anywhere in the finished p
      assert.ok(!html.includes(phrase),'Publication permission is not evidenced; remove third-party review text from '+path);
  }
 });
+
+test('Blinnery location shows only the address, and EXOS Easter egg has sound, physics, screen effects, and automatic 11-second reset',()=>{
+ const doc=documentFor('coaching.html');
+ const card=[...doc.querySelectorAll('#booking .grid-3 > article.card')][1];
+ const address=card.querySelector('.blinnergy-location a');
+ assert.ok(address);
+ assert.equal(address.textContent.trim(),'5817 238th St SE, Suite 1 · Woodinville, WA 98072');
+ assert.equal(address.querySelectorAll('.sr-only').length,0,'No unnecessary new-tab prose');
+ const exos=doc.querySelector('[data-exos-card]');
+ assert.ok(exos,'EXOS card exists');
+ const fall=[...exos.querySelectorAll('[data-exos-fall]')];
+ assert.equal(fall.length,4,'All original EXOS text blocks get word physics');
+ assert.match(fall.map(el=>el.textContent).join(' '),/Find me on Boost under Nate Holochwost/,'Original booking text unchanged');
+ const button=exos.querySelector('button[data-exos-boom]');
+ assert.equal(button.textContent.trim(),'this button does nothing');
+ assert.equal(button.type,'button');
+ assert.equal(doc.querySelectorAll('script[src="assets/exos-easter-egg.js"]').length,1);
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ assert.match(manifest,/assets\/exos-easter-egg\.js/);
+ const source=readFileSync(new URL('../assets/exos-easter-egg.js',import.meta.url),'utf8');
+ assert.match(source,/AudioContext/,'Explosion sound synthesizes on activation');
+ assert.match(source,/requestAnimationFrame/,'Falling words have frame-by-frame motion');
+ assert.match(source,/1180 \* dt/,'Gravity accelerates individual words');
+ assert.match(source,/function collide/,'Words pile with collision resolution');
+ assert.match(source,/setTimeout\(reset, 11000\)/,'Original layout returns 11 seconds after click');
+ assert.match(source,/prefers-reduced-motion: reduce/,'Respect motion accessibility');
+ const stylesheet=readFileSync(new URL('../style.css',import.meta.url),'utf8');
+ assert.match(stylesheet,/@keyframes exos-shake/);
+ assert.match(stylesheet,/@keyframes exos-fireball/);
+ assert.match(stylesheet,/\.exos-physics-layer\{position:absolute;inset:0;z-index:2;overflow:hidden/,'Words stay in their own white box');
+});

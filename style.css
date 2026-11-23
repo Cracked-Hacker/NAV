@@ -138,3 +138,28 @@ h1,h2,h3{overflow-wrap:anywhere}
 @media(max-width:980px){#booking .grid-3{grid-template-columns:minmax(0,1fr)}}
 
 
+
+/* EXOS Easter egg: contained falling-word physics and one-click explosion. */
+.exos-card{position:relative;display:flex;flex-direction:column;overflow:hidden}
+.exos-egg-slot{position:relative;z-index:4;display:flex;justify-content:center;margin-top:auto;padding-top:clamp(24px,3vw,42px)}
+.exos-egg-button{min-height:42px;max-width:100%;padding:9px 15px;border:1px solid #8d1220;border-radius:10px;background:#c82432;color:#fff;font-size:.82rem;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #861322;transition:filter .14s ease,transform .14s ease}
+.exos-egg-button:hover{filter:brightness(1.08)}
+.exos-egg-button:active{transform:translateY(2px);box-shadow:0 2px 0 #861322}
+.exos-egg-button:focus-visible{outline:3px solid #007ac8;outline-offset:4px}
+.exos-egg-button:disabled{cursor:default;opacity:1}
+.exos-copy-hidden{opacity:0!important}
+.exos-physics-layer{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.exos-falling-word{position:absolute;top:0;left:0;display:block;margin:0;padding:0;white-space:nowrap;will-change:transform;transform-origin:center}
+.exos-blast{position:fixed;inset:0;z-index:9999;overflow:hidden;pointer-events:none}
+.exos-blast i{position:absolute;display:block;pointer-events:none}
+.exos-blast-flash{inset:0;background:radial-gradient(circle at var(--exos-x) var(--exos-y),rgba(255,240,170,.82) 0%,rgba(255,85,13,.34) 20%,transparent 65%);animation:exos-flash .6s ease-out both}
+.exos-blast-fireball{left:var(--exos-x);top:var(--exos-y);width:20px;height:20px;margin:-10px;border-radius:50%;background:radial-gradient(circle,#fffddd 0%,#ffda36 25%,#ff5620 59%,rgba(185,18,0,.0) 74%);filter:drop-shadow(0 0 18px #f84);animation:exos-fireball .84s cubic-bezier(.12,.55,.3,1) both}
+.exos-blast-ring{left:var(--exos-x);top:var(--exos-y);width:32px;height:32px;margin:-16px;border:7px solid rgba(255,183,57,.9);border-radius:50%;box-shadow:0 0 30px rgba(255,77,11,.5);animation:exos-ring .9s ease-out both}
+.exos-blast-spark{left:var(--exos-x);top:var(--exos-y);width:6px;height:16px;border-radius:60%;background:linear-gradient(#fffcc5,#ff6a17,#de2607);box-shadow:0 0 7px #ff9b3a;animation:exos-spark .9s ease-out var(--exos-delay) both}
+.exos-screen-shake{animation:exos-shake .78s ease-in-out both}
+@keyframes exos-shake{0%,100%{transform:translate(0,0)}12%{transform:translate(-9px,5px)}24%{transform:translate(8px,-7px)}37%{transform:translate(-12px,-2px)}49%{transform:translate(10px,7px)}64%{transform:translate(-6px,-6px)}80%{transform:translate(4px,3px)}}
+@keyframes exos-flash{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+@keyframes exos-fireball{0%{opacity:.95;transform:scale(.2)}45%{opacity:1;transform:scale(14)}100%{opacity:0;transform:scale(28)}}
+@keyframes exos-ring{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(32)}}
+@keyframes exos-spark{0%{opacity:1;transform:translate3d(0,0,0) scale(.75) rotate(0)}100%{opacity:0;transform:translate3d(var(--exos-dx),var(--exos-dy),0) scale(.15) rotate(270deg)}}
+@media(prefers-reduced-motion:reduce){.exos-screen-shake{animation:none}.exos-blast-flash{animation:none;opacity:.2}.exos-blast-fireball,.exos-blast-ring,.exos-blast-spark{animation:none;display:none}.exos-egg-button{transition:none}}

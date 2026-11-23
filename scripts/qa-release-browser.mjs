@@ -83,6 +83,31 @@ try{
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
   console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
+
+  // Easter egg: confirm original copy, actual falling word bodies, sound-capable click,
+  // 11-second reset, narrow view containment, and OS reduced-motion fallback.
+  const addressLink=page.locator('.blinnergy-location a');
+  assert.equal((await addressLink.textContent()).trim(),'5817 238th St SE, Suite 1 · Woodinville, WA 98072');
+  assert.equal(await addressLink.locator('.sr-only').count(),0);
+  const egg=page.locator('[data-exos-card]');
+  assert.equal(await egg.locator('[data-exos-fall]').count(),4);
+  assert.equal((await egg.locator('[data-exos-boom]').textContent()).trim(),'this button does nothing');
+  await egg.locator('[data-exos-boom]').click();
+  assert.equal(await egg.locator('[data-exos-boom]').isDisabled(),true);
+  assert.ok(await egg.locator('.exos-falling-word').count()>25,'Text becomes individual falling words');
+  assert.equal(await egg.locator('.exos-copy-hidden').count(),4);
+  assert.equal(await page.locator('.exos-blast').count(),1,'Explosion overlay appears');
+  await page.waitForTimeout(1200);
+  assert.equal(await page.locator('.exos-blast').count(),0,'Explosion overlay does not linger');
+  assert.equal(await page.locator('body.exos-screen-shake').count(),0,'Screen shake does not linger');
+  await page.waitForTimeout(10100);
+  assert.equal(await egg.locator('.exos-falling-word').count(),0,'Word pieces removed after 11 seconds');
+  assert.equal(await egg.locator('.exos-copy-hidden').count(),0,'Original text restored');
+  assert.equal(await egg.locator('[data-exos-boom]').isEnabled(),true);
+  assert.ok((await egg.textContent()).includes('Find me on Boost under Nate Holochwost'));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1),true,'No mobile horizontal overflow after reset');
+  console.log('PASS EXOS word breakup, explosion overlay, reduced-motion fallback and automatic 11-second reset');
+
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');
