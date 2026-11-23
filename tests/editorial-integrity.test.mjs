@@ -88,8 +88,9 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
  assert.deepEqual(sections,['my-story','short-videos','youtube-lessons','athletics','teaching'],'Athletics must follow educational videos without restoring retired panels');
  assert.equal(w.document.querySelectorAll('#training video').length,4,'Each original squat video appears once, in Powerlifting');
  assert.equal(w.document.querySelectorAll('#training .powerlifting-photo-grid img').length,4,'Four authentic squat training stills');
+ for(const img of w.document.querySelectorAll('#training .powerlifting-photo-grid img')) assert.match(img.getAttribute('src')||'',/powerlifting-0[1-4]\.jpg$/,'Use original video-frame JPEG instead of compressed poster');
  assert.equal(w.document.querySelectorAll('#lacrosse .lacrosse-photo-grid img').length,5,'Use exactly five distinct lacrosse photos: no copied sixth frame');
- for(const filename of ['coach-nate-lacrosse-01.webp','coach-nate-lacrosse-02.webp','coach-nate-lacrosse-03.webp','coach-nate-lacrosse-04.webp','coach-nate-lacrosse-05.webp','coach-nate-lacrosse-photo-reel.mp4']){
+ for(const filename of ['coach-nate-lacrosse-01.jpg','coach-nate-lacrosse-02.jpg','coach-nate-lacrosse-03.jpg','coach-nate-lacrosse-04.jpg','coach-nate-lacrosse-05.jpg','coach-nate-powerlifting-01.jpg','coach-nate-powerlifting-02.jpg','coach-nate-powerlifting-03.jpg','coach-nate-powerlifting-04.jpg','coach-nate-lacrosse-photo-reel.mp4']){
   assert.ok(existsSync('assets/'+filename),'Do not release a gallery with a missing original media asset: '+filename);
  }
  assert.equal(w.document.querySelectorAll('#lacrosse video').length,1,'Lacrosse video is included');
