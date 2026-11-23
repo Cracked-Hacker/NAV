@@ -81,8 +81,16 @@ for(const media of ["assets/coach-nate-squat-9099-silent.mp4","assets/coach-nate
 const coach=readFileSync("coach-nate.html","utf8");
 if(!coach.includes('src="assets/coach-nate-strength-showcase-muted.mp4"')||!coach.includes('poster="assets/coach-nate-strength-showcase-poster.webp"')||!coach.includes('controls muted playsinline'))
  failures.push("Coach Nate silent video source, poster, or muted playback missing");
-for(const proof of ["Cycling of Ethanol and Acetaldehyde in Estuarine Waters","B.S. Kinesiology","B.A. Biology","10.1007/s10560-024-01000-y"])
- if(!coach.includes(proof))failures.push("Coach Nate research evidence missing: "+proof);
+for(const proof of ["B.S. Kinesiology","B.A. Biology"]){
+ if(!coach.includes(proof))failures.push("Coach Nate education credentials missing: "+proof);
+}
+const research=readFileSync("research.html","utf8");
+for(const proof of ["Cycling of Ethanol and Acetaldehyde in Estuarine Waters","10.1007/s10560-024-01000-y","Research shadowing at UW","SoundBio Lab"]){
+ if(!research.includes(proof))failures.push("Research page evidence missing: "+proof);
+}
+for(const img of ["assets/coach-nate-acs-conference.webp","assets/coach-nate-lab-bench.webp"]){
+ if(!research.includes('src="'+img+'"')||coach.includes('src="'+img+'"'))failures.push("Research asset must appear only on Research: "+img);
+}
 for(const media of ["assets/coach-nate-squat-9099-silent.mp4","assets/coach-nate-squat-9099-poster.webp","assets/coach-nate-squat-9078-silent.mp4","assets/coach-nate-squat-9078-poster.webp","assets/coach-nate-squat-8279-silent.mp4","assets/coach-nate-squat-8279-poster.webp"]){
  if(!coach.includes('assets/'+media.split('/').pop())) failures.push("Coach Nate gallery missing reference: "+media);
 }

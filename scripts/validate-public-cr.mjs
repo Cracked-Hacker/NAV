@@ -108,8 +108,12 @@ if (!/noindex,nofollow/.test(accountEntry)) failures.push("account/auth.html: pr
 
 const coachProfile = text("coach-nate.html");
 const resumePdf = "assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf";
-for(const detail of ["B.S. in Kinesiology","B.A. in Biology","10.1007/s10560-024-01000-y"]){
- if(!coachProfile.includes(detail))failures.push("coach-nate.html: professional background evidence missing: "+detail);
+for(const detail of ["B.S. in Kinesiology","B.A. in Biology"]){
+ if(!coachProfile.includes(detail))failures.push("coach-nate.html: educational background missing: "+detail);
+}
+const researchProfile=text("research.html");
+for(const detail of ["10.1007/s10560-024-01000-y","Cycling of Ethanol and Acetaldehyde in Estuarine Waters","Research shadowing at UW","SoundBio Lab"]){
+ if(!researchProfile.includes(detail))failures.push("research.html: research evidence missing: "+detail);
 }
 if(!coachProfile.includes('href="'+resumePdf+'" target="_blank" rel="noopener noreferrer" type="application/pdf">View Resume</a>'))failures.push("coach-nate.html: missing direct PDF View Resume button");
 if(!existsSync(resumePdf))failures.push("Public PDF résumé asset missing");
