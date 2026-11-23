@@ -11,7 +11,8 @@ test("Coach Nate's publicly approved background stays correct", () => {
   assert.match(coach, /B\.S\. in Kinesiology, a B\.A\. in Biology, and a minor in Chemistry/);
   assert.match(about, /B\.S\. in Kinesiology/);
   assert.match(about, /B\.A\. in Biology/);
-  assert.match(about, /I co-presented our work/);
+  assert.match(about, /co-presented our research poster at the <strong>American Chemical Society National Meeting/);
+  assert.match(about, /I derived a pixel-based conversion factor/);
   assert.match(coach, /2023/);
 });
 
