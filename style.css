@@ -122,7 +122,11 @@ h1,h2,h3{overflow-wrap:anywhere}
 .blinnergy-location{margin:1rem 0 .6rem;font-size:.88rem;font-weight:700;line-height:1.45}
 .blinnergy-location a{color:var(--blue);text-underline-offset:.16em;overflow-wrap:anywhere}
 .blinnergy-reviews{min-width:0;margin:1rem 0 .7rem;padding:.8rem 0 .4rem;border-top:1px solid var(--line)}
-.blinnergy-reviews p{margin:.15rem 0 .65rem;line-height:1.55}
+.blinnergy-review-summary{display:flex;align-items:center;flex-wrap:wrap;gap:.2rem .5rem;line-height:1.45}
+.blinnergy-review-summary strong{font-size:.95rem;font-weight:800}
+.blinnergy-review-stars{color:#b88325;font-size:.95rem;letter-spacing:.02em;white-space:nowrap}
+.blinnergy-review-count{font-size:.83rem;font-weight:700;white-space:nowrap}
+.blinnergy-review-source-link{display:inline-block;margin-top:.25rem;font-size:.78rem;font-weight:600;color:var(--blue);text-decoration:underline;text-underline-offset:.17em}
 
 /* Exos @ Google: factual workplace identification, not unapproved corporate logos. */
 .exos-gfit-label{margin:1rem 0 0;padding-top:.75rem;border-top:1px solid var(--line);font-size:.78rem;font-weight:800;line-height:1.5;color:var(--muted)}
