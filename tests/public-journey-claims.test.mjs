@@ -279,3 +279,16 @@ test('Blinnergy reviews use a direct Google reviews-list link without unlicensed
  assert.ok(!css.includes('.blinnergy-review-track'),'Remove dead carousel styling');
  assert.ok(!doc.querySelector('script[src="assets/blinnergy-reviews.js"]'),'No dormant carousel JS');
 });
+
+test('do not republish third-party review transcripts anywhere in the finished public HTML release',()=>{
+ const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
+ const publicPages=[...manifest.matchAll(/"([^"]+\\.html)"/g)].map(x=>x[1]);
+ assert.ok(publicPages.length>=18,'Must inspect the full published HTML release, not only coaching.html');
+ const identities=['Vignesh Gunasekaran','Mary Ventura','Bob Freer','Sara Job','shruti nair','Diane K','Kathy Williams','Darrin Buenger','Shannon J.','Steph Young'];
+ const uniqueReviewText=['Nate is a fantastic trainer. He has really addressed issues at my level.','Coach Nate brings amazing energy to every session','I give credit to the amazing personal trainers Adaeze, Sam, and Nate','I love training with Adaeze, Sam, and Nate','Love Nate’s 6 am class!!'];
+ for(const path of publicPages){
+   const html=readFileSync(new URL('../'+path,import.meta.url),'utf8');
+   for(const phrase of identities.concat(uniqueReviewText))
+     assert.ok(!html.includes(phrase),'Publication permission is not evidenced; remove third-party review text from '+path);
+ }
+});
