@@ -38,6 +38,10 @@ test('Coach Nate hero retains the approved introduction and original media links
  assert.equal(hero.querySelector('.subcopy')?.textContent,'I graduated with a pre-medical education from Western Washington University: a B.S. in Kinesiology, a B.A. in Biology, and a minor in Chemistry. Feel free to look at my résumé—you’re hiring a coach, after all!');
  assert.equal(hero.querySelector('a.btn')?.getAttribute('href'),'assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
  assert.equal(hero.querySelector('a.btn')?.textContent,'View Resume');
+ assert.equal(hero.querySelector('.hero-coaching-hours strong')?.textContent,'2,000+');
+ assert.equal(hero.querySelector('.hero-coaching-hours span')?.textContent,'coaching hours');
+ assert.equal(w.document.querySelector('.info[aria-label="Career highlights"]'),null,'Redundant career highlight strip must be removed');
+ assert.equal(w.document.querySelectorAll('.hero-coaching-hours').length,1,'One understated coaching-hour figure beside the résumé button');
  assert.equal(hero.querySelector('a.btn')?.getAttribute('target'),'_blank');
  assert.equal(hero.querySelector('img')?.getAttribute('src'),'assets/coach-nate-lab-portrait.webp');
  assert.equal(hero.querySelector('figure a')?.getAttribute('href'),'#uw-shadowing');

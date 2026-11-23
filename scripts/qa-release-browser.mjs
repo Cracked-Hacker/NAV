@@ -75,6 +75,17 @@ try{
   assert.equal(await resumeButton.getAttribute('href'),'assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
   assert.equal(await resumeButton.getAttribute('target'),'_blank');
   assert.equal(await resumeButton.getAttribute('rel'),'noopener noreferrer');
+  const hours=page.locator('section.hero .hero-coaching-hours');
+  assert.equal(await hours.count(),1,'Single coaching-hours figure beside View Resume');
+  assert.equal((await hours.textContent()).replace(/\\s+/g,' ').trim(),'2,000+ coaching hours');
+  assert.equal(await page.locator('.info[aria-label="Career highlights"]').count(),0,'Remove redundant four-item highlight strip');
+  const desktopHeroPositions=await page.locator('section.hero .hero-actions').evaluate(el=>{
+    const button=el.querySelector('a.btn').getBoundingClientRect();
+    const stat=el.querySelector('.hero-coaching-hours').getBoundingClientRect();
+    return {sameRow:Math.abs((button.top+button.bottom)/2-(stat.top+stat.bottom)/2)<8,overlap:!(button.right<=stat.left || stat.right<=button.left)};
+  });
+  assert.equal(desktopHeroPositions.sameRow,true,'Résumé CTA and coaching hours should align on desktop');
+  assert.equal(desktopHeroPositions.overlap,false,'Résumé CTA and coaching hours must not overlap');
   const resumePDFResponse=await context.request.get(new URL('assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf',base).href);
   assert.equal(resumePDFResponse.status(),200,'Direct résumé PDF must exist');
   assert.ok((await resumePDFResponse.body()).subarray(0,5).toString().startsWith('%PDF-'),'Résumé must have real PDF bytes');
