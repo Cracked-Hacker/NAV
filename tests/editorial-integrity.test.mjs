@@ -81,11 +81,16 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
  assert.ok(w.document.getElementById('training'),'Preserve strength videos');
  assert.ok(w.document.getElementById('youtube-lessons'),'Preserve educational videos');
  assert.ok(w.document.getElementById('teaching'),'Keep approved education and patient-care section');
- for(const retiredId of ['athletics','links','cv']){
+ for(const retiredId of ['links','cv']){
   assert.equal(w.document.getElementById(retiredId),null,'Remove redundant Coach Nate section '+retiredId);
  }
  const sections=[...w.document.querySelectorAll('main section[id]')].map(el=>el.id);
- assert.deepEqual(sections,['my-story','training','youtube-lessons','teaching'],'Keep only approved story, video, and education panels');
+ assert.deepEqual(sections,['my-story','short-videos','youtube-lessons','athletics','teaching'],'Athletics must follow educational videos without restoring retired panels');
+ assert.equal(w.document.querySelectorAll('#training video').length,4,'Each original squat video appears once, in Powerlifting');
+ assert.equal(w.document.querySelectorAll('#training .powerlifting-photo-grid img').length,4,'Four authentic squat training stills');
+ assert.equal(w.document.querySelectorAll('#lacrosse .lacrosse-photo-grid img').length,6,'Six lacrosse photo slots for original uploads');
+ assert.equal(w.document.querySelectorAll('#lacrosse video').length,1,'Lacrosse video is included');
+ assert.ok(w.document.querySelector('#athletics'),'New athletics media section remains accessible');
  assert.match(w.document.querySelector('section.hero a.btn')?.getAttribute('href')||'',/Nathan_Holochwost_Resume_2026-11\.pdf/,'Public résumé PDF remains accessible');
  for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
   assert.equal(w.document.querySelector('img[src="'+src+'"]'),null,'No duplicate research image on Coach Nate: '+src);
