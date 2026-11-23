@@ -261,8 +261,9 @@ test('Blinnergy carousel preserves all ten full owner-supplied review transcript
  const carousel=card.querySelector('[data-blinnergy-reviews]');
  assert.ok(carousel);
  const disclosure=carousel.querySelector('.blinnergy-review-disclosure').textContent;
- assert.match(disclosure,/reproduced in full from owner-supplied copies/);
- assert.match(disclosure,/not individual reviews/,'Must not falsely claim each Google Maps venue link is a direct permalink');
+ assert.match(disclosure,/Selected five-star reviews originally posted about Blinnergy/);
+ assert.match(disclosure,/not an individual review/,'These are not individual-review permalinks');
+ assert.match(disclosure,/not reviews of NAV/,'Do not pass Blinnergy reviews off as NAV business reviews');
  assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'));
  assert.match(card.querySelector('.blinnergy-location').textContent,/5817 238th St SE, Suite 1/);
  const slides=[...carousel.querySelectorAll('[data-review-slide]')];
@@ -272,7 +273,7 @@ test('Blinnergy carousel preserves all ten full owner-supplied review transcript
  slides.forEach((slide,index)=>{
    const ref=expected[index];
    assert.equal(slide.querySelector('.blinnergy-review-source-name').textContent,ref.name);
-   assert.equal(slide.querySelector('.blinnergy-review-platform').textContent,'Google Maps review');
+   assert.equal(slide.querySelector('.blinnergy-review-platform').textContent,'Google review');
    assert.equal(slide.querySelector('.blinnergy-review-stars').textContent,'★★★★★');
    assert.equal(slide.querySelector('.blinnergy-review-stars').getAttribute('aria-label'),'5 out of 5 stars');
    const block=slide.querySelector('blockquote');
@@ -283,11 +284,15 @@ test('Blinnergy carousel preserves all ten full owner-supplied review transcript
    assert.equal(fullText.length,ref.characters,'No truncation or extra text: '+ref.name);
    assert.equal(checksum(fullText),ref.fnv,'Exact original punctuation and text snapshot: '+ref.name);
    const link=slide.querySelector('a.blinnergy-review-source');
-   assert.match(link.getAttribute('href'),/google\.com\/maps\/place\/Blinnergy/);
-   assert.match(link.textContent,/opens the venue listing, not this individual review/);
+   assert.equal(link.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
+   assert.match(link.textContent,/Read Blinnergy reviews on Google/);
+   assert.match(link.textContent,/review list where supported, not this individual review/);
    assert.equal(link.getAttribute('target'),'_blank');
    assert.match(link.getAttribute('rel'),/noopener/);
  });
+ const allReviews=card.querySelector('.blinnergy-rating a');
+ assert.equal(allReviews.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,",'Direct reviews-list, not map location');
+ assert.doesNotMatch(card.querySelector('.blinnergy-rating').textContent,/5\.0\/5/,'Avoid stale business-level average rating');
  assert.equal(slides[3].querySelectorAll('blockquote p').length,1);
  assert.equal(slides[5].querySelectorAll('blockquote p').length,6);
  assert.equal(slides[8].querySelectorAll('blockquote p').length,4);
