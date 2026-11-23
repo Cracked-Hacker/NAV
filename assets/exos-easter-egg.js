@@ -151,7 +151,6 @@ if (card) {
     if (!running) return;
     const dt = Math.min(0.032, Math.max(0.001, (time - lastTime) / 1000 || 0.016));
     lastTime = time;
-    const box = card.getBoundingClientRect();
     const floor = Math.max(95, card.clientHeight - 12);
     const left = 10;
     const right = card.clientWidth - 10;
@@ -202,8 +201,18 @@ if (card) {
       }
     }
     for (const body of bodies) {
-      body.x = Math.max(left, Math.min(right - body.w, body.x));
-      body.y = Math.max(8, Math.min(floor - body.h, body.y));
+      // Clamp the *rotated* rectangle to the card, not merely the word's
+      // unrotated width/height. Rotation otherwise lets corners escape.
+      const cos = Math.abs(Math.cos(body.angle));
+      const sin = Math.abs(Math.sin(body.angle));
+      const extraX = (body.w * cos + body.h * sin - body.w) / 2;
+      const extraY = (body.h * cos + body.w * sin - body.h) / 2;
+      const minX = left + extraX + 3;
+      const maxX = right - body.w - extraX - 3;
+      const minY = 8 + extraY + 3;
+      const maxY = floor - body.h - extraY - 3;
+      body.x = Math.max(minX, Math.min(Math.max(minX, maxX), body.x));
+      body.y = Math.max(minY, Math.min(Math.max(minY, maxY), body.y));
       body.element.style.transform = 'translate3d(' + (body.x - body.homeX).toFixed(1) +
         'px,' + (body.y - body.homeY).toFixed(1) + 'px,0) rotate(' +
         body.angle.toFixed(3) + 'rad)';
