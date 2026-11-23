@@ -14,7 +14,7 @@ test('Editorial changes retain genuine experience, credentials, and story',()=>{
  for(const term of ['1,300+','700+','300+','50+'])assert.ok(c.includes(term),term);
  const pdf=readFileSync('assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
  assert.equal(pdf.subarray(0,5).toString(),'%PDF-','Public résumé must be a real PDF file');
- assert.ok(a.includes('href="coach-nate.html#my-story"'));
+ assert.ok(readFileSync('about.html','utf8').includes('href="coach-nate.html#my-story"'));
  assert.ok(c.includes('<h2 id="story-heading">My story</h2>'));
  assert.ok(c.includes('EXOS at Google'));
  assert.doesNotMatch(a,/Google employee|employed by Google/i);
