@@ -112,6 +112,7 @@ h1,h2,h3{overflow-wrap:anywhere}
 
 /* Learning Resources: one compact category for flashcards, atlas, and guide. */
 .nav-product-grid #study-tools{grid-column:1 / -1}
+#study-tools>h2{padding-bottom:.85rem;margin-bottom:1.5rem;border-bottom:1px solid var(--line)}
 .study-tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(1rem,2.2vw,2rem)}
 .study-tool-item{min-width:0}
 .study-tool-item+.study-tool-item{border-left:1px solid var(--line);padding-left:clamp(1rem,3vw,2.5rem)}
