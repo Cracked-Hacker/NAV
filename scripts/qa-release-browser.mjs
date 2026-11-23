@@ -67,18 +67,20 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
-  // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
+  // Blinnergy: exact owner-requested 10+ label with a discreet deep link into Google's review list.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
   const reviewSection=page.locator('.blinnergy-reviews');
-  const reviewLink=reviewSection.locator('a.button');
-  assert.equal(await reviewLink.count(),1,'One clear reviews-list CTA, not ten links to the same source');
-  assert.equal(await reviewLink.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
-  assert.match(await reviewSection.textContent(),/Some reviews of Blinnergy mention my coaching/);
-  assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0,'No unauthorized review transcriptions or reviewer names in public site');
+  const reviewCount=reviewSection.locator('.blinnergy-review-count');
+  assert.equal(await reviewCount.textContent(),'Coach Nate ★★★★★ (10+ reviews)');
+  assert.match(await reviewCount.getAttribute('aria-label'),/at least ten five-star Google reviews of Blinnergy/);
+  const reviewLink=reviewSection.locator('a.blinnergy-review-link');
+  assert.equal(await reviewLink.count(),1);
+  assert.equal(await reviewSection.locator('a.button').count(),0,'Review source link should remain understated, not button-style');
+  assert.equal(await reviewLink.getAttribute('href'),'https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,');
+  assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0);
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
-  assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
-  console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
+  console.log('PASS exact Coach Nate 10+ label, compact Google review-source link, no reproduced third-party review text, original Blinnergy booking');
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');

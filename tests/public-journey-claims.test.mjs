@@ -255,29 +255,30 @@ test('Muscle Card Set offers all five valid, internally consistent local formats
  assert.ok(section.textContent.includes('Free at $0. Download does not require payment.'));
 });
 
-test('Blinnergy reviews use a direct Google reviews-list link without unlicensed third-party testimonial republication',()=>{
+test('Blinnergy review label stays exact with a quiet Google source link and no unlicensed quotations',()=>{
  const doc=documentFor('coaching.html');
  const card=[...doc.querySelectorAll('#booking > .grid-3 > article.card')][1];
  const reviews=card.querySelector('.blinnergy-reviews');
  assert.ok(reviews);
- assert.match(reviews.textContent,/Some reviews of Blinnergy mention my coaching/);
- assert.match(reviews.textContent,/original reviews on Google/);
- assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Blinnery app booking remains intact');
- assert.match(card.querySelector('.blinnergy-location').textContent,/5817 238th St SE, Suite 1/);
- const expected="https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,";
- const link=reviews.querySelector('a.button');
- assert.equal(link.getAttribute('href'),expected,'Link should enter Google Search reviews for the specific Blinnergy business, not general Google Maps');
- assert.match(link.textContent,/Read Blinnergy Reviews on Google/);
+ const count=reviews.querySelector('.blinnergy-review-count');
+ assert.equal(count.textContent,'Coach Nate ★★★★★ (10+ reviews)','Preserve owner-requested exact visible label');
+ assert.match(count.getAttribute('aria-label'),/at least ten five-star Google reviews of Blinnergy mention his coaching/);
+ assert.equal(reviews.querySelectorAll('p').length,1,'No extra marketing fluff');
+ const links=[...reviews.querySelectorAll('a')];
+ assert.equal(links.length,1,'One discrete evidence link directly under the count');
+ const link=links[0];
+ assert.equal(link.className,'blinnergy-review-link','No bulky or redundant button');
+ assert.match(link.textContent,/Blinnergy reviews on Google/);
+ assert.equal(link.getAttribute('href'),'https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,');
  assert.equal(link.getAttribute('target'),'_blank');
  assert.match(link.getAttribute('rel'),/noopener/);
- assert.equal(reviews.querySelectorAll('blockquote,.blinnergy-review-slide,.blinnergy-review-stars').length,0,'No third-party reviews copied or used as unauthorised endorsements');
- for(const name of ['Vignesh Gunasekaran','Mary Ventura','Bob Freer','Sara Job','shruti nair','Diane K','Kathy Williams','Darrin Buenger','Shannon J.','Steph Young'])assert.ok(!reviews.textContent.includes(name),'Do not use reviewer names in marketing without established authorization');
- assert.equal(card.querySelectorAll('.blinnergy-rating').length,0,'No duplicate Google review link or stale aggregate rating');
+ assert.ok(card.querySelector('a[href="https://apps.apple.com/us/app/blinnergy/id6742318263"]'),'Keep Blinnergy booking CTA');
+ assert.match(card.querySelector('.blinnergy-location').textContent,/5817 238th St SE, Suite 1/);
+ assert.equal(card.querySelectorAll('.blinnergy-rating,blockquote,.blinnergy-review-slide').length,0,'Do not republish unlicensed full reviews or stale business-rating averages');
  const manifest=readFileSync(new URL('../scripts/public-release-manifest.mjs',import.meta.url),'utf8');
- assert.ok(!manifest.includes('assets/blinnergy-reviews.js'),'Unnecessary carousel JS must not ship to public site');
+ assert.ok(!manifest.includes('assets/blinnergy-reviews.js'),'No orphaned carousel JS in public release');
  const css=readFileSync(new URL('../style.css',import.meta.url),'utf8');
- assert.ok(!css.includes('.blinnergy-review-track'),'Remove dead carousel styling');
- assert.ok(!doc.querySelector('script[src="assets/blinnergy-reviews.js"]'),'No dormant carousel JS');
+ assert.ok(!css.includes('.blinnergy-review-track'),'No dead carousel styles');
 });
 
 test('do not republish third-party review transcripts anywhere in the finished public HTML release',()=>{
