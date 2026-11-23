@@ -85,7 +85,7 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
   assert.equal(w.document.getElementById(retiredId),null,'Remove redundant Coach Nate section '+retiredId);
  }
  const sections=[...w.document.querySelectorAll('main section[id]')].map(el=>el.id);
- assert.deepEqual(sections,['my-story','training','youtube-lessons','teaching'],'Keep only approved story, video, and education panels');
+ assert.deepEqual(sections,['my-story','training','youtube-lessons','lacrosse','teaching'],'Place lacrosse photos after the approved video sections');
  assert.match(w.document.querySelector('section.hero a.btn')?.getAttribute('href')||'',/Nathan_Holochwost_Resume_2026-11\.pdf/,'Public résumé PDF remains accessible');
  for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
   assert.equal(w.document.querySelector('img[src="'+src+'"]'),null,'No duplicate research image on Coach Nate: '+src);
@@ -98,4 +98,19 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
  }
  assert.equal(r.document.querySelectorAll('section[aria-labelledby="poster-heading"] figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
  w.happyDOM.abort();r.happyDOM.abort();
+});
+
+test('Lacrosse photographs are shown after the videos without restoring the retired athletics copy',()=>{
+ const html=readFileSync('coach-nate.html','utf8');
+ const w=new Window();w.document.write(html);
+ const photos=[...w.document.querySelectorAll('#lacrosse .lacrosse-photo[role="img"]')];
+ assert.equal(photos.length,6,'Show six distinct original lacrosse images');
+ assert.equal(w.document.querySelector('#lacrosse-heading')?.textContent,'Lacrosse');
+ assert.ok(photos.every(el=>el.getAttribute('aria-label')?.length>18),'Every image needs factual accessible description');
+ assert.ok(html.includes('background-image:url("assets/lacrosse-gallery.avif")'),'Use real published lacrosse asset');
+ assert.ok(!html.includes('<h3>On the field</h3>'),'Do not restore redundant prose');
+ const sprite=readFileSync('assets/lacrosse-gallery.avif');
+ assert.ok(sprite.length>8000 && sprite.subarray(4,12).toString()==='ftypavif','The public gallery must contain genuine AVIF bytes');
+ assert.ok(readFileSync('scripts/public-release-manifest.mjs','utf8').includes('"assets/lacrosse-gallery.avif"'),'Publish the actual asset');
+ w.happyDOM.abort();
 });

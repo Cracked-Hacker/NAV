@@ -157,6 +157,17 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 section.hero{padding-bottom:30px}
 section#my-story{padding-top:34px}
 @media(max-width:620px){section.hero{padding-bottom:22px}section#my-story{padding-top:26px}}
+/* Six owner-supplied lacrosse images, presented with consistent geometry and no re-cropping. */
+.lacrosse-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.lacrosse-photo{min-width:0;aspect-ratio:3/2;background-image:url("assets/lacrosse-gallery.avif");background-size:300% 200%;background-repeat:no-repeat;background-color:#102935;border:1px solid var(--line);border-radius:12px}
+.lacrosse-photo--one{background-position:50% 0%}
+.lacrosse-photo--two{background-position:100% 0%}
+.lacrosse-photo--three{background-position:0% 100%}
+.lacrosse-photo--four{background-position:50% 100%}
+.lacrosse-photo--five{background-position:100% 100%}
+.lacrosse-photo--six{background-position:0% 0%}
+@media(max-width:780px){.lacrosse-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+@media(max-width:460px){.lacrosse-photo-grid{grid-template-columns:1fr;gap:12px}.lacrosse-photo{max-width:100%}}
 </style>
 </head><body><a href="#content" class="skip">Skip to main content</a>
 <header><div class="container topbar">
@@ -416,6 +427,17 @@ section#my-story{padding-top:34px}
     </article>
   </div>
   <p class="instagram-notice">Videos load when you choose to play them; you can also watch directly on YouTube.</p>
+</section>
+<section id="lacrosse" class="lacrosse-showcase" aria-labelledby="lacrosse-heading">
+  <div class="sectionhead"><div><p class="eyebrow">Athletics</p><h2 id="lacrosse-heading">Lacrosse</h2></div></div>
+  <div class="lacrosse-photo-grid" aria-label="Lacrosse photographs">
+    <div class="lacrosse-photo lacrosse-photo--one" role="img" aria-label="Two lacrosse players reaching with sticks during an outdoor game"></div>
+    <div class="lacrosse-photo lacrosse-photo--two" role="img" aria-label="Players wearing orange and white jerseys on a lacrosse field"></div>
+    <div class="lacrosse-photo lacrosse-photo--three" role="img" aria-label="Lacrosse players competing near a goal"></div>
+    <div class="lacrosse-photo lacrosse-photo--four" role="img" aria-label="Lacrosse players contesting possession close to the ground"></div>
+    <div class="lacrosse-photo lacrosse-photo--five" role="img" aria-label="Two lacrosse players crouched and competing for the ball"></div>
+    <div class="lacrosse-photo lacrosse-photo--six" role="img" aria-label="Stylized portrait of a lacrosse player in dark gear with colorful light effects"></div>
+  </div>
 </section>
 <section id="teaching"><div class="sectionhead"><div><p class="eyebrow">Education, service &amp; clinical foundation</p><h2>Education and patient care</h2></div><p>My background includes anatomy teaching, laboratory research, and long-term care work.</p></div><div class="credentials"><div class="panel"><h3>Education</h3><ul><li>B.S. Kinesiology (pre-healthcare specialization), WWU</li><li>B.A. Biology, WWU</li><li>Chemistry minor, WWU</li></ul><h3>Certification and earlier training</h3><p><strong>NASM Certified Personal Trainer (CPT)</strong>, awarded May 29, 2025 (certificate expires May 29, 2027). Earlier CNA, BLS, CPR, First Aid, and web-design qualifications and training are listed in my résumé.</p><figure class="authentic-photo authentic-photo--small"><img src="assets/coach-nate-bod-pod-selected.webp" alt="Nate smiling while seated in a BOD POD body-composition chamber" width="250" height="281" loading="lazy" decoding="async"><figcaption>Personal photograph in a BOD POD body-composition measurement system.</figcaption></figure></div><div class="panel"><h3>Clinical &amp; community experience</h3><ul><li>CNA, North Cascades Health and Rehabilitation (2021–2023)</li><li>Clinical Aide, FYZICAL Therapy &amp; Balance Centers (2024)</li><li>CNA, Staffers LLC / Avalon Healthcare Solutions (2024–2025)</li><li>Volunteer powerlifting/athletic coaching (2023–2025)</li><li>Volunteer youth lacrosse coaching (2018–2019)</li></ul><p>Fitness coaching is not clinical diagnosis or treatment.</p><figure class="authentic-photo authentic-photo--portrait"><img src="assets/coach-nate-clinical-ppe-selected.webp" alt="Nate wearing navy scrubs, a mask and a face shield while seated on a couch" width="160" height="293" loading="lazy" decoding="async"><figcaption>Protective equipment during earlier healthcare-support work.</figcaption></figure></div></div></section>
 </div><section class="contact"><div class="container"><div><h2>Teaching, training, building.</h2><p>See NAV coaching, education, and product development, or get in touch.</p></div><div class="actions"><a href="index.html" class="btn">Explore NAV</a><a href="contact.html" class="btn alt">Contact</a></div></div></section></main>

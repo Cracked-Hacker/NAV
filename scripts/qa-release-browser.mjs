@@ -9,7 +9,7 @@ const out=process.env.NAV_QA_OUTPUT||'qa-screenshots';
 mkdirSync(out,{recursive:true});
 const root=resolve('.site-build');
 let server,base=process.env.NAV_QA_URL;
-const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.pdf':'application/pdf','.webp':'image/webp','.xml':'application/xml','.txt':'text/plain'};
+const mime={'.html':'text/html','.css':'text/css','.js':'text/javascript','.mjs':'text/javascript','.pdf':'application/pdf','.webp':'image/webp','.avif':'image/avif','.xml':'application/xml','.txt':'text/plain'};
 if(!base){
   assert.ok(existsSync(root+'/index.html'),'Build the public artifact first');
   server=createServer((req,res)=>{
@@ -154,7 +154,7 @@ try{
   for(const id of ['athletics','links','cv'])assert.equal(await page.locator('section#'+id).count(),0,'Retired Coach Nate block '+id+' must be removed');
   assert.equal(await page.locator('section#teaching').count(),1,'Keep education and patient care');
   const sections=await page.locator('main section[id]').evaluateAll(items=>items.map(item=>item.id));
-  assert.deepEqual(sections,['my-story','training','youtube-lessons','teaching'],'Remove redundant sections without creating empty placeholders');
+  assert.deepEqual(sections,['my-story','training','youtube-lessons','lacrosse','teaching'],'New lacrosse gallery follows videos without restoring retired sections');
   await page.goto(new URL('research.html#uw-shadowing',base).href,{waitUntil:'domcontentloaded'});
   assert.equal(await page.locator('#uw-shadowing h2').textContent(),'Research shadowing at UW');
   for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
@@ -164,6 +164,28 @@ try{
   }
   for(const id of ['chem-research','social-work-research','soundbio','research-interests'])assert.equal(await page.locator('#'+id).count(),1,'Research anchor '+id);
   console.log('PASS Research retains research and Coach Nate has no redundant athletics, links, or experience timeline');
+
+  // Six original lacrosse visuals, immediately below the educational video section.
+  await page.goto(new URL('coach-nate.html#lacrosse',base).href,{waitUntil:'domcontentloaded'});
+  const lacrossePhotos=page.locator('#lacrosse .lacrosse-photo');
+  assert.equal(await lacrossePhotos.count(),6,'Display all six original lacrosse images');
+  const lacrosseAsset=await context.request.get(new URL('assets/lacrosse-gallery.avif',base).href);
+  assert.equal(lacrosseAsset.status(),200,'Lacrosse visual must be published and load successfully');
+  assert.equal((await lacrosseAsset.body()).subarray(4,12).toString(),'ftypavif','Lacrosse gallery must contain real AVIF media');
+  for(const width of [320,390,768,1024,1440,1920]){
+    await page.setViewportSize({width,height:1000});
+    const dims=await lacrossePhotos.evaluateAll(photos=>photos.map(el=>({
+      width:el.getBoundingClientRect().width,
+      height:el.getBoundingClientRect().height,
+      background:getComputedStyle(el).backgroundImage,
+      position:getComputedStyle(el).backgroundPosition,
+      label:el.getAttribute('aria-label')
+    })));
+    assert.ok(dims.every(d=>d.width>100 && d.height>60 && Math.abs(d.width/d.height-1.5)<.02),width+': Lacrosse tiles need equal aspect ratio');
+    assert.ok(dims.every(d=>d.background.includes('lacrosse-gallery.avif')&&d.label?.length>18),width+': All lacrosse images must load with accessible description');
+    assert.equal(new Set(dims.map(d=>d.position)).size,6,'Each tile must display a distinct sprite panel');
+  }
+  console.log('PASS six lacrosse images after educational videos across all screen widths');
 
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});

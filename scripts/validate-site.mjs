@@ -79,6 +79,10 @@ for(const media of ["assets/coach-nate-squat-9099-silent.mp4","assets/coach-nate
   failures.push("Approved Coach Nate gallery asset missing: "+media);
 }
 const coach=readFileSync("coach-nate.html","utf8");
+if(!publishable.has("assets/lacrosse-gallery.avif")||!existsSync("assets/lacrosse-gallery.avif")||statSync("assets/lacrosse-gallery.avif").size<8000)
+ failures.push("Owner-supplied lacrosse image collection missing from finished-only release");
+if(!coach.includes('id="lacrosse"')||(coach.match(/class="lacrosse-photo lacrosse-photo--/g)||[]).length!==6)
+ failures.push("Coach Nate missing six-image lacrosse gallery");
 if(!coach.includes('src="assets/coach-nate-strength-showcase-muted.mp4"')||!coach.includes('poster="assets/coach-nate-strength-showcase-poster.webp"')||!coach.includes('controls muted playsinline'))
  failures.push("Coach Nate silent video source, poster, or muted playback missing");
 for(const proof of ["B.S. Kinesiology","B.A. Biology"]){

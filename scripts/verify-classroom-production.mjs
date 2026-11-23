@@ -65,6 +65,12 @@ for(let attempt=1;attempt<=15;attempt++){
     }
     assert.ok(coachHtml.includes('<section id="teaching"'),"Education and patient-care section missing");
     assert.ok(!coachHtml.includes('On the field')&&!coachHtml.includes('Find my work.')&&!coachHtml.includes('Experience &amp; appointments'),"Retired redundant copy still visible");
+    assert.ok(coachHtml.includes('<section id="lacrosse" class="lacrosse-showcase"'),"Lacrosse photo section missing from production");
+    assert.equal((coachHtml.match(/class="lacrosse-photo lacrosse-photo--/g)||[]).length,6,"Six lacrosse photos must appear on Coach Nate");
+    assert.ok(coachHtml.indexOf('id="lacrosse"')>coachHtml.indexOf('id="youtube-lessons"')&&coachHtml.indexOf('id="lacrosse"')<coachHtml.indexOf('id="teaching"'),"Lacrosse gallery must follow videos and precede education");
+    const lacrosseResponse=await request("assets/lacrosse-gallery.avif");
+    assert.equal(lacrosseResponse.status,200,"Lacrosse gallery asset missing from production");
+    assert.equal(Buffer.from(await lacrosseResponse.arrayBuffer()).subarray(4,12).toString(),"ftypavif","Published lacrosse imagery is not valid AVIF");
     const companyResponse=await request("about.html");
     assert.equal(companyResponse.status,200,"About NAV page missing in production");
     const companyHtml=await companyResponse.text();
