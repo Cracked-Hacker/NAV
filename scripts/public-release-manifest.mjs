@@ -52,7 +52,6 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-squat-8279-silent.mp4",
   "assets/coach-nate-squat-8279-poster.webp",
   "assets/coach-nate-training-gallery.js",
-  "assets/blinnergy-reviews.js",
   "assets/coach-nate-instagram-gallery.js",
   "assets/study-tools-options.js",
   "downloads/Human_Sciences_Atlas_2026.pdf",
