@@ -35,6 +35,21 @@ for (const page of keyPages) {
   requireMatch(page, html, new RegExp(appUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i"), "missing canonical NAV Coach sign-in route");
 }
 
+// Long-form About essays must remain intact and collapsed until requested.
+const aboutEssays = text("about.html");
+const essayDetails = [...aboutEssays.matchAll(/<details class="essay-disclosure"(?:\s[^>]*)?>([\s\S]*?)<\/details>/g)];
+if (essayDetails.length !== 2) failures.push("about.html: expected two collapsed long-form essays");
+for (const [index, match] of essayDetails.entries()) {
+  if (!/<summary>.*Read more.*Read less.*<\/summary>/s.test(match[1]))
+    failures.push(`about.html: essay ${index + 1} lacks a functional Read more/Read less summary`);
+  if ((match[1].match(/<p>/g) || []).length < 10)
+    failures.push(`about.html: essay ${index + 1} appears truncated`);
+}
+for (const phrase of ["There is one day I will never forget", "my father and sister", "… but it’s still really cool to lift a lot of weight"]) {
+  if (!aboutEssays.includes(phrase))
+    failures.push("about.html: approved patient-care story text missing: " + phrase);
+}
+
 const home = text("index.html");
 requireMatch("index.html", home, /human coaching|personal coaching|I want coaching/i, "homepage must offer human coaching");
 requireMatch("index.html", home, /I’m a coach/i, "homepage must offer a coach path");
