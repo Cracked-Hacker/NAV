@@ -74,7 +74,7 @@ try{
   const reviewLink=reviewSection.locator('a.button');
   assert.equal(await reviewLink.count(),1,'One clear reviews-list CTA, not ten links to the same source');
   assert.equal(await reviewLink.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
-  assert.match(await reviewSection.textContent(),/Some of Blinnergy’s Google reviews mention my coaching/);
+  assert.match(await reviewSection.textContent(),/Some reviews of Blinnergy mention my coaching/);
   assert.equal(await reviewSection.locator('blockquote,.blinnergy-review-slide').count(),0,'No unauthorized review transcriptions or reviewer names in public site');
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
