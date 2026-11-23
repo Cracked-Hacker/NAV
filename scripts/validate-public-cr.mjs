@@ -45,7 +45,7 @@ for (const [index, match] of essayDetails.entries()) {
   if ((match[1].match(/<p>/g) || []).length < 10)
     failures.push(`about.html: essay ${index + 1} appears truncated`);
 }
-for (const phrase of ["There is one day I will never forget", "my father and sister", "… but it’s still really cool to lift a lot of weight", "I developed an image-analysis method", "American Chemical Society National Meeting", "Child and Adolescent Social Work Journal"]) {
+for (const phrase of ["There is one day I will never forget", "my father and sister", "… but it’s still really cool to lift a lot of weight", "I derived a pixel-based conversion factor", "American Chemical Society National Meeting", "Child and Adolescent Social Work Journal"]) {
   if (!aboutEssays.includes(phrase))
     failures.push("about.html: approved patient-care story text missing: " + phrase);
 }
