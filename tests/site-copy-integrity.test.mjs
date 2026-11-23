@@ -30,8 +30,12 @@ test("research statements preserve source links and distinguish contribution", (
   const research = read("research.html");
   assert.match(research, /coach-nate-research-poster\.pdf/);
   assert.match(research, /10\.1007\/s10560-024-01000-y/);
-  assert.match(research, /I did not conduct the team's full statistical analysis/);
-  assert.match(research, /not yet conducted experimental research in cartilage regeneration/);
+  assert.match(research, /I conducted literature reviews on contraceptive types, effectiveness, prescription frequency and use, and assisted in table development, manuscript writing and revision/);
+  const interests = research.slice(research.indexOf('<h2 id="research-interests">'), research.indexOf('</main>'));
+  assert.match(interests, /I aim to contribute to the development of accessible, minimally invasive/);
+  assert.match(interests, /I am interested in optimizing strength development in adults/);
+  assert.match(interests, /I am also interested in strength development and muscle hypertrophy/);
+  assert.doesNotMatch(interests, /35756986|From evidence to practice/);
 });
 
 test("online NAV pricing is separate from employer booking and proposed partnerships", () => {
