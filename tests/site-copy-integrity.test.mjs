@@ -63,3 +63,25 @@ test("every public page uses the same five navigation headings before JavaScript
     assert.deepEqual(labels(mobile), expected, path + " mobile");
   }
 });
+
+test("EXOS Easter egg stays optional, local, and restores its text after 11 seconds", () => {
+  const page=read("coaching.html");
+  const code=read("assets/exos-easter-egg.js");
+  const css=read("style.css");
+  const manifest=read("scripts/public-release-manifest.mjs");
+  assert.doesNotMatch(page, /opens Google Maps in a new tab/i);
+  assert.match(page, /data-exos-card/);
+  assert.match(page, /data-exos-trigger>this button does nothing<\/button>/);
+  assert.equal((page.match(/data-exos-fall/g)||[]).length,4);
+  assert.match(page, /assets\/exos-easter-egg\.js/);
+  assert.match(manifest, /assets\/exos-easter-egg\.js/);
+  assert.match(code, /const RESET_MS = 11000/);
+  assert.match(code, /new AudioEngine\(\)/);
+  assert.match(code, /requestAnimationFrame/);
+  assert.match(code, /getBoundingClientRect/);
+  assert.match(code, /Math\.min\(a\.x \+ a\.w, b\.x \+ b\.w\)/);
+  assert.match(code, /window\.matchMedia\('\(prefers-reduced-motion: reduce\)'\)/);
+  assert.match(css, /exos-blast-core/);
+  assert.match(css, /exos-falling-word/);
+  assert.doesNotMatch(code, /\bfetch\(|XMLHttpRequest|new Audio\(|localStorage|sendBeacon/);
+});

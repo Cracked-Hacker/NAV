@@ -54,6 +54,7 @@ export const PUBLIC_RELEASE_FILES = Object.freeze([
   "assets/coach-nate-training-gallery.js",
   "assets/coach-nate-instagram-gallery.js",
   "assets/study-tools-options.js",
+  "assets/exos-easter-egg.js",
   "downloads/Human_Sciences_Atlas_2026.pdf",
   "downloads/NAV_Performance_Nutrition_The_Simple_Guide_v1-1.pdf",
   "assets/science-atlas-payment.js",

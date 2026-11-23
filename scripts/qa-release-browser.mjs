@@ -83,6 +83,30 @@ try{
   assert.equal(await page.locator('a').filter({hasText:'Get the Blinnergy App'}).count(),1);
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
   console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
+
+  // The EXOS joke is off until clicked, drops the real card words under gravity,
+  // and restores the original copy exactly 11 seconds later.
+  const exosCard=page.locator('[data-exos-card]');
+  const joke=exosCard.getByRole('button',{name:'this button does nothing'});
+  assert.equal(await joke.count(),1);
+  assert.equal(await page.locator('.exos-falling-word').count(),0);
+  const originalExosText=await exosCard.locator('[data-exos-fall]').allTextContents();
+  await joke.click();
+  await page.locator('.exos-falling-word').first().waitFor({state:'visible'});
+  assert.ok(await page.locator('.exos-falling-word').count()>=20,'Visible text must split into falling words');
+  assert.ok(await joke.isDisabled(),'Prevent retriggering while chaos is active');
+  assert.equal(await page.locator('.exos-blast-layer').count(),1,'Explosion animation shown');
+  assert.ok(await exosCard.evaluate(el=>el.classList.contains('exos-in-chaos')));
+  await page.waitForTimeout(1800);
+  assert.equal(await page.locator('.exos-blast-layer').count(),0,'Explosion overlay ends promptly');
+  assert.equal(await page.locator('body.exos-screen-shaking').count(),0,'Screen shake ends in about a second');
+  assert.ok(await page.locator('.exos-falling-word').first().evaluate(el=>getComputedStyle(el).transform!=='none'),'Words really move');
+  await page.waitForTimeout(9700);
+  assert.equal(await page.locator('.exos-falling-word').count(),0,'Words restore after eleven seconds');
+  assert.ok(await joke.isEnabled(),'Button is usable after reset');
+  assert.equal(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
+  console.log('PASS EXOS Easter egg: explosion, shake, original-word physics, 11-second reset');
+
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
   await page.keyboard.press('Tab');

@@ -138,3 +138,25 @@ h1,h2,h3{overflow-wrap:anywhere}
 @media(max-width:980px){#booking .grid-3{grid-template-columns:minmax(0,1fr)}}
 
 
+
+/* EXOS card Easter egg: all effects are user-triggered, local, and reset after 11 seconds. */
+.exos-card{position:relative;display:flex;flex-direction:column;min-width:0;isolation:isolate}
+.exos-card.exos-in-chaos{overflow:hidden}
+.exos-easter-egg{position:relative;z-index:4;margin-top:auto;padding-top:22px;display:flex;justify-content:flex-start}
+.exos-boom-button{border:1px solid #8c1720;border-radius:12px;background:#b51f2a;color:#fff;padding:11px 15px;min-height:46px;font-size:.84rem;font-weight:800;cursor:pointer;box-shadow:0 3px 0 #7b1421;transition:background-color .16s ease,transform .16s ease}
+.exos-boom-button:hover:not(:disabled){background:#8f1420}
+.exos-boom-button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #7b1421}
+.exos-boom-button:focus-visible{outline:3px solid #007ac8;outline-offset:4px}
+.exos-boom-button:disabled{opacity:.78;cursor:default}
+.exos-card.exos-in-chaos [data-exos-fall]{opacity:0}
+.exos-word-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3;border-radius:inherit}
+.exos-falling-word{display:block;position:absolute;white-space:nowrap;pointer-events:none;user-select:none;will-change:transform;transform-origin:center}
+.exos-blast-layer{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:2100}
+.exos-blast-core,.exos-blast-spark{position:absolute;left:var(--exos-blast-x);top:var(--exos-blast-y);pointer-events:none}
+.exos-blast-core{width:min(75vw,430px);height:min(75vw,430px);border-radius:50%;background:radial-gradient(circle,#fffbe4 0%,#ffd344 19%,#fa5822 42%,rgba(204,34,16,.5) 62%,transparent 71%);animation:exos-blast 1.2s ease-out forwards}
+.exos-blast-spark{width:10px;height:10px;border-radius:4px;box-shadow:0 0 9px rgba(255,97,25,.35);animation:exos-spark 1.18s ease-out var(--exos-delay) forwards}
+body.exos-screen-shaking>:not(.exos-blast-layer){animation:exos-shake .98s ease-in-out 1}
+@keyframes exos-blast{0%{opacity:.95;transform:translate(-50%,-50%) scale(.08)}35%{opacity:1;transform:translate(-50%,-50%) scale(.75)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}}
+@keyframes exos-spark{0%{opacity:1;transform:translate(-50%,-50%) translate(0,0) scale(1.2)}100%{opacity:0;transform:translate(-50%,-50%) translate(var(--exos-dx),var(--exos-dy)) scale(.1)}}
+@keyframes exos-shake{0%,100%{transform:translate(0,0)}10%{transform:translate(5px,-3px)}20%{transform:translate(-6px,4px)}30%{transform:translate(5px,3px)}40%{transform:translate(-5px,-3px)}50%{transform:translate(4px,2px)}60%{transform:translate(-3px,3px)}70%{transform:translate(3px,-2px)}80%{transform:translate(-2px,1px)}90%{transform:translate(1px,-1px)}}
+@media(prefers-reduced-motion:reduce){.exos-boom-button{transition:none}.exos-boom-button:active{transform:none}.exos-blast-layer,body.exos-screen-shaking>:not(.exos-blast-layer){animation:none}}
