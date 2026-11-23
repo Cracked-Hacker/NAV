@@ -92,6 +92,6 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
   'My workbench at SoundBio Lab while using PCR to amplify DNA.']){
   assert.ok(r.document.body.textContent.includes(phrase),'Original unique research information omitted: '+phrase);
  }
- assert.equal(r.document.querySelectorAll('#poster-heading figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
+ assert.equal(r.document.querySelectorAll('section[aria-labelledby="poster-heading"] figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
  w.happyDOM.abort();r.happyDOM.abort();
 });
