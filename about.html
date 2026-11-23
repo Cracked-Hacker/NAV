@@ -25,6 +25,13 @@
     .essay-rest{padding-top:2px}
     .essay-rest>p:first-child{margin-top:8px}
     .essay-rest>p:last-child{margin-bottom:0}
+    /* When JS is available, the expanded card itself replaces the Read more control. */
+    .essay-js-enabled .essay-disclosure[open]{margin-top:0}
+    .essay-js-enabled .essay-disclosure[open]>summary{display:none}
+    .essay-js-enabled .essay-disclosure[open] .essay-rest{padding-top:0}
+    .essay-js-enabled .essay-disclosure[open] .essay-rest>p:first-child{margin-top:0}
+    .essay-expanded{cursor:pointer}
+    .essay-expanded a{cursor:pointer}
   </style>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"Person","name":"Nate Holochwost","jobTitle":"Fitness Coach","description":"Founder of NAV with academic background in biology and kinesiology, chemistry coursework, fitness coaching, personal training certification, and research experience.","url":"https://coach-nate.netlify.app/about.html"}</script>
 </head>
@@ -175,4 +182,4 @@
   </section>
 </div></main>
 <footer class="site-footer"><div><a class="brand footer-brand" href="index.html"><span class="brand-mark">NAV</span><span>NAV</span></a><p>Coaching, training software, and exercise-science resources.</p></div><nav aria-label="Footer"><a href="about.html">About</a><a href="coach-nate.html">Coach Nate</a><a href="resume.html">Résumé</a><a href="account/">My NAV</a><a href="science.html">Science</a><a href="resources.html">Resources</a><a href="contact.html">Contact</a><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="disclaimer.html">Disclaimer</a><a href="accessibility.html">Accessibility</a></nav><div class="footer-meta"><p>Follow NAV’s Coach Nate: <a href="https://www.instagram.com/the_nate_dawg/">Instagram</a> · <a href="https://www.youtube.com/@NAV-Nate">YouTube</a></p><p>© 2026 NAV. Fitness coaching and education; not medical care.</p></div><p class="app-footer-link"><a href="https://nav-coach-app-eight.vercel.app/auth?mode=login">Open NAV Coach →</a></p></footer>
-<script type="module" src="account/navigation.js"></script></body></html>
+<script type="module" src="account/navigation.js"></script><script type="module" src="assets/about-essay-disclosures.js"></script></body></html>
