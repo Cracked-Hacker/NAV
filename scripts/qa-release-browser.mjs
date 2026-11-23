@@ -148,6 +148,23 @@ try{
   assert.equal(await storyDisclosure.evaluate(el=>el.open),false,'Clicking expanded card collapses it');
   console.log('PASS About → Coach Nate story link and four expandable personal essays');
 
+  // Research-only work now lives on the canonical Research page.
+  await page.goto(new URL('coach-nate.html',base).href,{waitUntil:'domcontentloaded'});
+  assert.equal(await page.locator('section#research,section#publication,section#uw-shadowing,section#soundbio,section#gallery').count(),0,'Coach Nate research panels must be removed');
+  for(const id of ['athletics','cv','teaching'])assert.equal(await page.locator('section#'+id).count(),1,'Coach Nate career sections must remain');
+  const migratedLink=page.locator('#links a[href="research.html#uw-shadowing"]');
+  assert.equal(await migratedLink.count(),1,'Professional shadowing link must point to Research');
+  await migratedLink.click();
+  await page.waitForURL(url=>url.pathname.endsWith('/research.html')&&url.hash==='#uw-shadowing');
+  assert.equal(await page.locator('#uw-shadowing h2').textContent(),'Research shadowing at UW');
+  for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
+    assert.equal(await page.locator('img[src="'+src+'"]').count(),1,'Research image should be present exactly once: '+src);
+    const response=await context.request.get(new URL(src,base).href);
+    assert.equal(response.status(),200,'Moved research image must load: '+src);
+  }
+  for(const id of ['chem-research','social-work-research','soundbio','research-interests'])assert.equal(await page.locator('#'+id).count(),1,'Research anchor '+id);
+  console.log('PASS research consolidated on Research page and Coach Nate retained videos/career history');
+
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});

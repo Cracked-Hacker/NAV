@@ -47,6 +47,22 @@ for(let attempt=1;attempt<=15;attempt++){
     for(const phrase of ["Coaching and athletics","Patient Care and Rehabilitation Settings","Scientific Research and Publication","Teaching and Community Science","I'm not a drill sergeant. I'm a teacher."]){
       assert.ok(coachHtml.includes(phrase),"Approved essay text missing on live Coach Nate: "+phrase);
     }
+    for(const retiredId of ["research","publication","uw-shadowing","soundbio","gallery"]){
+      assert.ok(!coachHtml.includes('<section id="'+retiredId+'"'),"Retired Coach Nate research panel still on production: "+retiredId);
+    }
+    const canonicalResearch=await request("research.html");
+    assert.equal(canonicalResearch.status,200,"Research page unavailable on production");
+    const researchHtml=await canonicalResearch.text();
+    for(const id of ["chem-research","poster-heading","social-work-research","uw-shadowing","soundbio","research-interests"]){
+      assert.ok(researchHtml.includes('id="'+id+'"'),"Research page missing original or moved section "+id);
+    }
+    for(const asset of ["coach-nate-acs-conference.webp","coach-nate-lab-bench.webp"]){
+      assert.ok(researchHtml.includes('assets/'+asset),"Research page missing transferred original photograph "+asset);
+      assert.ok(!coachHtml.includes('assets/'+asset),"Duplicate research photograph left on Coach Nate "+asset);
+    }
+    for(const target of ["research.html#social-work-research","research.html#uw-shadowing","research.html#soundbio"]){
+      assert.ok(coachHtml.includes('href="'+target+'"'),"Retargeted research link missing: "+target);
+    }
     const companyResponse=await request("about.html");
     assert.equal(companyResponse.status,200,"About NAV page missing in production");
     const companyHtml=await companyResponse.text();

@@ -65,3 +65,33 @@ test('Standalone résumé HTML page is retired without breaking PDF access',()=>
  const coach=readFileSync('coach-nate.html','utf8');
  assert.match(coach,/href="assets\/pdf\/Nathan_Holochwost_Resume_2026-11\.pdf" target="_blank" rel="noopener noreferrer" type="application\/pdf">View Resume<\/a>/);
 });
+
+test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
+ const w=new Window();w.document.write(readFileSync('coach-nate.html','utf8'));
+ const r=new Window();r.document.write(readFileSync('research.html','utf8'));
+ for(const id of ['research','publication','uw-shadowing','soundbio','gallery']){
+  assert.equal(w.document.getElementById(id),null,'Coach Nate must not retain research-only section '+id);
+ }
+ for(const id of ['chem-research','poster-heading','social-work-research','uw-shadowing','soundbio','research-interests']){
+  assert.ok(r.document.getElementById(id),'Research page missing '+id);
+ }
+ assert.equal(w.document.querySelectorAll('#my-story .story-essay').length,4,'Preserve all four original essays');
+ assert.ok(w.document.getElementById('training'),'Preserve strength videos');
+ assert.ok(w.document.getElementById('youtube-lessons'),'Preserve educational videos');
+ for(const id of ['athletics','cv','teaching'])assert.ok(w.document.getElementById(id),'Keep non-research career section '+id);
+ for(const [textPart,href] of [['Peer-reviewed publication','research.html#social-work-research'],['UW shadowing','research.html#uw-shadowing'],['SoundBio volunteering','research.html#soundbio']]){
+  const link=[...w.document.querySelectorAll('#links a')].find(a=>a.textContent.includes(textPart));
+  assert.equal(link?.getAttribute('href'),href,'Professional link '+textPart);
+ }
+ for(const src of ['assets/coach-nate-research-poster.webp','assets/coach-nate-acs-conference.webp','assets/coach-nate-lab-bench.webp']){
+  assert.equal(w.document.querySelector('img[src="'+src+'"]'),null,'No duplicate research image on Coach Nate: '+src);
+  assert.equal(r.document.querySelectorAll('img[src="'+src+'"]').length,1,'Original research image must be preserved on Research: '+src);
+ }
+ for(const phrase of ['During my UW lab shadowing, I observed mammalian cell-culture work',
+  'I helped develop biotechnology curriculum for community learners',
+  'My workbench at SoundBio Lab while using PCR to amplify DNA.']){
+  assert.ok(r.document.body.textContent.includes(phrase),'Original unique research information omitted: '+phrase);
+ }
+ assert.equal(r.document.querySelectorAll('#poster-heading figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
+ w.happyDOM.abort();r.happyDOM.abort();
+});
