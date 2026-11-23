@@ -89,9 +89,29 @@ try{
   const storyCards=page.locator('#my-story article.story-essay');
   assert.equal(await storyCards.count(),4,'All four personal essays must be on Coach Nate');
   assert.equal(await page.locator('#my-story h2').textContent(),'My story');
+  for(const width of [320,390,768,1024,1440,1920]){
+    await page.setViewportSize({width,height:1000});
+    const dimensions=await storyCards.evaluateAll(cards=>cards.map(card=>{
+      const rect=card.getBoundingClientRect();
+      const summary=card.querySelector('details.essay-disclosure summary');
+      return {width:rect.width,height:rect.height,overflow:card.scrollHeight-card.clientHeight,readMore:summary?.getBoundingClientRect().height||0};
+    }));
+    assert.ok(dimensions.every(card=>Math.abs(card.width-dimensions[0].width)<=1),width+': story preview card widths differ');
+    assert.ok(dimensions.every(card=>Math.abs(card.height-dimensions[0].height)<=1),width+': story preview card heights differ');
+    assert.ok(dimensions.every(card=>card.overflow<=2 && card.readMore>=40),width+': story preview content clips or control disappears');
+  }
+  await page.setViewportSize({width:1440,height:1000});
   const storyDisclosure=storyCards.first().locator('details.essay-disclosure');
   await storyDisclosure.locator('summary').click();
   assert.equal(await storyDisclosure.evaluate(el=>el.open),true,'Read more expands original essay');
+  const expandedMetrics=await page.locator('#my-story').evaluate(section=>{
+    const grid=section.querySelector('.story-grid');
+    const active=grid.querySelector('.essay-disclosure[open]').closest('article.story-essay');
+    return {fullWidth:Math.abs(active.getBoundingClientRect().width-grid.getBoundingClientRect().width)<2,
+      autoRows:getComputedStyle(grid).gridAutoRows};
+  });
+  assert.equal(expandedMetrics.fullWidth,true,'Expanded essay should occupy full reading width');
+  assert.equal(expandedMetrics.autoRows,'auto','Expanding one essay must not stretch other rows to its height');
   assert.equal(await storyDisclosure.locator('summary').evaluate(el=>getComputedStyle(el).display),'none','Expanded button disappears');
   await storyDisclosure.locator('.essay-rest p').first().click();
   assert.equal(await storyDisclosure.evaluate(el=>el.open),false,'Clicking expanded card collapses it');

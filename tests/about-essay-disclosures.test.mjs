@@ -13,6 +13,9 @@ test('Four Coach Nate essays open, hide the summary, and close by card click or 
   assert.match(html, /\.essay-js-enabled \.essay-disclosure\[open\]>summary\{display:none\}/);
   assert.match(html, /\.essay-js-enabled \.essay-disclosure\[open\] \.essay-rest>p:first-child\{margin-top:0\}/);
   assert.match(html, /src="assets\/about-essay-disclosures\.js"/);
+  assert.match(html, /\.story-grid\{[^}]*grid-auto-rows:1fr;[^}]*align-items:stretch\}/);
+  assert.match(html, /\.story-grid:has\(\.essay-disclosure\[open\]\)\{grid-auto-rows:auto\}/);
+  assert.match(html, /\.story-essay:not\(:has\(\.essay-disclosure\[open\]\)\) \.essay-disclosure\{margin-top:auto\}/);
 
   const window = new Window({ url: 'https://coach-nate.netlify.app/coach-nate.html#my-story' });
   window.document.write(html);
