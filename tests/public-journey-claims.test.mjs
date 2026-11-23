@@ -65,7 +65,10 @@ test('My NAV education directs members to published resources without promising 
 
 test('research and account FAQ describe the actual available next steps',()=>{
  const research=documentFor('research.html');
- assert.equal([...research.querySelectorAll('a')].some(a=>a.getAttribute('href')==='science.html'&&/evidence|research/i.test(a.textContent)),true);
+ assert.doesNotMatch(research.querySelector('main').textContent,/From evidence to practice|Research and coaching|Read how NAV evaluates evidence/i);
+  assert.equal(research.querySelector('a[href*="35756986"]'),null);
+  assert.ok(research.querySelector('#research-interests'));
+  assert.ok(research.querySelector('a[href="https://doi.org/10.1007/s10560-024-01000-y"]'));
  assert.doesNotMatch(research.body.textContent,/Explore exercise.science lessons/i);
  const faq=documentFor('resources.html');
  assert.equal([...faq.querySelectorAll('a')].some(a=>a.textContent.includes('Sign In to My NAV')&&a.getAttribute('href')==='account/auth.html?mode=login'),true);
