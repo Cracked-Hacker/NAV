@@ -90,6 +90,12 @@ try{
   // and restores the original copy exactly 11 seconds later.
   const exosCard=page.locator('[data-exos-card]');
   const joke=exosCard.getByRole('button',{name:'this button does nothing'});
+  assert.ok(await exosCard.evaluate(el=>{
+    const button=el.querySelector('[data-exos-trigger]');
+    const label=el.querySelector('.exos-gfit-label');
+    return button.compareDocumentPosition(label)&Node.DOCUMENT_POSITION_FOLLOWING &&
+      label.getBoundingClientRect().top>button.getBoundingClientRect().top;
+  }),'EXOS red button comes before gFit footer visually and in document order');
   assert.equal(await joke.count(),1);
   assert.equal(await page.locator('.exos-falling-word').count(),0);
   const originalExosText=await exosCard.locator('[data-exos-fall]').allTextContents();
@@ -103,6 +109,11 @@ try{
   assert.equal(await page.locator('.exos-blast-layer').count(),0,'Explosion overlay ends promptly');
   assert.equal(await page.locator('body.exos-screen-shaking').count(),0,'Screen shake ends in about a second');
   assert.ok(await page.locator('.exos-falling-word').first().evaluate(el=>getComputedStyle(el).transform!=='none'),'Words really move');
+  assert.ok(await exosCard.locator('.exos-falling-word').evaluateAll((els)=>{
+    const card=els[0].closest('[data-exos-card]');
+    const floor=card.getBoundingClientRect().bottom;
+    return els.every(el=>el.getBoundingClientRect().bottom<=floor+3);
+  }),'Falling words stay inside white card, including below the button');
   await page.waitForTimeout(9700);
   assert.equal(await page.locator('.exos-falling-word').count(),0,'Words restore after eleven seconds');
   assert.ok(await joke.isEnabled(),'Button is usable after reset');

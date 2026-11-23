@@ -299,3 +299,19 @@ test('do not republish third-party review transcripts anywhere in the finished p
      assert.ok(!html.includes(phrase),'Publication permission is not evidenced; remove third-party review text from '+path);
  }
 });
+
+test('EXOS Easter egg button is above the gFit footer; physics still ends inside the card',()=>{
+ const doc=documentFor('coaching.html');
+ const card=doc.querySelector('[data-exos-card]');
+ assert.ok(card);
+ const button=card.querySelector('[data-exos-trigger]');
+ const label=card.querySelector('.exos-gfit-label');
+ assert.ok(button && label);
+ assert.ok(Boolean(button.compareDocumentPosition(label)&doc.defaultView.Node.DOCUMENT_POSITION_FOLLOWING));
+ assert.equal(button.textContent.trim(),'this button does nothing');
+ assert.equal(label.textContent.trim().replace(/\s+/g,' '),'Exos @ Google · gFit');
+ assert.equal(card.querySelectorAll('[data-exos-fall]').length,4,'The original text blocks still participate in physics');
+ const js=readFileSync(new URL('../assets/exos-easter-egg.js',import.meta.url),'utf8');
+ assert.match(js,/const floor = Math.max\(95, card.clientHeight - 12\)/,'Word pile settles at the bottom of white card');
+ assert.match(js,/const RESET_MS = 11000/,'Exactly 11-second reset unchanged');
+});
