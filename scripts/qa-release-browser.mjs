@@ -84,6 +84,8 @@ try{
   assert.equal(await page.locator('.blinnergy-rating').count(),0,'No second link to same review list');
   console.log('PASS Google reviews-list deep link, no reproduced third-party review text, original Blinnergy booking');
 
+  // Standard motion exercises the animation; accessibility audits above use reduced motion.
+  await page.emulateMedia({reducedMotion:'no-preference'});
   // The EXOS joke is off until clicked, drops the real card words under gravity,
   // and restores the original copy exactly 11 seconds later.
   const exosCard=page.locator('[data-exos-card]');
@@ -106,6 +108,15 @@ try{
   assert.ok(await joke.isEnabled(),'Button is usable after reset');
   assert.deepEqual(await exosCard.locator('[data-exos-fall]').allTextContents(),originalExosText);
   console.log('PASS EXOS Easter egg: explosion, shake, original-word physics, 11-second reset');
+
+  // Reduced motion disables the blast, shake and falling words; the button remains usable.
+  await page.emulateMedia({reducedMotion:'reduce'});
+  await joke.click();
+  assert.equal(await page.locator('.exos-falling-word,.exos-blast-layer').count(),0,'Reduced-motion preference suppresses effects');
+  assert.equal(await exosCard.evaluate(el=>el.classList.contains('exos-in-chaos')),false);
+  assert.match(await exosCard.locator('[data-exos-status]').textContent(),/reset in 11 seconds/);
+  await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
+  console.log('PASS EXOS reduced-motion mode: no screen shake or moving words');
 
   await page.setViewportSize({width:1440,height:1000});
   await page.goto(new URL('account/auth.html?mode=login',base).href);
