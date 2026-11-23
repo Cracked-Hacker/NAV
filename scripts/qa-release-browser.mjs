@@ -77,7 +77,7 @@ try{
   assert.equal(await resumeButton.getAttribute('rel'),'noopener noreferrer');
   const hours=page.locator('section.hero .hero-coaching-hours');
   assert.equal(await hours.count(),1,'Single coaching-hours figure beside View Resume');
-  assert.equal((await hours.textContent()).replace(/\\s+/g,' ').trim(),'2,000+ coaching hours');
+  assert.equal((await hours.textContent()).replace(/\s+/g,' ').trim(),'2,000+ coaching hours');
   assert.equal(await page.locator('.info[aria-label="Career highlights"]').count(),0,'Remove redundant four-item highlight strip');
   const desktopHeroPositions=await page.locator('section.hero .hero-actions').evaluate(el=>{
     const button=el.querySelector('a.btn').getBoundingClientRect();
