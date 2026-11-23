@@ -272,7 +272,8 @@ test('Blinnergy reviews use a direct Google reviews-list link without unlicensed
  const expected="https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,";
  const link=reviews.querySelector('a.blinnergy-review-source-link');
  assert.equal(link.getAttribute('href'),expected,'Link should enter Google Search reviews for the specific Blinnergy business, not general Google Maps');
- assert.match(link.textContent,/Blinnergy reviews on Google/);
+ assert.equal(link.textContent,'Blinnergy reviews on Google','No extra text inside review-source link');
+ assert.equal(link.children.length,0,'Link label is plain concise text only');
  assert.ok(!link.classList.contains('button'),'Source link must be quiet inline text, not another bulky button');
  assert.equal(link.getAttribute('target'),'_blank');
  assert.match(link.getAttribute('rel'),/noopener/);

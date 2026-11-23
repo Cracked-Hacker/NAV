@@ -73,6 +73,7 @@ try{
   const reviewSection=page.locator('.blinnergy-reviews');
   const reviewLink=reviewSection.locator('a.blinnergy-review-source-link');
   assert.equal(await reviewLink.count(),1,'One discreet review-source link, not a bulky CTA');
+  assert.equal((await reviewLink.textContent()).trim(),'Blinnergy reviews on Google','No hidden or visible filler in the link label');
   assert.equal(await reviewLink.getAttribute('href'),"https://www.google.com/search?hl=en-US&gl=us&q=Blinnergy+Woodinville+WA#lrd=0x549006e72bbb6539:0x1f73ce46e1cb9651,1,,,");
   assert.equal((await reviewSection.locator('.blinnergy-review-summary strong').textContent()).trim(),'Coach Nate');
   assert.equal((await reviewSection.locator('.blinnergy-review-summary .blinnergy-review-stars').textContent()).trim(),'★★★★★');
