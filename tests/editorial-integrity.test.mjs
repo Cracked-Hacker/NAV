@@ -23,3 +23,17 @@ test('Research credit and licensing remain legible',()=>{
  assert.match(a,/Fitness coaching and education; not medical care/i);
  assert.match(text('disclaimer.html'),/not medical advice/i);
 });
+
+test('Coach Nate hero retains the approved introduction and original media links',()=>{
+ const w=new Window();w.document.write(readFileSync('coach-nate.html','utf8'));
+ const hero=w.document.querySelector('section.hero');
+ assert.ok(hero,'Hero section must exist');
+ assert.equal(hero.querySelector('.eyebrow')?.textContent,'Athlete · Coach · NAV founder');
+ assert.match(hero.querySelector('h1')?.textContent||'',/Nathan G\..*Holochwost/);
+ assert.equal(hero.querySelector('.lead')?.textContent,'I am Coach Nate. I coach strength and fitness at Blinnergy and EXOS, and I founded NAV to build a career around my passion for training, science, and education.');
+ assert.equal(hero.querySelector('.subcopy')?.textContent,'I graduated with a pre-medical education from Western Washington University: a B.S. in Kinesiology, a B.A. in Biology, and a minor in Chemistry. Feel free to look at my résumé—you’re hiring a coach, after all!');
+ assert.equal(hero.querySelector('a.btn')?.getAttribute('href'),'resume.html');
+ assert.equal(hero.querySelector('img')?.getAttribute('src'),'assets/coach-nate-lab-portrait.webp');
+ assert.equal(hero.querySelector('figure a')?.getAttribute('href'),'#uw-shadowing');
+ w.happyDOM.abort();
+});
