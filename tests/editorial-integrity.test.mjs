@@ -44,7 +44,13 @@ test('Coach Nate hero retains the approved introduction and original media links
  assert.equal(w.document.querySelectorAll('.hero-coaching-hours').length,1,'One understated coaching-hour figure beside the résumé button');
  assert.equal(hero.querySelector('a.btn')?.getAttribute('target'),'_blank');
  assert.equal(hero.querySelector('img')?.getAttribute('src'),'assets/coach-nate-lab-portrait.webp');
- assert.equal(hero.querySelector('figure a')?.getAttribute('href'),'#uw-shadowing');
+ assert.equal(hero.querySelector('figure a'),null,'The approved photo caption has no extra link');
+ assert.equal(hero.querySelector('figcaption')?.textContent,'A photo from one of my lab shadowing experiences. I’m interested in cartilage biology, how tissues respond to mechanical loading, regenerative medicine, and, of course, exercise science.');
+ assert.equal(hero.querySelector('img')?.getAttribute('alt'),'Nate in a white lab coat and blue gloves holding a sample tube in a laboratory');
+ assert.equal(w.document.querySelector('nav.profile-jumps'),null,'Retired shortcut buttons should not remain');
+ assert.ok(w.document.querySelector('#my-story'),'The essay collection remains accessible');
+ assert.ok(w.document.querySelector('#cv'),'Experience details remain accessible');
+ assert.ok(w.document.querySelector('#youtube-lessons'),'Educational videos remain accessible');
  w.happyDOM.abort();
 });
 

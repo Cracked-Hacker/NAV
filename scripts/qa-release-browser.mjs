@@ -91,6 +91,26 @@ try{
   assert.ok((await resumePDFResponse.body()).subarray(0,5).toString().startsWith('%PDF-'),'Résumé must have real PDF bytes');
   console.log('PASS direct View Resume PDF with no intermediate HTML page');
 
+  // The old three-item shortcut strip is gone, and the approved portrait caption is exact.
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(new URL('coach-nate.html',base).href,{waitUntil:'domcontentloaded'});
+  assert.equal(await page.locator('nav.profile-jumps').count(),0,'No redundant Coach Nate shortcut strip');
+  assert.equal(await page.locator('section.hero figcaption').textContent(),'A photo from one of my lab shadowing experiences. I’m interested in cartilage biology, how tissues respond to mechanical loading, regenerative medicine, and, of course, exercise science.');
+  assert.equal(await page.locator('section.hero figcaption a').count(),0,'No surplus link in the approved caption');
+  for(const width of [390,1440]){
+    await page.setViewportSize({width,height:1000});
+    const spacing=await page.evaluate(()=>{
+      const hero=document.querySelector('section.hero').getBoundingClientRect();
+      const story=document.querySelector('#my-story').getBoundingClientRect();
+      const storyHeading=document.querySelector('#story-heading').getBoundingClientRect();
+      return {gap:story.top-hero.bottom,headingGap:storyHeading.top-hero.bottom,overflow:document.documentElement.scrollWidth-innerWidth};
+    });
+    assert.ok(spacing.gap<=2 && spacing.gap>=-2,width+': hero and My story should be adjacent, without an empty slot');
+    assert.ok(spacing.headingGap>=20 && spacing.headingGap<=110,width+': balanced spacing before the story heading');
+    assert.ok(spacing.overflow<=1,width+': no horizontal overflow after removing shortcut buttons');
+  }
+  console.log('PASS approved lab-shadowing caption and clean Coach Nate story transition');
+
   // Story link from About NAV now leads to four complete Coach Nate essays.
   await page.goto(new URL('about.html',base).href,{waitUntil:'domcontentloaded'});
   const storyLink=page.locator('a[href="coach-nate.html#my-story"]');
