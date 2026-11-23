@@ -14,6 +14,17 @@
   to = "/account/"
   status = 301
 
+# Redirect old résumé links to the approved PDF; no intermediate HTML page.
+[[redirects]]
+  from = "/resume.html"
+  to = "/assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf"
+  status = 301
+
+[[redirects]]
+  from = "/resume"
+  to = "/assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf"
+  status = 301
+
 [[headers]]
   for = "/*"
   [headers.values]

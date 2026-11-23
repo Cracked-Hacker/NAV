@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 const base='https://coach-nate.netlify.app/';
 const checks=[];
-for(const route of ['', 'coaching.html','nav-coach.html','coach-nate.html','resume.html','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset','assets/coach-nate-research-poster.pdf','sitemap.xml','robots.txt']){
+for(const route of ['', 'coaching.html','nav-coach.html','coach-nate.html','assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset','assets/coach-nate-research-poster.pdf','sitemap.xml','robots.txt']){
   const r=await fetch(new URL(route,base));assert.ok(r.ok,`${route}: ${r.status}`);
   if(route.includes('account/auth')){
     assert.match(r.headers.get('cache-control')||'',/no-store/);
@@ -11,6 +11,9 @@ for(const route of ['', 'coaching.html','nav-coach.html','coach-nate.html','resu
   }
   checks.push({route,status:r.status});
 }
+const retiredResume=await fetch(new URL('resume.html',base),{redirect:'manual'});
+assert.equal(retiredResume.status,301,'Retired résumé HTML page must redirect to PDF');
+assert.equal(new URL(retiredResume.headers.get('location'),base).pathname,'/assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
 const old=await fetch(new URL('account.html',base),{redirect:'manual'});
 assert.equal(old.status,301,'Former account gateway redirects to the single My NAV hub');
 const release=await fetch(new URL('release.json',base)).then(r=>{assert.ok(r.ok,'Published release manifest');return r.json()});

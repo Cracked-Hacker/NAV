@@ -31,7 +31,7 @@ const page=await context.newPage();
 const errors=[],missing=[],results=[],accessibility=[];
 page.on('pageerror',e=>errors.push(e.message));
 page.on('response',r=>{if(r.url().startsWith(base)&&r.status()>=400)missing.push({url:r.url(),status:r.status()});});
-const routes=['','coaching.html','nav-coach.html','coach-nate.html','resume.html','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset'];
+const routes=['','coaching.html','nav-coach.html','coach-nate.html','research.html','classroom/','account/auth.html?mode=login','account/auth.html?mode=signup','account/auth.html?mode=reset'];
 try{
   for(const width of [320,390,768,1024,1440,1920]){
     await page.setViewportSize({width,height:1000});
@@ -67,6 +67,19 @@ try{
     if(width<=1024){await page.goto(base);await page.locator('.mobile-nav > summary').click();await page.locator('.mobile-nav .nav-dropdown').filter({has:page.locator('summary').filter({hasText:'Account'})}).locator('summary').click();await page.locator('.mobile-nav').getByRole('link',{name:'Create Account'}).click();await page.locator('#signup-form').waitFor({state:'visible'});}
     console.log(`PASS rendered ${routes.length} pages at ${width}px`);
   }
+
+  // The résumé page was retired; the primary CTA opens the approved PDF.
+  await page.goto(new URL('coach-nate.html',base).href,{waitUntil:'domcontentloaded'});
+  const resumeButton=page.locator('section.hero a.btn');
+  assert.equal(await resumeButton.textContent(),'View Resume');
+  assert.equal(await resumeButton.getAttribute('href'),'assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf');
+  assert.equal(await resumeButton.getAttribute('target'),'_blank');
+  assert.equal(await resumeButton.getAttribute('rel'),'noopener noreferrer');
+  const resumePDFResponse=await context.request.get(new URL('assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf',base).href);
+  assert.equal(resumePDFResponse.status(),200,'Direct résumé PDF must exist');
+  assert.ok((await resumePDFResponse.body()).subarray(0,5).toString().startsWith('%PDF-'),'Résumé must have real PDF bytes');
+  console.log('PASS direct View Resume PDF with no intermediate HTML page');
+
   // Blinnergy: link to the actual Google reviews-list view without republishing reviewer content.
   await page.setViewportSize({width:390,height:900});
   await page.goto(new URL('coaching.html',base).href,{waitUntil:'networkidle'});
@@ -257,7 +270,7 @@ try{
   const copyCrawl=[];
   const publicCopyRoutes=['404.html','about.html','accessibility.html','coach-nate.html',
     'coaching.html','contact.html','disclaimer.html','index.html','nav-coach.html',
-    'products.html','privacy.html','research.html','resources.html','resume.html',
+    'products.html','privacy.html','research.html','resources.html',
     'science.html','terms.html','classroom/'];
   for(const width of [390,1440]){
     await page.setViewportSize({width,height:1000});

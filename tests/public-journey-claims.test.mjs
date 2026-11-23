@@ -166,7 +166,7 @@ test('coaching clearly separates NAV online coaching from employer-owned booking
  assert.doesNotMatch(main.textContent,/Rain City Fit|\$100 base price per session/);
 });
 test('NASM CPT dates remain visible and the public site does not disclose private identifiers',()=>{
- for(const path of ['about.html','resume.html','coach-nate.html']){
+ for(const path of ['about.html','coach-nate.html']){
    const body=documentFor(path).body.textContent;
    assert.match(body,/NASM Certified Personal Trainer \(CPT\)/i);
    assert.match(body,/May 29, 2025/);

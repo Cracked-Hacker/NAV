@@ -3,7 +3,7 @@ import process from "node:process";
 
 const failures = [];
 const root = process.cwd();
-const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "coach-nate.html", "resume.html", "research.html"];
+const keyPages = ["index.html", "nav-coach.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "coach-nate.html", "research.html"];
 const canonicalBase = "https://coach-nate.netlify.app/";
 const appUrl = "https://nav-coach-app-eight.vercel.app/auth?mode=login";
 
@@ -102,8 +102,14 @@ for (const id of ["login-form", "signup-form", "reset-form"]) {
 }
 if (!/noindex,nofollow/.test(accountEntry)) failures.push("account/auth.html: private account entry must be noindex");
 
-const resume = text("resume.html");
-if (!resume.includes("B.S. Kinesiology") || !resume.includes("B.A. Biology") || !resume.includes("10.1007/s10560-024-01000-y")) failures.push("resume.html: November 2026 résumé facts missing");
+const coachProfile = text("coach-nate.html");
+const resumePdf = "assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf";
+for(const detail of ["B.S. in Kinesiology","B.A. in Biology","10.1007/s10560-024-01000-y"]){
+ if(!coachProfile.includes(detail))failures.push("coach-nate.html: professional background evidence missing: "+detail);
+}
+if(!coachProfile.includes('href="'+resumePdf+'" target="_blank" rel="noopener noreferrer" type="application/pdf">View Resume</a>'))failures.push("coach-nate.html: missing direct PDF View Resume button");
+if(!existsSync(resumePdf))failures.push("Public PDF résumé asset missing");
+if(existsSync("resume.html"))failures.push("Retired résumé HTML page remains in source");
 
 const prohibitedClaims = [
   [/scientifically proven/gi, "unsupported 'scientifically proven' claim"],
@@ -125,7 +131,7 @@ if (!robots.includes(`Sitemap: ${canonicalBase}sitemap.xml`)) failures.push("rob
 // Permit crawlers to see the explicit noindex on the beta landing; robots blocking it would hide that directive.
 const sitemap = text("sitemap.xml");
 if (sitemap.includes(`${canonicalBase}classroom/`)) failures.push("sitemap.xml: unreleased Classroom must not be indexed");
-for (const route of ["nav-coach.html", "coach-nate.html", "resume.html", "research.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
+for (const route of ["nav-coach.html", "coach-nate.html", "research.html", "coaching.html", "science.html", "resources.html", "about.html", "contact.html", "terms.html", "privacy.html", "disclaimer.html"]) {
   if (!sitemap.includes(`<loc>${canonicalBase}${route}</loc>`)) failures.push(`sitemap.xml: missing ${route}`);
 }
 

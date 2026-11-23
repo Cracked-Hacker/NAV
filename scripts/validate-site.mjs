@@ -8,7 +8,7 @@ import {PUBLIC_RELEASE_FILES} from "./public-release-manifest.mjs";
 const failures = [];
 const required = [
  "index.html","nav-coach.html","coaching.html","coach-nate.html",
- "resume.html","research.html","science.html","resources.html","about.html",
+ "research.html","science.html","resources.html","about.html",
  "contact.html","terms.html","privacy.html","disclaimer.html",
  "accessibility.html","404.html","account/auth.html","account/index.html",
  "classroom/index.html","style.css","robots.txt","sitemap.xml"
@@ -17,6 +17,9 @@ const mustExist = path => {if (!existsSync(path)) failures.push(path+": missing 
 for (const p of required) mustExist(p);
 const root = process.cwd();
 const publishable = new Set(PUBLIC_RELEASE_FILES);
+if(publishable.has("resume.html") || existsSync("resume.html"))failures.push("resume.html: retired résumé page must not be a public artifact or retained source");
+const resumePdf="assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf";
+if(!publishable.has(resumePdf)||!existsSync(resumePdf)||statSync(resumePdf).size<1000)failures.push("PDF résumé missing from approved public release");
 if(publishable.size!==PUBLIC_RELEASE_FILES.length)failures.push("public-release-manifest: duplicate entries");
 if(!publishable.has("classroom/index.html"))failures.push("public-release-manifest: missing beta information entry");
 if([...publishable].some(p=>p.startsWith("classroom/")&&p!=="classroom/index.html"))

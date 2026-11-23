@@ -47,7 +47,7 @@ test("every public page uses the same five navigation headings before JavaScript
     "404.html", "about.html", "accessibility.html", "coach-nate.html",
     "coaching.html", "contact.html", "disclaimer.html", "index.html",
     "nav-coach.html", "products.html", "privacy.html", "research.html",
-    "resources.html", "resume.html", "science.html", "terms.html",
+    "resources.html", "science.html", "terms.html",
     "account/auth.html", "account/index.html", "classroom/index.html"
   ];
   const expected = ["Home", "Services", "Products", "About", "Account"];

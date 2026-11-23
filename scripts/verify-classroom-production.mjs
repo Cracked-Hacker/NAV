@@ -42,6 +42,16 @@ for(let attempt=1;attempt<=15;attempt++){
     const coachResponse=await request("coach-nate.html");
     assert.equal(coachResponse.status,200,"Coach Nate profile missing in production");
     const coachHtml=await coachResponse.text();
+    const resumePdf="assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf";
+    assert.ok(coachHtml.includes('href="'+resumePdf+'" target="_blank" rel="noopener noreferrer" type="application/pdf">View Resume</a>'),"Approved Coach Nate résumé button did not reach production");
+    const pdfResponse=await request(resumePdf);
+    assert.equal(pdfResponse.status,200,"Published résumé PDF unavailable");
+    assert.equal(Buffer.from(await pdfResponse.arrayBuffer()).subarray(0,5).toString(),"%PDF-","Published résumé is not a valid PDF");
+    const oldResumeUrl=new URL("resume.html",root);
+    oldResumeUrl.searchParams.set("qa",expected.slice(0,9));
+    const retiredResponse=await fetch(oldResumeUrl,{redirect:"manual",headers:{"Cache-Control":"no-cache"},signal:AbortSignal.timeout(15000)});
+    assert.equal(retiredResponse.status,301,"Retired résumé page must redirect");
+    assert.equal(new URL(retiredResponse.headers.get("location"),root).pathname,"/"+resumePdf,"Retired résumé redirect points to wrong target");
     for(const code of ["DU67U4xAbgg","DVH2BmojR-X","DVKLlgxkm7e","DVO9SxBEkVh","DVRlBK5EpBz","DVZrxHgAWpp"]){
       assert.ok(coachHtml.includes('data-reel-code="'+code+'"') || coachHtml.includes("data-reel-code='"+code+"'"),"Missing published reel "+code);
     }

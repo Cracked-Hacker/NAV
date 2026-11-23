@@ -15,5 +15,5 @@ test('About uses exact educational credentials and grounded sources',()=>{
 test('About avoids duplicate product journey tiles from homepage',()=>{
   assert.doesNotMatch(about,/Three places, three different purposes/);
   assert.doesNotMatch(about,/class="card-link"/);
-  for(const route of ['resume.html','coach-nate.html','research.html'])assert.ok(about.includes('href="'+route+'"'));
+  for(const route of ['assets/pdf/Nathan_Holochwost_Resume_2026-11.pdf','coach-nate.html','research.html'])assert.ok(about.includes('href="'+route+'"'));
 });
