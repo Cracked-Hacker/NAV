@@ -11,7 +11,7 @@ test('Editorial changes retain genuine experience, credentials, and story',()=>{
  for(const page of [a,r,c])for(const term of ['NASM Certified Personal Trainer (CPT)','May 29, 2025','May 29, 2027'])assert.ok(page.includes(term),term);
  for(const term of ['B.S. in Kinesiology','B.A. in Biology','minor in Chemistry','Blinnergy','EXOS','FYZICAL','BIOL 348','Sound Bio Labs','University of Washington Yang Lab'])assert.ok(a.includes(term),term);
  for(const term of ['1,300+','700+','1,600+','800+','300+','50+'])assert.ok(r.includes(term),term);
- assert.ok(a.includes('Hours are estimates from my November 2026 résumé'));
+ assert.ok(a.includes('Read Nate’s story and how NAV got its start.'));
  assert.ok(r.includes('I work for EXOS at Google'));
  assert.doesNotMatch(a,/Google employee|employed by Google/i);
 });
