@@ -157,6 +157,29 @@ section{scroll-margin-top:115px;padding:65px 0}.sectionhead{display:flex;align-i
 section.hero{padding-bottom:30px}
 section#my-story{padding-top:34px}
 @media(max-width:620px){section.hero{padding-bottom:22px}section#my-story{padding-top:26px}}
+
+/* Owner-supplied lacrosse photographs. The PR remains draft until all six assets are present. */
+.lacrosse-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.lacrosse-photo-grid a{display:block;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.lacrosse-photo-grid a:hover{border-color:#7892a9;box-shadow:0 6px 24px #122f4a18}
+.lacrosse-photo-grid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+@media(max-width:800px){.lacrosse-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media(max-width:520px){.lacrosse-photo-grid{grid-template-columns:1fr}}
+
+
+/* Lacrosse & powerlifting sit below educational videos; native media and no external libraries. */
+.athletics-sport{background:#fff;border:1px solid var(--line);border-radius:7px;padding:clamp(16px,3vw,28px);margin-bottom:22px}
+.athletics-sport>h3{font:normal clamp(1.7rem,3vw,2.2rem)/1.2 var(--serif);margin:0 0 18px}
+.athletics-sport .training-gallery{margin-top:24px;border:0;padding:0}
+.lacrosse-game-video{margin:18px 0 0;max-width:660px}
+.lacrosse-game-video video{display:block;width:100%;height:auto;background:#14212c;border-radius:6px}
+.lacrosse-game-video figcaption{color:var(--muted);font-size:.82rem;padding-top:8px}
+.powerlifting-photo-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.powerlifting-photo-grid a{display:block;background:#f7f9fc;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.powerlifting-photo-grid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 50%}
+.powerlifting-photo-grid a:hover,.lacrosse-photo-grid a:hover{border-color:#7892a9;box-shadow:0 6px 24px #122f4a18}
+@media(max-width:700px){.powerlifting-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+
 </style>
 </head><body><a href="#content" class="skip">Skip to main content</a>
 <header><div class="container topbar">
@@ -289,45 +312,7 @@ section#my-story{padding-top:34px}
   </div>
 </section>
 
-<section id="training" class="training-showcase" aria-labelledby="training-heading">
-<div class="sectionhead"><div><p class="eyebrow">Coach Nate · Original strength footage</p><h2 id="training-heading">Squat training</h2></div><p>Four silent clips: three sets at 405 lb and one set at 415 lb × 2 (blue shorts).</p></div>
-<div class="training-gallery" data-training-gallery aria-label="Coach Nate squat video gallery">
-  <div class="training-gallery-header">
-    <div><p class="eyebrow">Four sets</p><h3>Back squat videos</h3><p class="training-gallery-note">Choose a clip to play.</p></div>
-    <div class="training-gallery-controls" aria-label="Video carousel controls">
-      <button type="button" data-gallery-prev aria-label="Previous squat video">← <span>Previous</span></button>
-      <span role="status" aria-live="polite" aria-atomic="true" data-gallery-status>1 of 4</span>
-      <button type="button" data-gallery-next aria-label="Next squat video"><span>Next</span> →</button>
-    </div>
-  </div>
-  <div class="training-gallery-track" role="region" aria-roledescription="carousel" aria-label="Squat video clips. Scroll or swipe left and right." data-training-track tabindex="0">
-<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="1 of 4: 405 lb squat set · Original clip">
-  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-strength-showcase-poster.webp" width="480" height="854" aria-label="Silent video: Coach Nate back squat at 405 lb · Original clip">
-    <source src="assets/coach-nate-strength-showcase-muted.mp4" type="video/mp4">Your browser does not support HTML video.
-  </video>
-  <figcaption><strong>405 lb back squat · Original clip</strong><span>Coach Nate · 39 seconds · silent</span></figcaption>
-</figure>
-<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="2 of 4: 405 lb back squat · Clip 1">
-  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-9099-poster.webp" width="480" height="854" aria-label="Silent video: 405 lb back squat · Clip 1">
-    <source src="assets/coach-nate-squat-9099-silent.mp4" type="video/mp4">Your browser does not support HTML video.
-  </video>
-  <figcaption><strong>405 lb back squat · Clip 1</strong><span>Coach Nate · 405 lb for reps · 45 seconds · silent</span></figcaption>
-</figure>
-<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="3 of 4: 405 lb back squat · Clip 2">
-  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-9078-poster.webp" width="480" height="854" aria-label="Silent video: 405 lb back squat · Clip 2">
-    <source src="assets/coach-nate-squat-9078-silent.mp4" type="video/mp4">Your browser does not support HTML video.
-  </video>
-  <figcaption><strong>405 lb back squat · Clip 2</strong><span>Coach Nate · 405 lb for reps · 31 seconds · silent</span></figcaption>
-</figure>
-<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="4 of 4: 415 lb × 2 · Blue shorts">
-  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-8279-poster.webp" width="480" height="854" aria-label="Silent video: 415 lb × 2 · Blue shorts">
-    <source src="assets/coach-nate-squat-8279-silent.mp4" type="video/mp4">Your browser does not support HTML video.
-  </video>
-  <figcaption><strong>415 lb × 2 · Blue shorts</strong><span>Coach Nate · 415 lb × 2 reps · 27 seconds · silent</span></figcaption>
-</figure>
-  </div>
-  <p class="training-gallery-help">Swipe or scroll for more · Select play on any video · Audio removed</p>
-</div>
+<section id="short-videos" aria-label="Instagram reels and YouTube Shorts">
 <div class="instagram-showcase" id="instagram-reels">
   <div class="instagram-heading"><div><p class="eyebrow">More from Coach Nate · Instagram + YouTube</p><h3>Video collection</h3><p class="instagram-intro">Six original Instagram reels plus three additional educational YouTube Shorts. Swipe or use the controls to browse, and choose a video to load it.</p></div>
     <div class="instagram-controls" aria-label="Reels and educational Shorts carousel controls"><button type="button" data-instagram-prev aria-label="Previous video">← Previous</button><span data-instagram-status role="status" aria-live="polite" aria-atomic="true">1 of 9</span><button type="button" data-instagram-next aria-label="Next video">Next →</button></div></div>
@@ -416,6 +401,70 @@ section#my-story{padding-top:34px}
     </article>
   </div>
   <p class="instagram-notice">Videos load when you choose to play them; you can also watch directly on YouTube.</p>
+</section>
+<section id="athletics" class="athletics-showcase" aria-labelledby="athletics-heading">
+  <div class="sectionhead"><div><p class="eyebrow">Athletics</p><h2 id="athletics-heading">Lacrosse &amp; Powerlifting</h2></div></div>
+  <div class="athletics-sport" id="lacrosse" aria-labelledby="lacrosse-heading">
+    <h3 id="lacrosse-heading">Lacrosse</h3>
+    <div class="lacrosse-photo-grid" aria-label="Five original lacrosse photographs">
+      <a href="assets/coach-nate-lacrosse-01.webp" target="_blank" rel="noopener noreferrer" aria-label="Open lacrosse photo 1"><img loading="lazy" decoding="async" src="assets/coach-nate-lacrosse-01.webp" alt="Two lacrosse players contesting possession on an outdoor field" width="1200" height="900"></a>
+<a href="assets/coach-nate-lacrosse-02.webp" target="_blank" rel="noopener noreferrer" aria-label="Open lacrosse photo 2"><img loading="lazy" decoding="async" src="assets/coach-nate-lacrosse-02.webp" alt="Lacrosse players in orange uniforms standing by the sideline" width="1200" height="900"></a>
+<a href="assets/coach-nate-lacrosse-03.webp" target="_blank" rel="noopener noreferrer" aria-label="Open lacrosse photo 3"><img loading="lazy" decoding="async" src="assets/coach-nate-lacrosse-03.webp" alt="Lacrosse players running and defending near a goal" width="1200" height="900"></a>
+<a href="assets/coach-nate-lacrosse-04.webp" target="_blank" rel="noopener noreferrer" aria-label="Open lacrosse photo 4"><img loading="lazy" decoding="async" src="assets/coach-nate-lacrosse-04.webp" alt="Two lacrosse players crouched low contesting a ground ball" width="1200" height="900"></a>
+<a href="assets/coach-nate-lacrosse-05.webp" target="_blank" rel="noopener noreferrer" aria-label="Open lacrosse photo 5"><img loading="lazy" decoding="async" src="assets/coach-nate-lacrosse-05.webp" alt="Lacrosse players in close contact while fighting for possession" width="1200" height="900"></a>
+
+    </div>
+    <figure class="lacrosse-game-video">
+      <video controls muted preload="none" playsinline poster="assets/coach-nate-lacrosse-01.webp" width="960" height="540" aria-label="Silent lacrosse photo reel made from five original still images"><source src="assets/coach-nate-lacrosse-photo-reel.mp4" type="video/mp4">Your browser does not support HTML video.</video>
+      <figcaption>Photo reel · five original photos · silent</figcaption>
+    </figure>
+  </div>
+  <div class="athletics-sport" id="training" aria-labelledby="powerlifting-heading">
+    <h3 id="powerlifting-heading">Powerlifting</h3>
+    <div class="powerlifting-photo-grid" aria-label="Powerlifting training photographs">
+      <a href="assets/coach-nate-strength-showcase-poster.webp" target="_blank" rel="noopener noreferrer" aria-label="Open powerlifting photo: 405 lb squat"><img src="assets/coach-nate-strength-showcase-poster.webp" alt="405 lb squat, still frame from Coach Nate's own workout video" loading="lazy" decoding="async" width="480" height="854"></a>
+<a href="assets/coach-nate-squat-9099-poster.webp" target="_blank" rel="noopener noreferrer" aria-label="Open powerlifting photo: 405 lb squat training still"><img src="assets/coach-nate-squat-9099-poster.webp" alt="405 lb squat training still, still frame from Coach Nate's own workout video" loading="lazy" decoding="async" width="480" height="854"></a>
+<a href="assets/coach-nate-squat-9078-poster.webp" target="_blank" rel="noopener noreferrer" aria-label="Open powerlifting photo: 405 lb squat training still"><img src="assets/coach-nate-squat-9078-poster.webp" alt="405 lb squat training still, still frame from Coach Nate's own workout video" loading="lazy" decoding="async" width="480" height="854"></a>
+<a href="assets/coach-nate-squat-8279-poster.webp" target="_blank" rel="noopener noreferrer" aria-label="Open powerlifting photo: 415 lb squat training still"><img src="assets/coach-nate-squat-8279-poster.webp" alt="415 lb squat training still, still frame from Coach Nate's own workout video" loading="lazy" decoding="async" width="480" height="854"></a>
+    </div>
+    <div class="training-gallery" data-training-gallery aria-label="Coach Nate squat video gallery">
+  <div class="training-gallery-header">
+    <div><p class="eyebrow">Four sets</p><h3>Back squat videos</h3><p class="training-gallery-note">Choose a clip to play.</p></div>
+    <div class="training-gallery-controls" aria-label="Video carousel controls">
+      <button type="button" data-gallery-prev aria-label="Previous squat video">← <span>Previous</span></button>
+      <span role="status" aria-live="polite" aria-atomic="true" data-gallery-status>1 of 4</span>
+      <button type="button" data-gallery-next aria-label="Next squat video"><span>Next</span> →</button>
+    </div>
+  </div>
+  <div class="training-gallery-track" role="region" aria-roledescription="carousel" aria-label="Squat video clips. Scroll or swipe left and right." data-training-track tabindex="0">
+<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="1 of 4: 405 lb squat set · Original clip">
+  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-strength-showcase-poster.webp" width="480" height="854" aria-label="Silent video: Coach Nate back squat at 405 lb · Original clip">
+    <source src="assets/coach-nate-strength-showcase-muted.mp4" type="video/mp4">Your browser does not support HTML video.
+  </video>
+  <figcaption><strong>405 lb back squat · Original clip</strong><span>Coach Nate · 39 seconds · silent</span></figcaption>
+</figure>
+<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="2 of 4: 405 lb back squat · Clip 1">
+  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-9099-poster.webp" width="480" height="854" aria-label="Silent video: 405 lb back squat · Clip 1">
+    <source src="assets/coach-nate-squat-9099-silent.mp4" type="video/mp4">Your browser does not support HTML video.
+  </video>
+  <figcaption><strong>405 lb back squat · Clip 1</strong><span>Coach Nate · 405 lb for reps · 45 seconds · silent</span></figcaption>
+</figure>
+<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="3 of 4: 405 lb back squat · Clip 2">
+  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-9078-poster.webp" width="480" height="854" aria-label="Silent video: 405 lb back squat · Clip 2">
+    <source src="assets/coach-nate-squat-9078-silent.mp4" type="video/mp4">Your browser does not support HTML video.
+  </video>
+  <figcaption><strong>405 lb back squat · Clip 2</strong><span>Coach Nate · 405 lb for reps · 31 seconds · silent</span></figcaption>
+</figure>
+<figure class="training-gallery-slide" role="group" aria-roledescription="slide" aria-label="4 of 4: 415 lb × 2 · Blue shorts">
+  <video controls muted playsinline preload="none" loading="lazy" poster="assets/coach-nate-squat-8279-poster.webp" width="480" height="854" aria-label="Silent video: 415 lb × 2 · Blue shorts">
+    <source src="assets/coach-nate-squat-8279-silent.mp4" type="video/mp4">Your browser does not support HTML video.
+  </video>
+  <figcaption><strong>415 lb × 2 · Blue shorts</strong><span>Coach Nate · 415 lb × 2 reps · 27 seconds · silent</span></figcaption>
+</figure>
+  </div>
+  <p class="training-gallery-help">Swipe or scroll for more · Select play on any video · Audio removed</p>
+</div>
+  </div>
 </section>
 <section id="teaching"><div class="sectionhead"><div><p class="eyebrow">Education, service &amp; clinical foundation</p><h2>Education and patient care</h2></div><p>My background includes anatomy teaching, laboratory research, and long-term care work.</p></div><div class="credentials"><div class="panel"><h3>Education</h3><ul><li>B.S. Kinesiology (pre-healthcare specialization), WWU</li><li>B.A. Biology, WWU</li><li>Chemistry minor, WWU</li></ul><h3>Certification and earlier training</h3><p><strong>NASM Certified Personal Trainer (CPT)</strong>, awarded May 29, 2025 (certificate expires May 29, 2027). Earlier CNA, BLS, CPR, First Aid, and web-design qualifications and training are listed in my résumé.</p><figure class="authentic-photo authentic-photo--small"><img src="assets/coach-nate-bod-pod-selected.webp" alt="Nate smiling while seated in a BOD POD body-composition chamber" width="250" height="281" loading="lazy" decoding="async"><figcaption>Personal photograph in a BOD POD body-composition measurement system.</figcaption></figure></div><div class="panel"><h3>Clinical &amp; community experience</h3><ul><li>CNA, North Cascades Health and Rehabilitation (2021–2023)</li><li>Clinical Aide, FYZICAL Therapy &amp; Balance Centers (2024)</li><li>CNA, Staffers LLC / Avalon Healthcare Solutions (2024–2025)</li><li>Volunteer powerlifting/athletic coaching (2023–2025)</li><li>Volunteer youth lacrosse coaching (2018–2019)</li></ul><p>Fitness coaching is not clinical diagnosis or treatment.</p><figure class="authentic-photo authentic-photo--portrait"><img src="assets/coach-nate-clinical-ppe-selected.webp" alt="Nate wearing navy scrubs, a mask and a face shield while seated on a couch" width="160" height="293" loading="lazy" decoding="async"><figcaption>Protective equipment during earlier healthcare-support work.</figcaption></figure></div></div></section>
 </div><section class="contact"><div class="container"><div><h2>Teaching, training, building.</h2><p>See NAV coaching, education, and product development, or get in touch.</p></div><div class="actions"><a href="index.html" class="btn">Explore NAV</a><a href="contact.html" class="btn alt">Contact</a></div></div></section></main>
