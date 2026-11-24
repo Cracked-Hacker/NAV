@@ -93,10 +93,10 @@ test('Research work lives on Research, not in duplicate Coach Nate panels',()=>{
  }
  for(const phrase of ['I shadowed research at the University of Washington',
   'I helped develop biotechnology curriculum for students in the community',
-  'My workbench at SoundBio Lab.']){
+  'Workbench at SoundBio Lab.']){
   assert.ok(r.document.body.textContent.includes(phrase),'Original unique research information omitted: '+phrase);
  }
- assert.doesNotMatch(r.document.querySelector('#uw-shadowing').textContent,/Yang Lab/i);
+ assert.doesNotMatch(r.document.body.textContent,/\bYang\b/i);
  assert.equal(r.document.querySelector('#uw-shadowing h3')?.textContent,'Lab Shadowing');
  assert.equal(r.document.querySelectorAll('section[aria-labelledby="poster-heading"] figure img[src="assets/coach-nate-research-poster.webp"]').length,1,'No duplicated poster art');
  w.happyDOM.abort();r.happyDOM.abort();
